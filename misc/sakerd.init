@@ -1,0 +1,61 @@
+#!/bin/sh
+
+USERNAME="{TemplateUsername}"
+EXEC="{TemplateExec}"
+CONF="{TemplateConf}"
+CMDPREFIX="su ${USERNAME} -c"
+#CMDPREFIX="su - ${USERNAME} -c"
+CMD="$EXEC -d" 
+SU=1
+
+CURRENTGID=`id -g`
+CURRENTID=`id -u`
+USERID=`id -u ${USERNAME}`
+
+test -z $CONF || CMD="$EXEC -c $CONF"
+
+if [ ${USERID} -eq ${CURRENTID} ]
+then
+    SU=0
+else
+    if [ $CURRENTGID -ne 0 ]
+    then
+        echo " Permission denied"
+        exit 1  
+    fi
+fi
+
+start()
+{
+    echo "Starting saker server..."
+    test $SU -eq 1 && $CMDPREFIX "$CMD" 
+    test $SU -eq 0 && $CMD 
+}
+
+stop()
+{
+    echo "Stopping saker server..."
+    test $SU -eq 1 && $CMDPREFIX "$CMD -k"
+    test $SU -eq 0 && $CMD -k
+}
+
+usage()
+{
+    echo "Usage: $0 {start|stop|restart}"
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        usage
+        ;;
+esac

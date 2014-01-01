@@ -1,0 +1,380 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="event">
+      <UniqueIdentifier>{4eb81446-9748-418b-8ff1-1efef465ca14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{459b9a2a-f5e0-41de-8fad-20244ff156ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{791b594e-a62e-480a-a905-cf0318d9ed7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sysinfo">
+      <UniqueIdentifier>{741a2ad8-5af4-4d4f-af67-a13f18eb6090}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="service">
+      <UniqueIdentifier>{02c8fe59-75a0-4d4f-b080-dc3ed3547a77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{7ff60568-b69c-4e7c-8cb3-99aada118488}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="plugins">
+      <UniqueIdentifier>{aad575e0-0a67-49c5-95e7-4f9642ec1a66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="proto">
+      <UniqueIdentifier>{1174c82a-b4f2-4897-8c29-1f3dc63827f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="luacompat">
+      <UniqueIdentifier>{f6b559d4-2950-455f-9cc0-53f28ca9f728}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\event\zmalloc.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\event\adlist.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\event\win32fixes.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\event\win32_wsiocp.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\event\ae.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\event\anet.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\saker.c" />
+    <ClCompile Include="..\..\..\src\core\core_chdir.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_copyfile.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_getcwd.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_isabsolute.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_isdir.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_isfile.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_kill.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_log.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_lualib.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_md5.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_mkdir.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_platform.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_rmdir.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_sleep.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_uuid.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\error.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\file.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\md5.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\path.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\sds.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\strbuf.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\string.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\thread.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\uuid.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sysinfo\sysinfo.c">
+      <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sysinfo\sysinfo_lualib.c">
+      <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sysinfo\windows\boottime.c">
+      <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sysinfo\windows\cpu.c">
+      <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sysinfo\windows\diskspace.c">
+      <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sysinfo\windows\kernel.c">
+      <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sysinfo\windows\memory.c">
+      <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sysinfo\windows\net.c">
+      <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sysinfo\windows\proc.c">
+      <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sysinfo\windows\uptime.c">
+      <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\udict.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\service\register.c">
+      <Filter>service</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_exec.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\service\sv_lualib.c">
+      <Filter>service</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_walk.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_pidof.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\config.c">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\luaworking.c">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\script.c">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\ulualib.c">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\plugins\cmsgpack.c">
+      <Filter>plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\plugins\cjson.c">
+      <Filter>plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\debug.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\event\util.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\logger.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_popen.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_fileinfo.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_islink.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_listdir.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\getopt.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\plugins\lua-hiredis.c">
+      <Filter>plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\process.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\proto\client.c">
+      <Filter>proto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\proto\commands.c">
+      <Filter>proto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\proto\networking.c">
+      <Filter>proto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\proto\pubsub.c">
+      <Filter>proto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\core\core_adopt.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\luacompat\compat52.c">
+      <Filter>luacompat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sysinfo\topbase.c">
+      <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\sysinfo\windows\top.c">
+      <Filter>sysinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\proto\object.c">
+      <Filter>proto</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\time.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\utils\perf.c">
+      <Filter>utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\src\event\zmalloc.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\event\adlist.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\event\ae.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\event\anet.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\event\config.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\event\fmacros.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\event\win32_wsiocp.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\event\win32fixes.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\saker.h" />
+    <ClInclude Include="..\..\..\src\core\core_declarer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\error.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\file.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\md5.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\path.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\sds.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\strbuf.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\string.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\thread.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\uuid.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\sysinfo\sysinfo.h">
+      <Filter>sysinfo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\udict.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\ulist.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\service\register.h">
+      <Filter>service</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\config.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\luaworking.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\ulualib.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\debug.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\event\util.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\logger.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\common\common.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\common\defines.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\common\platform.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\common\types.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\getopt.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\process.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\proto\client.h">
+      <Filter>proto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\proto\commands.h">
+      <Filter>proto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\luacompat\luacompat52.h">
+      <Filter>luacompat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\proto\object.h">
+      <Filter>proto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\time.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\proto\pubsub.h">
+      <Filter>proto</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\utils\perf.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

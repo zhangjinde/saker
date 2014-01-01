@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>Saker LUA API 文档</title>
+	<meta name="keywords" content="saker lua" />
+
+	<style type="text/css">
+	body{
+		margin: 4px;
+		padding: 0;
+		font-size: 13px;
+		font-family: tahoma, arial;
+		background: #fff;
+	}
+	table{
+		border-collapse: collapse;
+	}
+	th, td{
+		padding: 4px;
+		border: 1px solid #999;
+	}
+	pre{
+	padding: 6px;
+	background: #eee;
+	}
+	code{
+	}
+	h1{font-size: 220%;}
+	h2{font-size: 180%; border-bottom: 1px solid #999;}
+	h3{font-size: 150%; border-bottom: 1px solid #ccc;}
+	h4{font-size: 110%;}
+	#footer{
+		margin-top: 40px;
+		padding: 8px;
+		border-top: 1px solid #ccc;
+	}
+	</style>
+</head>
+<body>
+
+<h1>Saker LUA API 文档</h1>
+
+<dl>
+	<dd>@作者: <a href="http://cnblogs.com/ciniece">cinience</a></dd>
+	<dd>@日期: 2013-10-09</dd>
+</dl>
+
+<p>Saker 是系统服务级软件, 基于LUA扩展. <a href="https://github.com/cinience/saker">Fock Me at github.com/cinience</a>. 本文档介绍了 saker 的 LUA API.</p>
+
+<a name="top"></a>
+<h1>saker.sysinfo(key, param)
+<p> 本节介绍saker.sysinfo的不种参数的意义
+</p>
+</h1>
+<!-- ##############  key value ############## -->
+
+<a name="system.boottime"></a>
+<h3>system.boottime</h3>
+
+<h4><em>说明</em></h4>
+<p>获取系统启动时间.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code></code> </dd>  
+</dl>
+<h4><em>返回值</em></h4>
+<p>出错则返回 <code>nil,err</code>, 其它值表示正常.成功则返回<code>int</code></p></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  boottime,err = saker.sysinfo("system.boottime")
+  print(boottime)
+</pre>
+
+<a name="system.uptime"></a>
+<h3>system.uptime</h3>
+
+<h4><em>说明</em></h4>
+<p>获取系统在线时间.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code></code> </dd>  
+</dl>
+<h4><em>返回值</em></h4>
+<p>出错则返回 <code>nil,err</code>, 其它值表示正常.成功则返回<code>int</code></p></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  uptime,err = saker.sysinfo("system.uptime")
+  print(uptime)
+</pre>
+
+
+<a name="system.cpu.num.online"></a>
+<h3>system.cpu.num.online</h3>
+
+<h4><em>说明</em></h4>
+<p>获取系统在线CPU数量.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code></code> </dd>  
+</dl>
+<h4><em>返回值</em></h4>
+<p>出错则返回 <code>nil,err</code>, 其它值表示正常.成功则返回<code>int</code></p></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  cpunum,err = saker.sysinfo("system.cpu.num.online")
+  print(cpunum)
+</pre>
+
+
+<a name="system.cpu.num.max"></a>
+<h3>system.cpu.num.max</h3>
+
+<h4><em>说明</em></h4>
+<p>获取系统所有CPU数量.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code></code> </dd>  
+</dl>
+<h4><em>返回值</em></h4>
+<p>出错则返回 <code>nil,err</code>, 其它值表示正常.成功则返回<code>int</code></p></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  cpunum,err = saker.sysinfo("system.cpu.num.max")
+  print(cpunum)
+</pre>
+
+
+<a name="system.cpu.load.all"></a>
+<h3>system.cpu.load.all</h3>
+
+<h4><em>说明</em></h4>
+<p>获取系统所有CPU数量.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code></code> </dd>  
+</dl>
+<h4><em>返回值</em></h4>
+<p>出错则返回 <code>nil,err</code>, 其它值表示正常.成功则返回<code>int</code></p></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  cpunum,err = saker.sysinfo("system.cpu.num.max")
+  print(cpunum)
+</pre>
+
+
+
+<a name="system.cpu.util"></a>
+<h3>system.cpu.util</h3>
+
+<h4><em>说明</em></h4>
+<p>获取系统所有CPU数量.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code></code> </dd>  
+</dl>
+<h4><em>返回值</em></h4>
+<p>出错则返回 <code>nil,err</code>, 其它值表示正常.成功则返回<code>int</code></p></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  cpunum,err = saker.sysinfo("system.cpu.num.max")
+  print(cpunum)
+</pre>
+
+
+<div id="footer">
+	Copyright &copy; 2013 cinience. All rights reserved.
+</div>
+
+</body>
+</html>

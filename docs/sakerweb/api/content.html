@@ -1,0 +1,671 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>Saker LUA API 文档</title>
+	<meta name="keywords" content="saker lua" />
+
+	<style type="text/css">
+	body{
+		margin: 4px;
+		padding: 0;
+		font-size: 13px;
+		font-family: tahoma, arial;
+		background: #fff;
+	}
+	table{
+		border-collapse: collapse;
+	}
+	th, td{
+		padding: 4px;
+		border: 1px solid #999;
+	}
+	pre{
+	padding: 6px;
+	background: #eee;
+	}
+	code{
+	}
+	h1{font-size: 220%;}
+	h2{font-size: 180%; border-bottom: 1px solid #999;}
+	h3{font-size: 150%; border-bottom: 1px solid #ccc;}
+	h4{font-size: 110%;}
+	#footer{
+		margin-top: 40px;
+		padding: 8px;
+		border-top: 1px solid #ccc;
+	}
+	</style>
+</head>
+<body>
+
+<h1>Saker LUA API 文档</h1>
+
+<dl>
+	<dd>@作者: <a href="http://cnblogs.com/ciniece">cinience</a></dd>
+	<dd>@日期: 2013-10-09</dd>
+</dl>
+
+<p>Saker 是系统服务级软件, 基于LUA扩展. <a href="https://github.com/cinience/saker">Fock Me at github.com/cinience</a>. 本文档介绍了 saker 的 LUA API.</p>
+
+<a name="m-quick_start"></a>
+<h3><em>快速开始</em></h3>
+
+<pre>
+<a>编译运行</a>
+$ sh build.sh
+$ cd bin 
+$ ./saker
+
+<a>客户端连接</a>
+$ telnet 127.0.0.1 7777
+$ help
+$ info
+</pre>
+
+<!-- ##############  key value ############## -->
+
+<a name="saker-register"></a>
+<h3>saker.register(arg1, arg2, arg3)</h3>
+
+<h4><em>说明</em></h4>
+<p>注册任务(任务以function为单位).</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code>arg1</code> - 别名，必须唯一</dd>
+  <dd><code>arg2</code> - 函数名，必须已经实现function</dd>
+  <dd><code>arg3</code> - 任务属性，取值范围：</dd>   
+  <pre>
+        PROP_UNKNOWN    -  未知任务
+        PROP_UNACTIVE   -  非活跃任务
+        PROP_ONCE       -  一次性任务，仅执行一次
+        PROP_CYCLE      -  周期任务，周期执行
+        PROP_PASSIVITY  -  已执行过的一次性任务
+        PROP_DEFER      -  退出时执行的任务
+  </pre>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>出错则返回 <code>nil,err</code>, 其它值表示正常.</p>
+
+<h4><em>示例</em></h4>
+<pre>
+  function UUID_Example()
+    saker.log(LOG_INFO, "This is UUID_Example")
+    saker.log(LOG_INFO, "UUID : "..saker.uuid())
+    return True  
+    -- 你所实现的function必须返回值 ，True 或 False,err
+  end
+
+  ret,err = saker.register("UUID_Example", "UUID_Example", PROP_ONCE)
+</pre>
+
+
+<a name="saker-unregister"></a>
+<h3>saker.unregister(arg)</h3>
+
+<h4><em>说明</em></h4>
+<p>反注册任务.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code>arg</code> - 任务别名</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果 key 不存在则返回 <code>nil,err</code>,成功则返回<code>true</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  ret,err = saker.unregister("UUID_Example")
+</pre>
+
+<a name="saker-uname"></a>
+<h3>saker.uname()</h3>
+
+<h4><em>说明</em></h4>
+<p>操作系统类型.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+
+</dl>
+
+<h4><em>返回值</em></h4>
+<dl>
+  <dd><code>UNIX</code>  - *nix系统统一为UNIX</dd>
+  <dd><code>WIN</code>   - windows为 WIN</dd>
+</dl>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>操作系统类型字符串</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  ret = saker.uname()
+  if ret == "UNIX" then 
+    -- do something
+  end
+</pre>
+
+<a name="saker-osname"></a>
+<h3>saker.osname()</h3>
+
+<h4><em>说明</em></h4>
+<p>操作系统具体类型.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+</dl>
+<h4><em>返回值</em></h4>
+<dl>
+  <dd><code>FREE_BSD</code>   </dd>
+  <dd><code>AIX</code>   </dd>
+  <dd><code>HPUX</code>    </dd>
+  <dd><code>TRU64</code>   </dd>
+  <dd><code>LINUX</code>   </dd>
+  <dd><code>MAC_OS_X</code>   </dd>
+  <dd><code>NET_BSD</code>   </dd>
+  <dd><code>OPEN_BSD</code>   </dd>
+  <dd><code>OPEN_IRIX</code>    </dd>
+  <dd><code>SOLARIS</code>    </dd>
+  <dd><code>QNX</code>    </dd>
+  <dd><code>CYGWIN</code>   </dd>
+  <dd><code>UNKNOWN_UNIX</code>   </dd>
+  <dd><code>WINDOWS_NT</code>   </dd>
+</dl>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>操作系统类型字符串</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  ret = saker.osname()
+</pre>
+
+<a name="saker-exec"></a>
+<h3>saker.exec(cmd, ...)</h3>
+
+<h4><em>说明</em></h4>
+<p>执行命令.</p>
+
+<h4><em>参数</em></h4>
+<dl> 
+  <dd><code>cmd</code> - 执行的命令</dd>
+  <dd><code>argv</code> - 执行的传入参数</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>该命令返回状态</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  pid,ret = saker.exec("calc")
+  
+  pid,ret = saker.exec("/usr/local/bin/smb")
+</pre>
+
+<a name="saker-adopt"></a>
+<h3>saker.exec(pidfile, cmd, ...)</h3>
+
+<h4><em>说明</em></h4>
+<p>以精灵模式执行命令,通常作为被守护的进程被传入.</p>
+
+<h4><em>参数</em></h4>
+<dl> 
+  <dd><code>pidfile</code> - pidfile路径，如果nil则默认生成</dd>
+  <dd><code>cmd</code> - 执行的命令</dd>
+  <dd><code>argv</code> - 执行的传入参数</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>pid, pidfile</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  local pid,err = saker.adopt("/var/run/test.pid", "/bin/sh test.sh") 
+  
+  local pid,err = saker.adopt(nil, cmd)
+</pre>
+
+<a name="saker-pidof"></a>
+<h3>saker.pidof(pidfile)</h3>
+
+<h4><em>说明</em></h4>
+<p>根据pidfile获取pid.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code>pidfile</code> - pidfile路径</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>pid</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  pid,ret = saker.pidof("/var/run/smb.pid")
+</pre>
+
+<a name="saker-kill"></a>
+<h3>saker.kill(pid[, sig])</h3>
+
+<h4><em>说明</em></h4>
+<p>发送信号给进程.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code>pid</code> - 进程PID</dd>
+  <dd><code>sig</code> - 信号值，可选，默认为9</dd>
+  <pre>
+       SIGHUP        1       Term    Hangup detected on controlling termina
+                                     or death of controlling process
+       SIGINT        2       Term    Interrupt from keyboard
+       SIGQUIT       3       Core    Quit from keyboard
+       SIGILL        4       Core    Illegal Instruction
+       SIGABRT       6       Core    Abort signal from abort(3)
+       SIGFPE        8       Core    Floating point exception
+       SIGKILL       9       Term    Kill signal
+       SIGSEGV      11       Core    Invalid memory reference
+       SIGPIPE      13       Term    Broken pipe: write to pipe with no readers
+       SIGALRM      14       Term    Timer signal from alarm(2)
+       SIGTERM      15       Term    Termination signal
+       SIGUSR1   30,10,16    Term    User-defined signal 1
+       SIGUSR2   31,12,17    Term    User-defined signal 2
+       SIGCHLD   20,17,18    Ign     Child stopped or terminated
+       SIGCONT   19,18,25    Cont    Continue if stopped
+       SIGSTOP   17,19,23    Stop    Stop process
+       SIGTSTP   18,20,24    Stop    Stop typed at tty
+       SIGTTIN   21,21,26    Stop    tty input for background process
+       SIGTTOU   22,22,27    Stop    tty output for background process
+  </pre>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>true</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  ret,err = saker.kill(2345, 9)
+</pre>
+
+<a name="saker-popen"></a>
+<h3>saker.popen(cmd)</h3>
+
+<h4><em>说明</em></h4>
+<p>以管道形式执行cmd.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code>cmd</code> - 执行的命令</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>执行的output</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  ret,err = saker.popen("ls")
+</pre>
+
+<a name="saker-sleep"></a>
+<h3>saker.sleep(ms)</h3>
+
+<h4><em>说明</em></h4>
+<p>进程sleep.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code>ms</code> - sleep 的ms值</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>true</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  ret,err = saker.sleep(1000)
+</pre>
+
+
+
+
+<a name="saker-cd"></a>
+<h3>saker.cd(dirpath)</h3>
+
+<h4><em>说明</em></h4>
+<p>改变当前目录.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code>dirpath</code> - 目录路径</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>true</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  ret,err = saker.cd("..")
+</pre>
+
+
+
+<a name="saker-cp"></a>
+<h3>saker.cp(sour, dest)</h3>
+
+<h4><em>说明</em></h4>
+<p>拷贝文件.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code>sour</code> - 源目录</dd>
+  <dd><code>dest</code> - 目标目录</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>true</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  ret,err = saker.cp("./a", "./b")
+</pre>
+
+
+
+<a name="saker-pwd"></a>
+<h3>saker.pwd()</h3>
+
+<h4><em>说明</em></h4>
+<p>输出当前工作目录.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code>  </code> </dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回路径<code>字符串</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  curdir,err = saker.pwd()
+  print(curdir)
+</pre>
+
+
+<a name="saker-isfile"></a>
+<h3>saker.isfile(path)</h3>
+
+<h4><em>说明</em></h4>
+<p>判断是否是文件.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code> path </code>  - 被判定的路径</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>true 或 false</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  isfile,err = saker.isfile(path)
+  if isfile then
+  -- dosomething
+  end
+</pre>
+
+
+
+<a name="saker-isdir"></a>
+<h3>saker.isdir(path)</h3>
+
+<h4><em>说明</em></h4>
+<p>判断是否是目录.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code> path </code>  - 被判定的路径</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>true 或 false</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  isdir,err = saker.isdir(path)
+  if isdir then
+  -- dosomething
+  end
+</pre>
+
+
+
+<a name="saker-islink"></a>
+<h3>saker.islink(path)</h3>
+
+<h4><em>说明</em></h4>
+<p>判断是否是链接文件.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code> path </code>  - 被判定的路径</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>true 或 false</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  islink,err = saker.islink(path)
+  if islink then
+  -- dosomething
+  end
+</pre>
+
+
+<a name="saker-fileinfo"></a>
+<h3>saker.fileinfo(path)</h3>
+
+<h4><em>说明</em></h4>
+<p>获取文件的详细信息.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code> path </code>  - 指定路径</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>table</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  info,err = saker.fileinfo(path)
+  if info ~= nil then 
+    print(info["size"])
+  end
+</pre>
+
+
+
+<a name="saker-ls"></a>
+<h3>saker.ls(path)</h3>
+
+<h4><em>说明</em></h4>
+<p>获取目录下的所有文件，目录(首层).</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code> path </code>  - 指定路径</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>字符串数组</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  files,err = saker.ls(path)
+  for k,v in pairs(files) 
+  do
+      print(v)
+  end
+</pre>
+
+
+
+<a name="saker-walk"></a>
+<h3>saker.walk(path)</h3>
+
+<h4><em>说明</em></h4>
+<p>获取目录下的所有文件(递归).</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code> path </code>  - 指定路径</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>字符串数组</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  files,err = saker.ls(path)
+  for k,v in pairs(files) 
+  do
+      print(v)
+  end
+</pre>
+
+
+<a name="saker-mkdir"></a>
+<h3>saker.mkdir(path)</h3>
+
+<h4><em>说明</em></h4>
+<p>创建目录.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code> path </code>  - 指定目录路径</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>true</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  ret,err = saker.mkdir(path)
+</pre>
+
+
+<a name="saker-rmdir"></a>
+<h3>saker.rmdir(path)</h3>
+
+<h4><em>说明</em></h4>
+<p>删除目录.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code> path </code>  - 指定目录路径</dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回<code>true</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  ret,err = saker.rmdir(path)
+</pre>
+
+
+<a name="saker-log"></a>
+<h3>saker.log(level, ...)</h3>
+
+<h4><em>说明</em></h4>
+<p>记录日志.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code> level </code>  - 日志级别</dd>
+  <pre>
+     LOG_FATAL    = 1 
+     LOG_CRITICAL = 2 
+     LOG_ERROR    = 3 
+     LOG_WARNING  = 4 
+     LOG_NOTICE   = 5 
+     LOG_INFO     = 6 
+     LOG_DEBUG    = 7 
+     LOG_TRACE    = 8 
+</pre>
+</dl>
+
+<a name="saker-uuid"></a>
+<h3>saker.uuid()</h3>
+
+<h4><em>说明</em></h4>
+<p>获取uuid.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code>  </code> </dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回UUID<code>string</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  uuid,err = saker.uuid()
+  if uuid ~= nil then
+      print(uuid)
+  end
+</pre>
+
+
+<a name="saker-md5"></a>
+<h3>saker.md5(str[,len])</h3>
+
+<h4><em>说明</em></h4>
+<p>计算str的md5.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code>str</code> - 字符串 </dd>
+  <dd><code>len</code> - 参与计算的字符串长度，可选 </dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回md5<code>string</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+  md5,err = saker.md5(“fdaxcfdsaeag", 5);
+  if md5 ~= nil then
+      print(md5)
+  end
+</pre>
+
+
+<a name="saker-publish"></a>
+<h3>saker.publish(chan, msg)</h3>
+
+<h4><em>说明</em></h4>
+<p>发布消息.</p>
+
+<h4><em>参数</em></h4>
+<dl>
+  <dd><code>chan</code> - 订阅名 </dd>
+  <dd><code>msg</code> - 消息 </dd>
+</dl>
+
+<h4><em>返回值</em></h4>
+<p>如果失败返回 <code>nil,err</code>,成功则返回接收到订阅者的数量<code>int</code></p>
+
+<h4><em>示例</em></h4>
+<pre>
+   saker.publish("foo", "hello foo")
+</pre>
+
+<div id="footer">
+	Copyright &copy; 2013 cinience. All rights reserved.
+</div>
+
+</body>
+</html>

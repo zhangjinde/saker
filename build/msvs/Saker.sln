@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "saker-server", "saker-server\saker-server.vcxproj", "{3B27DB39-83F9-4293-8B3B-7F6646D7C529}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua", "lua\lua.vcxproj", "{CCB1DA62-4D7D-4CF9-9041-F18D839F1B5D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hiredis", "hiredis\hiredis.vcxproj", "{B13AE40D-166F-4C2D-B98D-119C9B5796A4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "saker-cli", "saker-cli\saker-cli.vcxproj", "{2E8DAD40-E561-4B89-B5DE-15A641288F47}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3B27DB39-83F9-4293-8B3B-7F6646D7C529}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3B27DB39-83F9-4293-8B3B-7F6646D7C529}.Debug|Win32.Build.0 = Debug|Win32
+		{3B27DB39-83F9-4293-8B3B-7F6646D7C529}.Release|Win32.ActiveCfg = Release|Win32
+		{3B27DB39-83F9-4293-8B3B-7F6646D7C529}.Release|Win32.Build.0 = Release|Win32
+		{CCB1DA62-4D7D-4CF9-9041-F18D839F1B5D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CCB1DA62-4D7D-4CF9-9041-F18D839F1B5D}.Debug|Win32.Build.0 = Debug|Win32
+		{CCB1DA62-4D7D-4CF9-9041-F18D839F1B5D}.Release|Win32.ActiveCfg = Release|Win32
+		{CCB1DA62-4D7D-4CF9-9041-F18D839F1B5D}.Release|Win32.Build.0 = Release|Win32
+		{B13AE40D-166F-4C2D-B98D-119C9B5796A4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B13AE40D-166F-4C2D-B98D-119C9B5796A4}.Debug|Win32.Build.0 = Debug|Win32
+		{B13AE40D-166F-4C2D-B98D-119C9B5796A4}.Release|Win32.ActiveCfg = Release|Win32
+		{B13AE40D-166F-4C2D-B98D-119C9B5796A4}.Release|Win32.Build.0 = Release|Win32
+		{2E8DAD40-E561-4B89-B5DE-15A641288F47}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2E8DAD40-E561-4B89-B5DE-15A641288F47}.Debug|Win32.Build.0 = Debug|Win32
+		{2E8DAD40-E561-4B89-B5DE-15A641288F47}.Release|Win32.ActiveCfg = Release|Win32
+		{2E8DAD40-E561-4B89-B5DE-15A641288F47}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
