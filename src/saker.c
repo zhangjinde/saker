@@ -147,7 +147,7 @@ void freeServer(struct sakerServer* server)
     server->hasfree = 1;
 
     if (server->tasks) deferHandler();
-    if (server->clients) freeClientlist();
+    if (server->clients) freeClientlist(server->clients);
     if (server->ipfd > -1) aeDeleteFileEvent(server->el, server->ipfd, AE_READABLE);
     for (i=0; i <= server->max_timeeventid; ++i)
     {
