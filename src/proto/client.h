@@ -71,11 +71,11 @@ void  freeClient(void *c);
 
 void freeClientAsync(void *c);
 
-void  resetClient(ugClient* c);
+void  resetClient(ugClient *c);
 
 list* createClientlist();
 
-void  freeClientlist();
+void  freeClientlist(list *l);
 
 int   processLineBuffer(ugClient* c);
 
