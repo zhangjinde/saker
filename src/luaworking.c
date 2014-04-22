@@ -106,7 +106,6 @@ int luaworkDoDir(lua_State* L,const char* path, char* err)
 
     if (xfilelistdir(path, "*.lua", queue) == UGERR) {
         luaworkSetError(err, "list files for %s failed", path);
-        listRelease(queue);
         ret = UGERR;
         goto END;
     }
