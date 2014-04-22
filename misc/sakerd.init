@@ -12,7 +12,7 @@ CURRENTGID=`id -g`
 CURRENTID=`id -u`
 USERID=`id -u ${USERNAME}`
 
-test -z $CONF || CMD="$EXEC -c $CONF"
+test -z $CONF || CMD="$EXEC -c $CONF -d"
 
 if [ ${USERID} -eq ${CURRENTID} ]
 then
