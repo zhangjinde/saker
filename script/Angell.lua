@@ -1,6 +1,7 @@
 
 
 local Angelltable={}
+local modulefile
 
 function proc_status(Args)
   local sa = {}
@@ -79,6 +80,7 @@ end
 
 
 function proc_start(Args)
+  reload_config()
   local sa = {}
   if Args ~= nil and #Args ~= 0 then
     for k,v in pairs(Args) 
@@ -137,19 +139,21 @@ function proc_stop(Args)
   return true,rsp
 end
 
-local modulefile
+function reload_config()
+  local reader = assert(io.open(modulefile, "rb"))
+  local ctx = reader:read('*a')
+  io.close(reader)
+  Angelltable = json.decode(ctx)
+end
+
 
 if saker.uname() == "UNIX" then
   modulefile = saker.pwd().."/../script/ModuleAppsForLinux.json"
 else 
   modulefile = saker.pwd().."/../script/ModuleAppsForWin.json"
 end
-local reader = assert(io.open(modulefile, "rb"))
-local ctx = reader:read('*a')
-io.close(reader)
 
-
-Angelltable = json.decode(ctx)
+reload_config()
 
 saker.register("svstatus", "proc_status", PROP_PASSIVITY)
 saker.register("svcheck",  "proc_check", PROP_CYCLE)
