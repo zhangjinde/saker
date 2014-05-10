@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block body %}    
+<div id="processes" class="panel panel-primary">
+        <div class="panel-heading"><span class="glyphicon glyphicon-tasks"></span> Service</div>
+        <table id="processes" class="table table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>
+                       ServiceName
+                    </th>
+                    <th>
+                       Status&nbsp;&nbsp;
+                    </th>
+                    <th>
+                       PID
+                    </th>
+                    <th>
+                       UPTIME
+                    </th>
+                    <th>
+                       %MEM
+                    </th>
+                    <th >
+                        %CPU
+                    </th>
+                    <th align="right">
+                       Operation
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in sorted(items.keys()) %}
+                    <tr>
+                      <td>{{ escape(item) }}</td>
+      
+                      <td>{{ escape(items[item]["STATUS"]) }}</td>
+                      <td>{{ escape(str(items[item]["PID"])) }}</td>
+                      <td>{{ escape(str(items[item]["UPTIME"])) }}</td>
+                      <td>{{ escape(str(items[item]["MEM"])) }}</td>
+                      <td>{{ escape(str(items[item]["CPU"])) }}</td>
+                      {% if str(items[item]["PID"]) == "nil" %}                    
+                      <td align="right"><a href="/svstart?servicename={{ escape(item) }}">start</a></td>
+                      {% else %}
+                      <td align="right"><a href="/svstop?servicename={{ escape(item) }}">stop</a></td>
+                      {% end %}
+                    </tr>
+                {% end %}
+            </tbody>
+        </table>
+    </div>
+{% end %}
