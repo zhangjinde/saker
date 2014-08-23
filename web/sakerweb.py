@@ -16,7 +16,7 @@ from tornado.options import define, options
 
 
 def GetSettings():
-    with open("/home/bx/web/sakerweb.conf") as config:
+    with open("./sakerweb.conf") as config:
         return json.load(config)
         
 config = GetSettings()
