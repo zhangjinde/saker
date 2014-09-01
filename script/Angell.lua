@@ -20,7 +20,7 @@ function proc_status(Args)
     local pid,err = saker.pidof(v['pidfile'], v['key'])
     local obj = {}
     if not pid then    
-        obj["STATUS"]= "Stopping"
+        obj["STATUS"]= "Stopped"
         obj["PID"] = "nil"
         obj["MEM"] = 0
         obj["CPU"]= 0
@@ -73,6 +73,12 @@ function proc_check(Args)
           saker.log(LOG_ERROR, err)
           return false,err
       end      
+    else if v["check"] == "wait" then 
+       pid,err = saker.pidof(v['pidfile'], v['key'])
+       if pid then
+            saker.kill(pid, 9)
+       end
+       v["check"] = "no"
     end
   end
   return true
@@ -125,7 +131,7 @@ function proc_stop(Args)
   local rsp = ""
   for k,v in pairs(sa)
   do
-    v['check']="no"
+    v['check']="wait"
     local pid,err = saker.pidof(v['pidfile'], v['key'])
     if pid then
       if v['ksignal'] == 0 then

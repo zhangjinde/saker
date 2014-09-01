@@ -15,20 +15,21 @@
         <div class="navbar-header">
           <a class="navbar-brand" href="{{ url_escape("") }}"> Saker portal </a>
         </div>
-        <p class="navbar-text navbar-right"><span class="glyphicon glyphicon-refresh"></span> Auto-updating (every 3 sec)</p>
+        <!--<p class="navbar-text navbar-right"><span class="glyphicon glyphicon-refresh"></span> Auto-updating (every 3 sec)</p>-->
       </div>
     </div>
 
     <div id="psdash" class="container-fluid">
         <div class="row">
             <div class="col-sm-3 col-md-1 sidebar">
-                <ul class="nav nav-sidebar">                
-                 <a href="{{ url_escape("sv") }}"><span class="glyphicon glyphicon-th"></span>Service</a>
-                 
+                <ul class="nav nav-sidebar">   
+                    <a href="{{ url_escape("api") }}"><span class="glyphicon glyphicon-th"></span>API</a>
+                </ul>
+                <ul class="nav nav-sidebar">    
+                    <a href="{{ url_escape("sv") }}"><span class="glyphicon glyphicon-th"></span>Service</a>
                 </ul>
             </div>
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 main">
-
                 <div id="content">
                     {% block body %}{% end %}
                 </div>
