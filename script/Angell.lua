@@ -73,7 +73,7 @@ function proc_check(Args)
           saker.log(LOG_ERROR, err)
           return false,err
       end      
-    else if v["check"] == "wait" then 
+    elseif v["check"] == "wait" then 
        pid,err = saker.pidof(v['pidfile'], v['key'])
        if pid then
             saker.kill(pid, 9)
