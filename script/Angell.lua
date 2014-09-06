@@ -2,6 +2,7 @@
 
 local Angelltable={}
 local modulefile
+local tsvlife = {}
 
 function proc_status(Args)
   local sa = {}
@@ -108,8 +109,10 @@ function proc_start(Args)
               saker.exec(v['scmd'])
            end   
            pid,err = saker.pidof(v['pidfile'],v['key'])
+           life_add(k, "user request start")
         end
         if pid == nil then 
+          life_add(k, "start failed")
           saker.log(LOG_ERROR, err)
           return false,err
         end     
@@ -139,10 +142,19 @@ function proc_stop(Args)
       else 
         saker.kill(pid, v['ksignal'])
       end  
+      life_add(k, "user request stop")
       rsp = rsp.."stop "..k.." success"
     end      
   end
   return true,rsp
+end
+
+function proc_life(Args) 
+  for k,v in pairs(Args)
+  do
+      return true, json.encode(tsvlife[v])
+  end
+  return false, "cannot nil param"
 end
 
 function reload_config()
@@ -152,18 +164,39 @@ function reload_config()
   Angelltable = json.decode(ctx)
 end
 
-
+function life_add(k, a)
+  if tsvlife[k] == nil then
+     tsvlife[k] = {}
+  end
+  local idx = table.getn(tsvlife[k])
+  tsvlife[k][idx+1] = {}
+  tsvlife[k][idx+1]["index"] = idx + 1
+  tsvlife[k][idx+1]["time"] = os.date("%a, %d %b %Y %X GMT")
+  tsvlife[k][idx+1]["action"] = a 
+end
+    
 if saker.uname() == "UNIX" then
   modulefile = saker.pwd().."/../script/ModuleAppsForLinux.json"
 else 
   modulefile = saker.pwd().."/../script/ModuleAppsForWin.json"
 end
 
+function init_liferecord()
+    for k, _ in pairs(Angelltable)
+    do
+        life_add(k, "saker start")
+    end
+end
+
 reload_config()
+
+init_liferecord()
+
 
 saker.register("svstatus", "proc_status", PROP_PASSIVITY)
 saker.register("svcheck",  "proc_check", PROP_CYCLE)
 saker.register("svstart", "proc_start", PROP_PASSIVITY)
 saker.register("svstop", "proc_stop", PROP_PASSIVITY)
+saker.register("svlife", "proc_life", PROP_PASSIVITY)
 
 

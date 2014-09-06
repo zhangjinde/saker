@@ -40,6 +40,17 @@ class SVStatus(tornado.web.RequestHandler):
         str = client.execute_command("exec", "svstatus")
         obj = json.loads(str)
         self.render("svinfo.html", items=obj)
+
+class SVLife(tornado.web.RequestHandler):
+    def get(self):
+        serviceName = self.get_argument("servicename", None)
+        client = redis.Redis(config["saker-ip"], config["saker-port"])
+        str = client.execute_command("exec", "svstatus")
+        obj = json.loads(str)
+        str = client.execute_command("exec", "svlife", serviceName)
+        objlife = json.loads(str)
+        objlife.reverse()
+        self.render("svlife.html", service=serviceName, items=obj, itemlife=objlife)
         
 class SVStop(tornado.web.RequestHandler):
     def get(self):
@@ -66,6 +77,7 @@ def main():
             (r"/sv", SVStatus),
             (r"/svstop", SVStop),
             (r"/svstart", SVStart),
+            (r"/svlife", SVLife),
             ],
         template_path=os.path.join(os.path.dirname(__file__), "templates"),
         static_path=os.path.join(os.path.dirname(__file__), "static"),

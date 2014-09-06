@@ -26,6 +26,9 @@
                     <th>
                        Operation
                     </th>
+                    <th>
+                       MORE
+                   </th>
                 </tr>
             </thead>
             <tbody>
@@ -43,9 +46,13 @@
                       {% else %}
                       <td><a class="btn btn-danger btn-sm" href="/svstop?servicename={{ escape(item) }}">stop</a></td>
                       {% end %}
+                      <td><a class="btn btn-info btn-sm" href="/svlife?servicename={{ escape(item) }}">goto</a></td>
                     </tr>
                 {% end %}
             </tbody>
         </table>
     </div>
+          <div id="svlife">
+                    {% block svlife %}{% end %}
+          </div>
 {% end %}
