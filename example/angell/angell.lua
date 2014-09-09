@@ -1,7 +1,7 @@
 
 
 local Angelltable={}
-local modulefile
+local modulefile = saker.pwd().."/../example/angell/angell.conf"
 local tsvlife = {}
 
 function proc_status(Args)
@@ -174,7 +174,6 @@ function proc_life(Args)
     do
         return true, json.encode(tsvlife[v])
     end
-  
     return false, "cannot nil param"
 end
 
@@ -194,12 +193,6 @@ function life_add(k, a)
     tsvlife[k][idx+1]["index"] = idx + 1
     tsvlife[k][idx+1]["time"] = os.date("%a, %d %b %Y %X GMT")
     tsvlife[k][idx+1]["action"] = a 
-end
-    
-if saker.uname() == "UNIX" then
-    modulefile = saker.pwd().."/../script/ModuleAppsForLinux.json"
-else 
-    modulefile = saker.pwd().."/../script/ModuleAppsForWin.json"
 end
 
 function init_angelltable()
