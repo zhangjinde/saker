@@ -9,6 +9,7 @@
 #include "service/register.h"
 #include "saker.h"
 
+static void authCommand(ugClient* c);
 
 static void usageCommand(ugClient* c);
 
@@ -27,6 +28,7 @@ static void unloadCommand(ugClient* c);
 static void execCommand(ugClient* c);
 
 static  ugCommand redisCommandTable[] = {
+    {"auth", authCommand, 1, 0, 0},
     {"usage", usageCommand , 0, 0, 0},
     {"ping", pingCommand ,  0, 0, 0},
     {"info", infoCommand ,  0, 0, 0},
@@ -66,6 +68,21 @@ static void usageCommand(ugClient* c)
         (unsigned long)sdslen(usage)));
     addReplySds(c, usage);
     addReply(c,shared.crlf);
+}
+
+static void authCommand(ugClient* c) 
+{
+    if (c->argc == 1) {
+        addReplyErrorFormat(c,  "wrong number of arguments for '%s' command",  c->argv[0]) ;
+        return;
+    }
+    if (strcmp(c->argv[1]->ptr, server.config->password) == 0) 
+    {
+        c->authenticated = 1;
+        addReplyStatus(c, "ok");
+        return;
+    }
+    addReplyError(c,"Authentication failed.");
 }
 
 static void pingCommand(ugClient* c)

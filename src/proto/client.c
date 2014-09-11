@@ -186,6 +186,10 @@ ugClient* createClient(int fd)
             return NULL;
         }
     }
+    
+    if (server.config->password == NULL) {
+        c->authenticated = 1;
+    }
     c->querybuf = sdsempty();
     c->fd = fd;
     c->ctime = c->lastinteraction = time(NULL);
@@ -470,7 +474,10 @@ int  processCommand(ugClient* c)
         c->flags |= UG_CLOSE_AFTER_REPLY;
         return UGERR;
     }
-
+    if (c->authenticated  == 0 && strcasecmp(c->argv[0]->ptr, "auth") != 0) {
+        addReplyError(c,"NOAUTH Authentication required. ");
+        return UGOK;
+    }
     c->cmd = lookupCommand((sds)c->argv[0]->ptr)  ;
     if (!c->cmd) {        
         addReplyErrorFormat(c,"unknown command '%s'",

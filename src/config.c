@@ -21,6 +21,7 @@ static const char* luacode = LOGFILE_PATH"   ./"APPNAME".log"ENDFLAG
                              LOCAL_PORT"   12007"ENDFLAG
                              TOP_MODE" 3000"ENDFLAG
                              MAXCLIENTS" 1000"ENDFLAG
+                             "#"PASSWORD" qazplm"ENDFLAG 
                              ;
 
 
@@ -100,6 +101,9 @@ static void parse_string(config_t* config, char* configstr)
                 err = "Invalid "MAXCLIENTS;
                 goto loaderr;
             }
+        } else if (!xstrcasecmp(argv[0], PASSWORD) && argc == 2) {
+            zfree(config->password);
+            config->password = xstrdup(argv[1]);
         }
         sdsfreesplitres(argv,argc);
     }
@@ -157,6 +161,7 @@ void freeConfig(config_t* pconfig)
     zfree(pconfig->logfile_path);
     zfree(pconfig->script_dir);
     zfree(pconfig->pidfile_dir);
+    zfree(pconfig->password);
     zfree(pconfig);
 }
 

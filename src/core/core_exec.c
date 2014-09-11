@@ -125,6 +125,7 @@ int core_exec(lua_State* L)
     starttime = time(NULL);
     do {
         if (-1 == (rc = waitpid(pid, &status, WUNTRACED)) && EINTR != xerrno()) {
+            alarm(0);
             lua_pushnil(L);
             lua_pushfstring(L, "waitpid failure: '%s' ,err: '%s'", startcmd, xerrmsg());
             goto End;

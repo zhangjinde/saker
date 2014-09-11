@@ -47,7 +47,7 @@ typedef struct ugClient {
 
     int bufpos;
     int sentlen;
-
+    int authenticated;
     char buf[UG_REPLY_CHUNK_BYTES];
 } ugClient;
 

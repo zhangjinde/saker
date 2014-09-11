@@ -12,8 +12,8 @@
 #define LOCAL_PORT           "port"
 #define NET_TIMEOUT          "timeout"
 #define TOP_MODE             "top-mode"
-#define MAXCLIENTS          "maxclients"
-
+#define MAXCLIENTS           "maxclients"
+#define PASSWORD             "password"
 
 typedef struct config {
     int      work_interval;
@@ -23,6 +23,7 @@ typedef struct config {
     int      net_timeout;
     char*    script_dir;
     char*    pidfile_dir;
+    char*    password;
     int      port;
     int      top_mode;
 	int      maxclients;
