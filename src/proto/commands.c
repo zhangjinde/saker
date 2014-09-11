@@ -72,17 +72,15 @@ static void usageCommand(ugClient* c)
 
 static void authCommand(ugClient* c) 
 {
-    if (c->argc == 1) {
-        addReplyErrorFormat(c,  "wrong number of arguments for '%s' command",  c->argv[0]) ;
-        return;
-    }
-    if (strcmp(c->argv[1]->ptr, server.config->password) == 0) 
-    {
+    if (server.config->password == NULL) {
+        addReplyError(c,"Client sent AUTH, but no password is set");
+    } else if (strcmp(c->argv[1]->ptr, server.config->password) == 0) {
         c->authenticated = 1;
         addReplyStatus(c, "ok");
-        return;
+    } else {
+        c->authenticated = 0;
+        addReplyError(c,"invalid password.");
     }
-    addReplyError(c,"Authentication failed.");
 }
 
 static void pingCommand(ugClient* c)
