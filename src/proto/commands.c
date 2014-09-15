@@ -176,13 +176,15 @@ static void execCommand(ugClient* c)
         const char* pret = NULL;
         int    ret = 0;
         int   top = lua_gettop(server.ls);
+        int luatbl_idx = 1;  
         /* the same as :
                    lua_getglobal(server.ls, ptask->func);
               */
         lua_rawgeti(server.ls, LUA_REGISTRYINDEX, ptask->handle);
         lua_createtable(server.ls, c->argc - idx, 0);
         for (; idx < c->argc; idx++) {
-            lua_pushinteger(server.ls, idx-1);            
+            /* lua index must start 1 */
+            lua_pushinteger(server.ls, luatbl_idx++);            
             lua_pushstring(server.ls, c->argv[idx]->ptr);
             lua_settable(server.ls , -3);
             /* the same as :
