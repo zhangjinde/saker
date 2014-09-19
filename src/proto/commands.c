@@ -188,7 +188,7 @@ static void execCommand(ugClient* c)
             lua_pushstring(server.ls, c->argv[idx]->ptr);
             lua_settable(server.ls , -3);
             /* the same as :
-                    lua_pushstring(server.ls, c->argv[idx]);				   
+                    lua_pushstring(server.ls, c->argv[idx]); 
                     lua_rawseti(server.ls, -2, idx-1);
                     */
         }

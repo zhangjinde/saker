@@ -18,6 +18,7 @@ static const char* luacode = LOGFILE_PATH"   ./"APPNAME".log"ENDFLAG
                              SCRIPT_DIR"  ../script"ENDFLAG
                              PIDFILE_DIR"  ../pid"ENDFLAG
                              WORK_INTERVAL"   5000 "ENDFLAG
+                             BIND"    127.0.0.1"ENDFLAG
                              LOCAL_PORT"   12007"ENDFLAG
                              TOP_MODE" 3000"ENDFLAG
                              MAXCLIENTS" 1000"ENDFLAG
@@ -89,7 +90,10 @@ static void parse_string(config_t* config, char* configstr)
         //  err = "Invalid net_timeout"; goto loaderr;
         //}
         //}
-        else if (!xstrcasecmp(argv[0],LOCAL_PORT) && argc == 2) {
+        else if (!xstrcasecmp(argv[0], BIND) && argc == 2) {
+            zfree(config->bind);
+            config->bind = xstrdup(argv[1]);
+        }else if (!xstrcasecmp(argv[0], LOCAL_PORT) && argc == 2) {
             config->port = atoi(argv[1]);
             if (config->port < 0 || config->port > 65535) {
                 err = "Invalid port";

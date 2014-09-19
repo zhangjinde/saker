@@ -25,19 +25,19 @@ struct sakerServer
     list*         pubsub_patterns;
     int           tcpkeepalive;               /* Set SO_KEEPALIVE if non-zero. */
     list*         clients; 
-	long long     stat_rejected_conn;
-	long long     stat_numconnections;
+    long long     stat_rejected_conn;
+    long long     stat_numconnections;
     long long     max_timeeventid;
-	aeEventLoop*  el; 
+    aeEventLoop*  el; 
      
-	/* private */
-	char*         pidfile;
-	config_t*     config; 
+    /* private */
+    char*         pidfile;
+    config_t*     config; 
     char*         configfile;
-	lua_State*    ls;
+    lua_State*    ls;
     dict*         tasks;
-	dict*         process;
-	
+    dict*         process;
+    
     /* not used */
     time_t        unixtime;
     unsigned long long maxmemory;

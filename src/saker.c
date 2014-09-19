@@ -151,7 +151,7 @@ void freeServer(struct sakerServer* server)
     if (server->ipfd > -1) aeDeleteFileEvent(server->el, server->ipfd, AE_READABLE);
     for (i=0; i <= server->max_timeeventid; ++i)
     {
-		if (server->el)
+        if (server->el)
         aeDeleteTimeEvent(server->el, i);
     }
     //if (server->timereventid != AE_ERR) 
@@ -285,7 +285,7 @@ static int doAction()
     server.config->maxclients = adjustOpenFilesLimit(server.config->maxclients);
 
     server.el = aeCreateEventLoop(server.config->maxclients + 1024);
-    server.ipfd = anetTcpServer(buff, server.config->port, NULL);
+    server.ipfd = anetTcpServer(buff, server.config->port, server.config->bind);
     if (server.ipfd == ANET_ERR) {
         LOG_ERROR("bind localhost:%d failed . %s. ", server.config->port, xerrmsg());
         server.ipfd = 0;

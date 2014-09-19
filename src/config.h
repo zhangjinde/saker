@@ -9,11 +9,13 @@
 #define SCRIPT_DIR           "script-dir"
 #define PIDFILE_DIR          "pidfile-dir"
 #define WORK_INTERVAL        "interval"
+#define BIND                 "bind"
 #define LOCAL_PORT           "port"
 #define NET_TIMEOUT          "timeout"
 #define TOP_MODE             "top-mode"
 #define MAXCLIENTS           "maxclients"
 #define PASSWORD             "password"
+
 
 typedef struct config {
     int      work_interval;
@@ -24,9 +26,10 @@ typedef struct config {
     char*    script_dir;
     char*    pidfile_dir;
     char*    password;
+    char*    bind;
     int      port;
     int      top_mode;
-	int      maxclients;
+    int      maxclients;
 } config_t;
 
 
