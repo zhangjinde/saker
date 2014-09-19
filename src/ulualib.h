@@ -4,11 +4,11 @@
 
 #include "luaworking.h"
 
-//#define LUA_CORELIBNAME	"saker"
+//#define LUA_CORELIBNAME   "saker"
 //LUAMOD_API int (luaopen_core) (lua_State *L);
 //
 //
-//#define LUA_SVLIBNAME	"saker"
+//#define LUA_SVLIBNAME     "saker"
 //LUAMOD_API int (luaopen_sv) (lua_State *L);
 
 

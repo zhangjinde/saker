@@ -23,7 +23,7 @@ static void acceptCommonhandler(int fd, int flags)
 #endif
         return;
     }
-	    /* If maxclient directive is set and this is one client more... close the
+        /* If maxclient directive is set and this is one client more... close the
      * connection. Note that we create the client instead to check before
      * for this condition, since now the socket is already set in non-blocking
      * mode and we can send an error for free using the Kernel I/O */

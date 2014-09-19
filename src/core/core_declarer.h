@@ -12,6 +12,8 @@
 
 
 /* Built-in functions */
+int core_getuid(lua_State* L);
+
 int core_adopt(lua_State* L);
 int core_popen(lua_State* L);
 int core_exec(lua_State* L);

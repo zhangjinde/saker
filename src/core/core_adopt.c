@@ -12,6 +12,9 @@
 #ifndef OS_WIN
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 #endif
 
 
@@ -47,6 +50,7 @@ int core_adopt(lua_State* L)
     int idx = 1, argc = 0;
     pid_t pid;
     const char** argv = NULL;
+    const char* user = NULL;
     sds* tmpargv = NULL;
     const char*  startcmd = NULL;
     int top = lua_gettop(L);
@@ -55,7 +59,7 @@ int core_adopt(lua_State* L)
         lua_pushstring(L, "wrong number of arguments for fork");
         goto End;
     }
-
+    
     startcmd = luaL_checkstring(L, 2);
     cmd = sdscat(cmd, startcmd);
     tmpargv = sdssplitargs(startcmd, &argc);
@@ -66,6 +70,10 @@ int core_adopt(lua_State* L)
 
     if (!lua_isnil(L, 1)) pidfile = sdsnew(luaL_checkstring(L, 1));
     else pidfile = getPidfile(argv[0]);
+    
+    if (top == 3) {
+        user = luaL_checkstring(L, 3);
+    }
 
     if ( pidfile_verify(pidfile) == UGOK) {
         lua_pushnil(L);
@@ -147,7 +155,15 @@ int core_adopt(lua_State* L)
             LOG_ERROR("cannot create pid for '%s' ,exit process. err: %s , mypid is '%d'", pidfile , xerrmsg(), pid);
             _exit(1);
         }
-
+        if (user != NULL) {
+            struct passwd * pwd = getpwnam(user);
+            if (pwd) {
+                if (setuid(pwd->pw_uid) != 0) {
+                    LOG_ERROR("cannot setuid for '%s'", cmd);
+                    _exit(1);
+                }
+            }
+        }
         LOG_TRACE("exec %s", cmd);
         execvp(argv[0], argv);
         LOG_TRACE("exec process exit, mypid is '%d'", xerrmsg(), pid);

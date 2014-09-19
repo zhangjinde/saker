@@ -181,7 +181,7 @@ int ugUnregister(lua_State* L)
 int   ugPublish(lua_State* L) 
 {
     int top = lua_gettop(L);
-	int recvs;
+    int recvs;
     robj* channel, *message;
     const char* p1, *p2;
     
@@ -198,7 +198,7 @@ int   ugPublish(lua_State* L)
     recvs = pubsubPublishMessage(channel, message);
     decrRefCount(channel);
     decrRefCount(message);
-	
-	lua_pushinteger(L, recvs);
+    
+    lua_pushinteger(L, recvs);
     return 1;
 }
