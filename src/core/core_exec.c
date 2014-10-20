@@ -12,6 +12,7 @@
 #ifndef OS_WIN
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 #endif
 
 int core_exec(lua_State* L)
@@ -21,7 +22,8 @@ int core_exec(lua_State* L)
     STARTUPINFO startupInfo;
     char procname[1024]= {0};
 #else
-    time_t starttime;
+    struct timeval t_start,t_end; 
+    long start_ms, end_ms;
 #endif
     int timeout = 10; /* default 10 ms */
     int ret = 2;
@@ -88,8 +90,6 @@ int core_exec(lua_State* L)
     GetExitCodeProcess(processInfo.hProcess, (DWORD*) &status);
 
 #else
-    alarm(timeout);
-
     pid = fork();
     if (pid < 0 ) {
         lua_pushnil(L);
@@ -99,7 +99,6 @@ int core_exec(lua_State* L)
         int fd;
         int maxFd = (int)sysconf(_SC_OPEN_MAX);
         unsigned int flags = fcntl(server.ipfd, F_GETFD);
-        int pid ;
 
         /* Close all file descriptors, except for standard input,
                   standard output, standard error    and listen fd
@@ -118,33 +117,41 @@ int core_exec(lua_State* L)
             server.ipfd = -1;
         }
         LOG_TRACE("exec %s", cmd);
-        execvp(argv[0], argv);
+        execvp(argv[0], (char * const*)argv);
         _exit(0);
     }
-    /* Wait timeout */
-    starttime = time(NULL);
+    gettimeofday(&t_start, NULL); 
+    start_ms = ((long)t_start.tv_sec)*1000+(long)t_start.tv_usec/1000;
     do {
-        if (-1 == (rc = waitpid(pid, &status, WUNTRACED)) && EINTR != xerrno()) {
-            alarm(0);
+        /* WNOHANG     return immediately if no child has exited. */
+        /* waitpid(): on success, returns the process ID of the child whose state has changed; if WNOHANG was  specified  and  one  or
+         * more child(ren) specified by pid exist, but have not yet changed state, then 0 is returned.  On error, -1 is returned.
+         */
+        rc = waitpid(pid, &status, WNOHANG);
+        if (rc == -1 && EINTR != xerrno()) {
             lua_pushnil(L);
             lua_pushfstring(L, "waitpid failure: '%s' ,err: '%s'", startcmd, xerrmsg());
             goto End;
-        } else if (rc == -1 ) {
-            alarm(0);
+        }
+        gettimeofday(&t_end, NULL); 
+        end_ms =  ((long)t_end.tv_sec)*1000+(long)t_end.tv_usec/1000; 
+        /* Wait timeout */
+        if (rc == 0 && (end_ms - start_ms) >= timeout) {
+            pkill(pid, SIGTERM);
+            waitpid(pid, &status, 0);
             lua_pushnil(L);
-            lua_pushfstring(L, "waitpid timeout: '%s' ,err: '%s'", startcmd, xerrmsg());
+            lua_pushfstring(L, "waitpid timeout: '%s'", startcmd);
             goto End;
         }
-        if (WIFEXITED(status)) {
-            LOG_TRACE( "%s exited, status:%d", startcmd, WEXITSTATUS(status));
-        } else if (WIFSIGNALED(status)) {
-            LOG_TRACE( "%s killed by signal %d", startcmd, WTERMSIG(status));
-        } else if (WIFSTOPPED(status)) {
-            LOG_TRACE( "%s stopped by signal %d", startcmd, WSTOPSIG(status));
-        }
-    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-
-    alarm(0);
+    } while (rc == 0);
+    
+    if (WIFEXITED(status)) {
+        LOG_TRACE( "%s exited, status:%d", startcmd, WEXITSTATUS(status));
+    } else if (WIFSIGNALED(status)) {
+        LOG_TRACE( "%s killed by signal %d", startcmd, WTERMSIG(status));
+    } else if (WIFSTOPPED(status)) {
+        LOG_TRACE( "%s stopped by signal %d", startcmd, WSTOPSIG(status));
+    }
 #endif
     lua_pushinteger(L, status);
     lua_pushnil(L);

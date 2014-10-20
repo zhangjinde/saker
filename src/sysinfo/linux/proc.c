@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <time.h>
 
 #include "sysinfo/top.h"
 #include "utils/string.h"
@@ -310,13 +311,13 @@ int PROC_PID(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
 /// argv[0] == pid argv[1] == mb|kb|gb|nil
 int PROC_MEMORY_USED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
 {
-    int    ret = UGERR;
-    int    do_task = 0;
+    int    ret = UGERR;    
     uint64_t memsize = 0;
     char   tmp[MAX_STRING_LEN]= {0};
     char   buff[MAX_STRING_LEN]= {0};
     FILE*  fp = NULL;
-    char*  pidstr,*p, *p1;
+    const char *pidstr;
+    char *p, *p1;
     int    pid = 0;
     if(NULL == (pidstr=getParam(argc,argv,0))) {
         SET_MSG_RESULT(result, xstrdup("called must have param"));
@@ -374,8 +375,6 @@ int PROC_MEMORY_USED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* 
 int PROC_MEMORY_PUSED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
 {
 
-
-    int    ret = UGERR;
     SYSINFO_RESULT tmpresult;
     const char* inparam = argv[0];
     struct sysinfo  info;
@@ -446,7 +445,7 @@ int PROC_STATINFO(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* res
                            proc->state,
                            proc->pcpu,
                            proc->pmem);
-	
+
     SET_STR_RESULT(result, rst);
     ret = UGOK;
 

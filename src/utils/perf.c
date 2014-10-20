@@ -44,7 +44,7 @@ unsigned long long adjustOpenFilesLimit(unsigned long clientsnum)
             if (f != maxfiles) {
                 maxclients = f-32;
                 LOG_WARNING("Unable to set the max number of files limit to %d (%s), setting the max clients configuration to %d.",
-                    (int) maxfiles, strerror(errno), (int) maxclients);
+                    (int) maxfiles, xerrmsg(), (int) maxclients);
             } else {
                 LOG_TRACE("Max number of open files set to %d",
                     (int) maxfiles);

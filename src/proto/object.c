@@ -33,6 +33,7 @@
 #include "common/winfixes.h"
 #include <math.h>
 #include <ctype.h>
+#include <string.h>
 #include "saker.h"
 
 #include "event/util.h"

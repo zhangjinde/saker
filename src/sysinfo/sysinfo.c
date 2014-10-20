@@ -204,13 +204,13 @@ int sysInfo(lua_State* L)
     }
     cmd = luaL_checkstring(L,1);
     if (top > 1) {
-        argv = (char**)zmalloc(sizeof(char*)*(top-1));
+        argv = (const char**)zmalloc(sizeof(char*)*(top-1));
         for(idx=2; idx<=top; ++idx) {
             argv[idx-2] = (char*)luaL_checkstring(L,idx);
         }
     }
 
-    if(NULL == g_dict_sysinfo_function) {
+    if (NULL == g_dict_sysinfo_function) {
         if (UGOK!=initSysinfoDic()) {
             strcpy(errmsg, "initSysinfoDic failed");
             ret = 2;

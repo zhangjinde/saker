@@ -165,7 +165,7 @@ int core_adopt(lua_State* L)
             }
         }
         LOG_TRACE("exec %s", cmd);
-        execvp(argv[0], argv);
+        execvp(argv[0], (char * const*)argv);
         LOG_TRACE("exec process exit, mypid is '%d'", xerrmsg(), pid);
         xfiledel(pidfile);
         _exit(72);
