@@ -1,4 +1,5 @@
 #!/bin/sh
+ScriptDir=`echo $(cd "$(dirname "$0")"; pwd)`
 
 BINPATH=""
 CONFFILE=""
@@ -10,7 +11,6 @@ DESTDIR="/etc/init.d"
 CTLFILE="sakerd_${USERNAME}"
 TMPFILE="/tmp/${CTLFILE}"
 
-
 test $# -ge 1 && BINPATH=$1
 test $# -ge 2 && CONFFILE=$2
 
@@ -18,9 +18,20 @@ if [ -z ${BINPATH} ];then
     echo "Please input saker path:"
     read BINPATH
 fi
-echo "USERNAME=${USERNAME}" >  ${TMPFILE}
+if [ -z ${CONFFILE} ];then
+    echo "Please input saker config path:"
+    read CONFFILE
+fi
+
+echo "#!/bin/bash" >  ${TMPFILE}
+
+echo "# chkconfig:   345 99 01" >> ${TMPFILE}
+echo "# description: saker" >> ${TMPFILE}
+
+echo "USERNAME=${USERNAME}" >>  ${TMPFILE}
 echo "EXEC=${BINPATH}"      >> ${TMPFILE}
 echo "CONF=${CONFFILE}"     >> ${TMPFILE}
+
 cat sakerd.init | grep -v "{TemplateUsername}" | \
                   grep -v "{TemplateExec}" | \
                   grep -v "{TemplateConf}" >> ${TMPFILE}
@@ -44,5 +55,4 @@ else
 fi
 
 ${DESTDIR}/${CTLFILE} start
-
 

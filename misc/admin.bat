@@ -23,7 +23,7 @@ sc create %AppName% binPath= %CmdName% start= auto
 sc start %AppName%
 goto End
 
-	
+
 :Uninstall
 echo uninstall %AppName% 
 sc stop %AppName%
