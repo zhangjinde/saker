@@ -1,0 +1,9 @@
+language: c
+compiler:
+  - gcc
+before_script:
+- sudo apt-get install cmake
+- sudo chmod +x build.sh
+script: 
+  - ./build.sh
+
