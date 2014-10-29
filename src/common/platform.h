@@ -92,6 +92,11 @@
 #include <unistd.h>
 #endif
 
+/* Test for backtrace() */
+#if defined(__APPLE__) || defined(__linux__)
+#define HAVE_BACKTRACE 1
+#endif
+
 
 /* A success return code */
 #define UGOK   (0)  

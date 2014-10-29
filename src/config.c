@@ -14,9 +14,9 @@ static const char* default_configfile="config";
  *   for init config
  */
 static const char* luacode = LOGFILE_PATH"   ./"APPNAME".log"ENDFLAG
-                             LOGFILE_LEVEL"  8"ENDFLAG
-                             SCRIPT_DIR"  ../script"ENDFLAG
-                             PIDFILE_DIR"  ../pid"ENDFLAG
+                             LOGFILE_LEVEL"  debug"ENDFLAG
+                             SCRIPT_DIR"  ./script"ENDFLAG
+                             PIDFILE_DIR"  ./pid"ENDFLAG
                              WORK_INTERVAL"   5000 "ENDFLAG
                              BIND"    127.0.0.1"ENDFLAG
                              LOCAL_PORT"   12007"ENDFLAG
@@ -63,7 +63,25 @@ static void parse_string(config_t* config, char* configstr)
             zfree((config->logfile_path));
             config->logfile_path = xstrdup(argv[1]);
         } else if (!xstrcasecmp(argv[0], LOGFILE_LEVEL) && argc == 2) {
-            config->logfile_level = atoi(argv[1]);
+            if  (strcmp(argv[1], "fatal") == 0) {
+                config->logfile_level = 1;
+            } else if (strcmp(argv[1], "critical") == 0) {
+                config->logfile_level = 2;
+            } else if (strcmp(argv[1], "error") == 0) {
+                config->logfile_level = 3;
+            } else if (strcmp(argv[1], "warning") == 0) {
+                config->logfile_level = 4;
+            } else if (strcmp(argv[1], "notice") == 0) {
+                config->logfile_level = 5;
+            } else if (strcmp(argv[1], "info") == 0) {
+                config->logfile_level = 6;
+            } else if (strcmp(argv[1], "debug") == 0) {
+                config->logfile_level = 7;
+            } else if (strcmp(argv[1], "trace") == 0) {
+                config->logfile_level = 8;
+            } else {
+                config->logfile_level = atoi(argv[1]);
+            }
             if (config->logfile_level < 0 || config->logfile_level > 8) {
                 err = "Invalid loglevel";
                 goto loaderr;
