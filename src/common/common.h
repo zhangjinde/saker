@@ -56,9 +56,9 @@ while (0)
 
 
 #ifdef OS_UNIX
-#define ENDFLAG             "\r\n"
-#else
 #define ENDFLAG             "\n"
+#else
+#define ENDFLAG             "\r\n"
 #endif
 
 #endif

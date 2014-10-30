@@ -45,8 +45,6 @@ static time_t get_starttime()
     return time(NULL) - (time_t)up;
 }
 
-
-
 int proc_owner(int pid)
 {
     struct stat sb;
@@ -58,7 +56,6 @@ int proc_owner(int pid)
     return (int)sb.st_uid;
 }
 
-
 static FILE* open_proc_file(const char* filename)
 {
     struct stat s;
@@ -68,8 +65,6 @@ static FILE* open_proc_file(const char* filename)
 
     return fopen(filename, "r");
 }
-
-
 
 static int  get_cmdline(FILE* f_cmd, char** line, size_t* line_offset)
 {
@@ -104,8 +99,6 @@ static int  get_cmdline(FILE* f_cmd, char** line, size_t* line_offset)
 
     return UGERR;
 }
-
-
 
 static int  cmp_status(FILE* f_stat, const char* procname)
 {
@@ -189,8 +182,6 @@ static int  check_user(FILE *f_stat, struct passwd *usrinfo)
 }
 */
 
-
-
 static int  check_procstate(FILE* f_stat, int proc_stat)
 {
     char    tmp[MAX_STRING_LEN], *p;
@@ -221,10 +212,9 @@ static int  check_procstate(FILE* f_stat, int proc_stat)
     return UGERR;
 }
 
-
-
-
-/// argv[0]  =  processname
+/*
+ * @param argv[0]  =  processname
+ */
 int PROC_PID(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
 {
     int    ret = UGERR;
@@ -306,7 +296,68 @@ int PROC_PID(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
     sdsfree(pidstr);
     return UGOK;
 }
+/* 
+ * @param cmd "system.proc.mem.rss"
+ * @param argv[0] pid
+ * @param argv[1] mb|kb|gb|nil
+ */
+int PROC_MEMORY_RSS(const char* cmd,int argc,const char** argv,SYSINFO_RESULT *result)
+{
+    int    ret = UGERR;    
+    uint64_t memsize = 0;
+    char   tmp[MAX_STRING_LEN]= {0};
+    char   buff[MAX_STRING_LEN]= {0};
+    FILE*  fp = NULL;
+    const char *pidstr;
+    char *p, *p1;
+    int    pid = 0;
+    if(NULL == (pidstr=getParam(argc,argv,0))) {
+        SET_MSG_RESULT(result, xstrdup("called must have param"));
+        return ret;
+    }
+    if(UGERR == xstrisdigit(pidstr)) {
+        SET_MSG_RESULT(result, xstrdup("param must pid"));
+        return ret;
+    }
 
+    snprintf(buff, sizeof(buff), "/proc/%s/status", pidstr);
+
+    if (NULL == (fp = open_proc_file(buff))) {
+        SET_MSG_RESULT(result, xstrprintf("cannot found the process %d", pid));
+        return UGERR;
+    }
+
+    while (NULL != fgets(tmp, sizeof(tmp), fp)) {
+        if (0 != strncmp(tmp, "VmRSS:\t", 7))
+            continue;
+
+        p = tmp + 8;
+
+        if (NULL == (p1 = strrchr(p, ' ')))
+            continue;
+
+        *p1++ = '\0';
+
+        UG_STR2UINT64(memsize, p);
+
+        xstrrtrim(p1, "\n");
+
+        if (0 == xstrcasecmp(p1, "kB"))
+            memsize <<= 10;
+        else if(0 == xstrcasecmp(p1, "mB"))
+            memsize <<= 20;
+        else if(0 == xstrcasecmp(p1, "GB"))
+            memsize <<= 30;
+        else if(0 == xstrcasecmp(p1, "TB"))
+            memsize <<= 40;
+
+        break;
+
+    }
+    FILECLOSE(fp);
+    SET_UI64_RESULT(result,bytesConvert(memsize,getParam(argc,argv,1)));
+    return UGOK;
+}
 
 /// argv[0] == pid argv[1] == mb|kb|gb|nil
 int PROC_MEMORY_USED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
@@ -362,19 +413,14 @@ int PROC_MEMORY_USED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* 
         break;
 
     }
-
-
     FILECLOSE(fp);
-
     SET_UI64_RESULT(result,bytesConvert(memsize,getParam(argc,argv,1)));
     return UGOK;
-
 }
 
 /// argv[0] == pid
 int PROC_MEMORY_PUSED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
 {
-
     SYSINFO_RESULT tmpresult;
     const char* inparam = argv[0];
     struct sysinfo  info;
@@ -385,7 +431,7 @@ int PROC_MEMORY_PUSED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT*
     if ( UGERR == PROC_MEMORY_USED(NULL,1,&inparam,&tmpresult)) {
         return UGERR;
     }
-    //
+    
     SET_DBL_RESULT(result,GET_UI64_RESULT(&tmpresult)/ (double)info.totalram * 100);
 
     return UGOK;
@@ -396,12 +442,9 @@ int PROC_MEMORY_PUSED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT*
 int PROC_CPU_LOAD(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
 {
     int    ret = UGERR;
-
+    /* todo here */
     return ret;
 }
-
-
-
 
 int PROC_STATINFO(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
 {

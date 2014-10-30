@@ -137,6 +137,7 @@ static const sysinfoMap sysinfo_map[] = {
     {"system.fs.size.pused" ,        VFS_FS_SIZE },
 
     {"system.proc.id" ,              PROC_PID},
+    {"system.proc.mem.rss" ,         PROC_MEMORY_RSS },
     {"system.proc.mem.used" ,        PROC_MEMORY_USED },
     {"system.proc.mem.pused" ,       PROC_MEMORY_PUSED },
     {"system.proc.cpu.load" ,        PROC_CPU_LOAD },

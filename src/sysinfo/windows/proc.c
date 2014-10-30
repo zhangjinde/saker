@@ -102,6 +102,11 @@ int PROC_PID(const char* cmd,int argc, const char** argv, SYSINFO_RESULT* result
     return UGOK;
 }
 
+int PROC_MEMORY_RSS(const char* cmd, int argc, const char** argv, SYSINFO_RESULT* result)
+{
+    return PROC_MEMORY_USED(cmd, argc, argv, result);
+}
+
 int PROC_MEMORY_USED(const char* cmd, int argc, const char** argv, SYSINFO_RESULT* result)
 {
     PROCESS_MEMORY_COUNTERS pmc;

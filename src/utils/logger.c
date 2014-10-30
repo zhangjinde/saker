@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <sys/types.h>  /* for getpid */
+#include <unistd.h>    /* for getpid */
+
 #include "common/defines.h"
 #include "common/common.h"
 #include "utils/path.h"
@@ -55,13 +58,12 @@ int logger_open(const char* logfile, int level)
         strcpy(logfilename, buff);
         strcat(logfilename, logfile);
     }
-    LOG_NOTICE("logger open ");
+    LOG_NOTICE("logger start.");
     return UGOK;
 }
 
 void logger_write(int level, const char* file, int line, const char* fmt, ...)
 {
-
     char buffer[128]= {0};
     FILE* logfp = NULL;
     va_list vl;
@@ -87,7 +89,7 @@ void logger_write(int level, const char* file, int line, const char* fmt, ...)
              ptm->tm_year + 1900, ptm->tm_mon + 1, ptm->tm_mday,
              ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
 
-    fprintf(logfp, "%s %s [%s:%d] ",buffer, log_array[level-1],file,line);
+    fprintf(logfp, "%s %s [%d] [%s:%d] ",buffer, log_array[level-1], getpid(), file, line);
 
     va_start(vl,fmt);
     vfprintf(logfp,fmt,vl);
