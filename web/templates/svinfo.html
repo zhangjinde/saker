@@ -39,8 +39,8 @@
                       <td>{{ escape(items[item]["STATUS"]) }}</td>
                       <td>{{ escape(str(items[item]["PID"])) }}</td>
                       <td>{{ escape(str(items[item]["UPTIME"])) }}</td>
-                      <td>{{ escape(str(items[item]["MEM"])) }}</td>
-                      <td>{{ escape(str(items[item]["CPU"])) }}</td>
+                      <td>{{ escape(str(items[item]["PMEM"])) }}</td>
+                      <td>{{ escape(str(items[item]["PCPU"])) }}</td>
                       {% if str(items[item]["PID"]) == "nil" %}
                       <td><a class="btn btn-success btn-sm" href="/svstart?servicename={{ escape(item) }}">start</a></td>
                       {% else %}

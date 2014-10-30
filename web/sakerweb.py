@@ -47,7 +47,7 @@ class SVLife(tornado.web.RequestHandler):
         client = redis.Redis(config["saker-ip"], config["saker-port"])
         str = client.execute_command("exec", "svstatus")
         obj = json.loads(str)
-        str = client.execute_command("exec", "svlife", serviceName)
+        str = client.execute_command("exec", "svinfo", serviceName)
         objlife = json.loads(str)
         objlife.reverse()
         self.render("svlife.html", service=serviceName, items=obj, itemlife=objlife)
