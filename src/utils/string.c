@@ -8,9 +8,8 @@
 #include <strings.h>
 #endif
 
-int     xstrrtrim(char* str,const char* charlist)
-{
-    char*    p;
+int     xstrrtrim(char *str,const char *charlist) {
+    char    *p;
     int count = 0;
 
     if (NULL == str || '\0' == *str)
@@ -26,9 +25,8 @@ int     xstrrtrim(char* str,const char* charlist)
 
 
 
-void    xstrltrim(char* str, const char* charlist)
-{
-    char*    p;
+void    xstrltrim(char *str, const char *charlist) {
+    char    *p;
 
     if (NULL == str || '\0' == *str)
         return;
@@ -46,9 +44,8 @@ void    xstrltrim(char* str, const char* charlist)
 }
 
 
-void    xstrdos2unix(char* str)
-{
-    char*    o = str;
+void    xstrdos2unix(char *str) {
+    char    *o = str;
 
     while ('\0' != *str) {
         if ('\r' == str[0] && '\n' == str[1])   /* CR+LF (Windows) */
@@ -59,9 +56,8 @@ void    xstrdos2unix(char* str)
 }
 
 
-void    xstrremove_chars(register char* str, const char* charlist)
-{
-    register char* p;
+void    xstrremove_chars(register char *str, const char *charlist) {
+    register char *p;
 
     if (NULL == str || NULL == charlist || '\0' == *str || '\0' == *charlist)
         return;
@@ -74,8 +70,7 @@ void    xstrremove_chars(register char* str, const char* charlist)
     *str = '\0';
 }
 
-void    xstrrtrim_spaces(char* c)
-{
+void    xstrrtrim_spaces(char *c) {
     int i,len;
 
     len = (int)strlen(c);
@@ -86,8 +81,7 @@ void    xstrrtrim_spaces(char* c)
     }
 }
 
-void   xstrltrim_spaces(char* c)
-{
+void   xstrltrim_spaces(char *c) {
     int i;
     /* Number of left spaces */
     int spaces=0;
@@ -105,16 +99,14 @@ void   xstrltrim_spaces(char* c)
 }
 
 
-void    xstrlrtrim_spaces(char* c)
-{
+void    xstrlrtrim_spaces(char *c) {
     xstrltrim_spaces(c);
     xstrrtrim_spaces(c);
 }
 
 
 
-int   xstrncasecmp(const char* s1,const char* s2,size_t n)
-{
+int   xstrncasecmp(const char *s1,const char *s2,size_t n) {
 #ifdef OS_WIN
     return _strnicmp(s1,s2,n);
 #else
@@ -124,8 +116,7 @@ int   xstrncasecmp(const char* s1,const char* s2,size_t n)
 }
 
 
-int   xstrcasecmp(const char* s1,const char* s2)
-{
+int   xstrcasecmp(const char *s1,const char *s2) {
     int slen = strlen(s1) - strlen(s2);
     if(slen == 0) {
         return xstrncasecmp(s1,s2,strlen(s1));
@@ -133,8 +124,7 @@ int   xstrcasecmp(const char* s1,const char* s2)
     return slen;
 }
 
-int    xstrisdigit(const char* str)
-{
+int    xstrisdigit(const char *str) {
     if (!str) return UGERR;
     while (*str) {
         if (*str <'0' || *str>'9') {
@@ -145,8 +135,7 @@ int    xstrisdigit(const char* str)
     return UGOK;
 }
 
-int    xstrdigest_convert(unsigned char* sour,int sourlen,char* dest,int destlen)
-{
+int    xstrdigest_convert(unsigned char *sour,int sourlen,char *dest,int destlen) {
     int idx=0;
     static const char digits[] = "0123456789abcdef";
     if (sourlen*2>destlen) {
@@ -164,13 +153,12 @@ int    xstrdigest_convert(unsigned char* sour,int sourlen,char* dest,int destlen
 
 
 /* Has to be rewritten to avoid malloc */
-char*   xstrreplace(const char* str, const char* sub_str1, const char* sub_str2)
-{
-    char* new_str = NULL;
-    const char* p;
-    const char* q;
-    const char* r;
-    char* t;
+char   *xstrreplace(const char *str, const char *sub_str1, const char *sub_str2) {
+    char *new_str = NULL;
+    const char *p;
+    const char *q;
+    const char *r;
+    char *t;
     long len;
     long diff;
     unsigned long count = 0;
@@ -190,7 +178,7 @@ char*   xstrreplace(const char* str, const char* sub_str1, const char* sub_str2)
 
     /* allocate new memory */
 
-    new_str = (char*)zmalloc((size_t)(strlen(str) + count*diff + 1)*sizeof(char));
+    new_str = (char *)zmalloc((size_t)(strlen(str) + count*diff + 1)*sizeof(char));
 
     for (q=str,t=new_str,p=str; (p = strstr(p, sub_str1)); ) {
         /* copy until next occurrence of sub_str1 */
@@ -208,19 +196,17 @@ char*   xstrreplace(const char* str, const char* sub_str1, const char* sub_str2)
     return new_str;
 }
 
-char*  xstrdup(const char* s)
-{
+char  *xstrdup(const char *s) {
     size_t l = strlen(s)+1;
-    char* p = zmalloc(l);
+    char *p = zmalloc(l);
     memcpy(p,s,l);
     return p;
 }
 
-char*   xstrprintf(const char* fmt, ...)
-{
+char   *xstrprintf(const char *fmt, ...) {
     va_list ap;
     va_list cpy;
-    char* buf;
+    char *buf;
     size_t buflen = 16;
     va_start(ap, fmt);
 #if !defined(va_copy)
@@ -245,11 +231,10 @@ char*   xstrprintf(const char* fmt, ...)
 }
 
 
-int    xstrtoint(const char* str, int slen)
-{
+int    xstrtoint(const char *str, int slen) {
     int len = 0;
     int idx = 0;
-    char* p=(char*)str;
+    char *p=(char *)str;
     for (; idx<slen; idx++) {
         len = (len*10)+(*p - '0');
         p++;
@@ -259,9 +244,8 @@ int    xstrtoint(const char* str, int slen)
 }
 
 /* Glob-style pattern matching. */
-int xstrmatchlen(const char* pattern, int patternLen,
-                 const char* string, int stringLen, int nocase)
-{
+int xstrmatchlen(const char *pattern, int patternLen,
+                 const char *string, int stringLen, int nocase) {
     while (patternLen) {
         switch (pattern[0]) {
         case '*':
@@ -380,7 +364,6 @@ int xstrmatchlen(const char* pattern, int patternLen,
     return 0;
 }
 
-int xstrmatch(const char* pattern, const char* string, int nocase)
-{
+int xstrmatch(const char *pattern, const char *string, int nocase) {
     return xstrmatchlen(pattern,strlen(pattern),string,strlen(string),nocase);
 }

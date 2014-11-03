@@ -10,10 +10,9 @@
 
 #ifdef OS_UNIX
 
-static uint64_t read_andom_uint64()
-{
+static uint64_t read_andom_uint64() {
     uint64_t result;
-    FILE* rnd = fopen("/dev/urandom", "rb");
+    FILE *rnd = fopen("/dev/urandom", "rb");
     fread(&result, sizeof(result), 1, rnd);
     fclose(rnd);
     return result;
@@ -21,14 +20,13 @@ static uint64_t read_andom_uint64()
 #endif
 
 
-int uuidgen(char* uuidbyte)
-{
+int uuidgen(char *uuidbyte) {
 #if OS_WIN
     unsigned char bytes[16];
     if (NULL == uuidbyte) {
         return UGERR;
     }
-    CoCreateGuid((GUID*)bytes);
+    CoCreateGuid((GUID *)bytes);
     sprintf(uuidbyte, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
             bytes[0], bytes[1], bytes[2], bytes[3],
             bytes[4], bytes[5],
@@ -54,10 +52,9 @@ int uuidgen(char* uuidbyte)
 
 
 
-int uuidisvaild(const char* uuidbyte)
-{
+int uuidisvaild(const char *uuidbyte) {
 
-    const char*  hexchars   = "0123456789ABCDEF";
+    const char  *hexchars   = "0123456789ABCDEF";
     const size_t uuidlength = 36U;
     size_t idx;
     if (NULL==uuidbyte || strlen(uuidbyte)!=uuidlength) {

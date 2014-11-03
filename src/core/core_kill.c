@@ -2,8 +2,7 @@
 
 #include "utils/process.h"
 
-int core_kill(lua_State* L)
-{
+int core_kill(lua_State *L) {
     int pid;
     int sig = -1;
     int top = lua_gettop(L);

@@ -1,12 +1,11 @@
 #include "core_declarer.h"
 #include <stdlib.h>
 
-int core_rmdir(lua_State* L)
-{
+int core_rmdir(lua_State *L) {
     int z;
     int top = lua_gettop(L);
 
-    const char* path =  NULL;
+    const char *path =  NULL;
     int idx = 0;
 
     for (; idx < top; ++idx) {

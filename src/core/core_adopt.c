@@ -18,11 +18,10 @@
 #endif
 
 
-sds getPidfile(const char* execfile)
-{
+sds getPidfile(const char *execfile) {
     sds   pidfile = sdsempty();
     char  buff[MAX_STRING_LEN] = {0};
-    char* p, *q;
+    char *p, *q;
     strcat(buff, execfile);
     xstrlrtrim_spaces(buff);
     p = (p = strrchr(buff, ' ')) != NULL ? p+1 : buff ;
@@ -36,8 +35,7 @@ sds getPidfile(const char* execfile)
     return sdscatprintf(pidfile, "%s/%s.pid" ,server.config->pidfile_dir, q);
 }
 
-int core_adopt(lua_State* L)
-{
+int core_adopt(lua_State *L) {
     int ret = 2;
     int status = 0;
     sds cmd = sdsempty();
@@ -49,28 +47,28 @@ int core_adopt(lua_State* L)
 #endif
     int idx = 1, argc = 0;
     pid_t pid;
-    const char** argv = NULL;
-    const char* user = NULL;
-    sds* tmpargv = NULL;
-    const char*  startcmd = NULL;
+    const char **argv = NULL;
+    const char *user = NULL;
+    sds *tmpargv = NULL;
+    const char  *startcmd = NULL;
     int top = lua_gettop(L);
     if (top < 2) {
         lua_pushnil(L);
         lua_pushstring(L, "wrong number of arguments for fork");
         goto End;
     }
-    
+
     startcmd = luaL_checkstring(L, 2);
     cmd = sdscat(cmd, startcmd);
     tmpargv = sdssplitargs(startcmd, &argc);
 
-    argv = (const char**)zmalloc(sizeof(char*)*(argc+1));
+    argv = (const char **)zmalloc(sizeof(char *)*(argc+1));
     argv[argc] = 0;
     for (idx=0 ; idx<argc; ++idx) argv[idx] = tmpargv[idx];
 
     if (!lua_isnil(L, 1)) pidfile = sdsnew(luaL_checkstring(L, 1));
     else pidfile = getPidfile(argv[0]);
-    
+
     if (top == 3) {
         user = luaL_checkstring(L, 3);
     }
@@ -108,7 +106,7 @@ int core_adopt(lua_State* L)
     }
     pid = processInfo.dwProcessId;
     if (WAIT_TIMEOUT != WaitForSingleObject(processInfo.hProcess, 10)) {
-        GetExitCodeProcess(processInfo.hProcess, (DWORD*) &status);
+        GetExitCodeProcess(processInfo.hProcess, (DWORD *) &status);
         lua_pushnil(L);
         lua_pushfstring(L, "execute it [%s] failed ,status [%d] ,the pidfile :[%s]", cmd, status, pidfile);
         goto End;
@@ -156,7 +154,7 @@ int core_adopt(lua_State* L)
             _exit(1);
         }
         if (user != NULL) {
-            struct passwd * pwd = getpwnam(user);
+            struct passwd *pwd = getpwnam(user);
             if (pwd) {
                 if (setuid(pwd->pw_uid) != 0) {
                     LOG_ERROR("cannot setuid for '%s'", cmd);
@@ -165,7 +163,7 @@ int core_adopt(lua_State* L)
             }
         }
         LOG_TRACE("exec %s", cmd);
-        execvp(argv[0], (char * const*)argv);
+        execvp(argv[0], (char * const *)argv);
         LOG_TRACE("exec process exit, mypid is '%d'", xerrmsg(), pid);
         xfiledel(pidfile);
         _exit(72);
@@ -183,7 +181,7 @@ int core_adopt(lua_State* L)
     }
 End:
     if(tmpargv) sdsfreesplitres(tmpargv, argc);
-    if(argv) zfree((char**)argv);
+    if(argv) zfree((char **)argv);
     argv = 0;
     sdsfree(cmd);
     if(pidfile) sdsfree(pidfile);

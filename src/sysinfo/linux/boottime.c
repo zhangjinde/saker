@@ -1,9 +1,8 @@
 #include "sysinfo/sysinfo.h"
 #include "utils/string.h"
 
-int SYSTEM_BOOTTIME(const char* cmd, int argc, const char** argv, SYSINFO_RESULT* result)
-{
-    FILE*        f;
+int SYSTEM_BOOTTIME(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result) {
+    FILE        *f;
     char        buf[MAX_STRING_LEN];
     int     ret = UGERR;
     unsigned long   value;

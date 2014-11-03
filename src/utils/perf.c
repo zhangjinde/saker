@@ -14,16 +14,15 @@
  * If it will not be possible to set the limit accordingly to the configured
  * max number of clients, the function will do the reverse setting
  * server.maxclients to the value that we can actually handle. */
-unsigned long long adjustOpenFilesLimit(unsigned long clientsnum) 
-{
+unsigned long long adjustOpenFilesLimit(unsigned long clientsnum) {
     unsigned long long maxclients = clientsnum;
-#ifndef _WIN32    
+#ifndef _WIN32
     rlim_t maxfiles = maxclients+32;
     struct rlimit limit;
 
     if (getrlimit(RLIMIT_NOFILE,&limit) == -1) {
         LOG_WARNING("Unable to obtain the current NOFILE limit (%s), assuming 1024 and setting the max clients configuration accordingly.",
-           xerrmsg());
+                    xerrmsg());
         maxclients = 1024-32;
     } else {
         rlim_t oldlimit = limit.rlim_cur;
@@ -32,7 +31,7 @@ unsigned long long adjustOpenFilesLimit(unsigned long clientsnum)
          * for our needs. */
         if (oldlimit < maxfiles) {
             rlim_t f;
-            
+
             f = maxfiles;
             while(f > oldlimit) {
                 limit.rlim_cur = f;
@@ -44,10 +43,10 @@ unsigned long long adjustOpenFilesLimit(unsigned long clientsnum)
             if (f != maxfiles) {
                 maxclients = f-32;
                 LOG_WARNING("Unable to set the max number of files limit to %d (%s), setting the max clients configuration to %d.",
-                    (int) maxfiles, xerrmsg(), (int) maxclients);
+                            (int) maxfiles, xerrmsg(), (int) maxclients);
             } else {
                 LOG_TRACE("Max number of open files set to %d",
-                    (int) maxfiles);
+                          (int) maxfiles);
             }
         }
     }

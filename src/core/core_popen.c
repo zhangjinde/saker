@@ -9,12 +9,11 @@
 
 
 
-int core_popen(lua_State* L)
-{
-    FILE* fp = NULL;
+int core_popen(lua_State *L) {
+    FILE *fp = NULL;
     char buff[128] = {0};
     sds s = sdsempty();
-    const char* cmd = luaL_checkstring(L, 1);
+    const char *cmd = luaL_checkstring(L, 1);
 
     if( (fp = popen(cmd, "r" )) == NULL ) {
         lua_pushnil(L);

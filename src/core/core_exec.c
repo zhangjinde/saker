@@ -15,14 +15,13 @@
 #include <sys/time.h>
 #endif
 
-int core_exec(lua_State* L)
-{
+int core_exec(lua_State *L) {
 #ifdef OS_WIN
     PROCESS_INFORMATION processInfo;
     STARTUPINFO startupInfo;
     char procname[1024]= {0};
 #else
-    struct timeval t_start,t_end; 
+    struct timeval t_start,t_end;
     long start_ms, end_ms;
 #endif
     int timeout = 10; /* default 10 ms */
@@ -32,9 +31,9 @@ int core_exec(lua_State* L)
     sds pidfile = 0;
     int idx = 1, argc = 0 ,rc;
     pid_t pid;
-    const char** argv = NULL;
-    sds* tmpargv = NULL;
-    const char*  startcmd = NULL;
+    const char **argv = NULL;
+    sds *tmpargv = NULL;
+    const char  *startcmd = NULL;
     int top = lua_gettop(L);
     if (top < 1) {
         lua_pushnil(L);
@@ -47,7 +46,7 @@ int core_exec(lua_State* L)
     cmd = sdscat(cmd, startcmd);
     tmpargv = sdssplitargs(startcmd, &argc);
 
-    argv = (const char**)zmalloc(sizeof(char*)*(argc+1));
+    argv = (const char **)zmalloc(sizeof(char *)*(argc+1));
     argv[argc] = 0;
     for (idx=0 ; idx<argc; ++idx) argv[idx] = tmpargv[idx];
 
@@ -87,7 +86,7 @@ int core_exec(lua_State* L)
         goto End;
     }
     /*  give the retval to user     */
-    GetExitCodeProcess(processInfo.hProcess, (DWORD*) &status);
+    GetExitCodeProcess(processInfo.hProcess, (DWORD *) &status);
 
 #else
     pid = fork();
@@ -117,10 +116,10 @@ int core_exec(lua_State* L)
             server.ipfd = -1;
         }
         LOG_TRACE("exec %s", cmd);
-        execvp(argv[0], (char * const*)argv);
+        execvp(argv[0], (char * const *)argv);
         _exit(0);
     }
-    gettimeofday(&t_start, NULL); 
+    gettimeofday(&t_start, NULL);
     start_ms = ((long)t_start.tv_sec)*1000+(long)t_start.tv_usec/1000;
     do {
         /* WNOHANG     return immediately if no child has exited. */
@@ -133,8 +132,8 @@ int core_exec(lua_State* L)
             lua_pushfstring(L, "waitpid failure: '%s' ,err: '%s'", startcmd, xerrmsg());
             goto End;
         }
-        gettimeofday(&t_end, NULL); 
-        end_ms =  ((long)t_end.tv_sec)*1000+(long)t_end.tv_usec/1000; 
+        gettimeofday(&t_end, NULL);
+        end_ms =  ((long)t_end.tv_sec)*1000+(long)t_end.tv_usec/1000;
         /* Wait timeout */
         if (rc == 0 && (end_ms - start_ms) >= timeout) {
             pkill(pid, SIGTERM);
@@ -144,7 +143,7 @@ int core_exec(lua_State* L)
             goto End;
         }
     } while (rc == 0);
-    
+
     if (WIFEXITED(status)) {
         LOG_TRACE( "%s exited, status:%d", startcmd, WEXITSTATUS(status));
     } else if (WIFSIGNALED(status)) {
@@ -157,7 +156,7 @@ int core_exec(lua_State* L)
     lua_pushnil(L);
 End:
     if(tmpargv) sdsfreesplitres(tmpargv, argc);
-    if(argv) zfree((char**)argv);
+    if(argv) zfree((char **)argv);
     argv = 0;
     sdsfree(cmd);
     if(pidfile) sdsfree(pidfile);

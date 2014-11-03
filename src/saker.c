@@ -25,19 +25,17 @@
 #include "proto/pubsub.h"
 
 
-extern const char* builtin_scripts[];
+extern const char *builtin_scripts[];
 
 struct sakerServer server;
 
-static void sigtermHandler(int sig)
-{
+static void sigtermHandler(int sig) {
     UG_NOTUSED(sig);
     LOG_TRACE("Received SIGTERM, scheduling shutdown...");
     exit(0);
 }
 
-static void setupSignalHandler(void)
-{
+static void setupSignalHandler(void) {
     struct sigaction act;
 
     /* When the SA_SIGINFO flag is set in sa_flags then sa_sigaction is used.
@@ -46,7 +44,7 @@ static void setupSignalHandler(void)
     act.sa_flags = 0;
     act.sa_handler = sigtermHandler;
     sigaction(SIGTERM, &act, NULL);
-    
+
 #ifdef HAVE_BACKTRACE
     sigemptyset(&act.sa_mask);
     act.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
@@ -59,16 +57,15 @@ static void setupSignalHandler(void)
 }
 
 
-static int  timerHandler(aeEventLoop* el, long long id, void* clientData)
-{
-    dictIterator* di = dictGetIterator(server.tasks);
-    dictEntry* de;
-    const char* innererr = NULL;
+static int  timerHandler(aeEventLoop *el, long long id, void *clientData) {
+    dictIterator *di = dictGetIterator(server.tasks);
+    dictEntry *de;
+    const char *innererr = NULL;
     int ret = 1;
     char errmsg[LUAWORK_ERR_LEN] = {0};
 
     while ((de = dictNext(di)) != NULL) {
-        ugTaskType* ptask = dictGetEntryVal(de); 
+        ugTaskType *ptask = dictGetEntryVal(de);
         ret = 1;
         ugAssert(ptask != NULL);
         if (ptask->property == PROP_CYCLE || ptask->property == PROP_ONCE ) {
@@ -92,21 +89,19 @@ static int  timerHandler(aeEventLoop* el, long long id, void* clientData)
 }
 
 
-static int topHandler(aeEventLoop* el, long long id, void* clientData)
-{
+static int topHandler(aeEventLoop *el, long long id, void *clientData) {
     topUpdate();
     return server.config->top_mode;
 }
 
-static void deferHandler()
-{
-    dictIterator* di = dictGetIterator(server.tasks);
-    dictEntry* de;
-    const char* innererr = NULL;
+static void deferHandler() {
+    dictIterator *di = dictGetIterator(server.tasks);
+    dictEntry *de;
+    const char *innererr = NULL;
     char errmsg[LUAWORK_ERR_LEN] = {0};
     int ret;
     while ((de = dictNext(di)) != NULL) {
-        ugTaskType* ptask =  dictGetEntryVal(de); 
+        ugTaskType *ptask =  dictGetEntryVal(de);
         assert(ptask != NULL);
         ret = 1;
         if (ptask->property == PROP_DEFER) {
@@ -122,8 +117,7 @@ static void deferHandler()
     dictReleaseIterator(di);
 }
 
-void initServer(struct sakerServer* server)
-{
+void initServer(struct sakerServer *server) {
     memset(server, 0 , sizeof(*server));
     server->hasfree = 0;
 
@@ -149,8 +143,7 @@ void initServer(struct sakerServer* server)
 
 }
 
-void freeServer(struct sakerServer* server)
-{
+void freeServer(struct sakerServer *server) {
     int i;
     if (server->hasfree ) return;
     server->hasfree = 1;
@@ -158,12 +151,11 @@ void freeServer(struct sakerServer* server)
     if (server->tasks) deferHandler();
     if (server->clients) freeClientlist(server->clients);
     if (server->ipfd > -1) aeDeleteFileEvent(server->el, server->ipfd, AE_READABLE);
-    for (i=0; i <= server->max_timeeventid; ++i)
-    {
+    for (i=0; i <= server->max_timeeventid; ++i) {
         if (server->el)
-        aeDeleteTimeEvent(server->el, i);
+            aeDeleteTimeEvent(server->el, i);
     }
-    //if (server->timereventid != AE_ERR) 
+    //if (server->timereventid != AE_ERR)
     if (server->el) aeDeleteEventLoop(server->el);
     if (server->config) freeConfig(server->config);
     if (server->tasks) destroyTaskMap(server->tasks);
@@ -182,8 +174,7 @@ void freeServer(struct sakerServer* server)
 
 
 
-void exitProc(void)
-{
+void exitProc(void) {
     freeServer(&server);
 
 #ifdef _WIN32
@@ -196,8 +187,7 @@ void exitProc(void)
     logger_close();
 }
 
-static int doAction()
-{
+static int doAction() {
     char buff[MAX_STRING_LEN] = {0};
     int  idx = 0;
     long long  timeeventid;
@@ -236,7 +226,7 @@ static int doAction()
         LOG_ERROR("load_config failed");
         return UGERR;
     }
-    
+
     if (UGERR == logger_open(server.config->logfile_path, server.config->logfile_level)) {
         LOG_ERROR("open_log failed");
         return UGERR;
@@ -306,7 +296,7 @@ static int doAction()
         exit(1);
     }
     if ((timeeventid = aeCreateTimeEvent(server.el, 0, timerHandler,NULL,NULL)) == AE_ERR) {
-        LOG_ERROR("aeCreateTimeEvent failed");        
+        LOG_ERROR("aeCreateTimeEvent failed");
         exit(1);
     }
     server.max_timeeventid = timeeventid;
@@ -327,8 +317,7 @@ static int doAction()
 static SERVICE_STATUS_HANDLE service_status_handle;
 static SERVICE_STATUS        service_status;
 
-static VOID WINAPI  ServiceControlHandler(DWORD fdwControl)
-{
+static VOID WINAPI  ServiceControlHandler(DWORD fdwControl) {
     switch (fdwControl) {
     case SERVICE_CONTROL_STOP:
     case SERVICE_CONTROL_SHUTDOWN:
@@ -346,8 +335,7 @@ static VOID WINAPI  ServiceControlHandler(DWORD fdwControl)
     }
 }
 
-static VOID WINAPI SvcMain( DWORD dwArgc, LPTSTR* lpszArgv )
-{
+static VOID WINAPI SvcMain( DWORD dwArgc, LPTSTR *lpszArgv ) {
     service_status.dwServiceType             = SERVICE_WIN32;
     service_status.dwCurrentState            = SERVICE_START_PENDING;
     service_status.dwControlsAccepted        = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN;
@@ -373,8 +361,7 @@ static VOID WINAPI SvcMain( DWORD dwArgc, LPTSTR* lpszArgv )
     doAction();
 }
 
-void doBgAction()
-{
+void doBgAction() {
     SERVICE_TABLE_ENTRY DispatchTable[] = {
         { APPNAME, (LPSERVICE_MAIN_FUNCTION) SvcMain },
         { NULL, NULL }
@@ -387,8 +374,7 @@ void doBgAction()
 }
 #else
 
-void doBgAction()
-{
+void doBgAction() {
     daemonize();
 
     doAction();
@@ -396,8 +382,7 @@ void doBgAction()
 #endif
 
 
-static void doOptions(int argc, char** argv)
-{
+static void doOptions(int argc, char **argv) {
     int idx;
     while ((idx = xgetopt(argc, argv, "kdc:p:")) != EOF)    {
         switch(idx) {
@@ -421,8 +406,7 @@ static void doOptions(int argc, char** argv)
     }
 }
 
-int main(int argc,char** argv)
-{
+int main(int argc,char **argv) {
     initServer(&server);
 
     if (xchtoapppath() != UGOK) {

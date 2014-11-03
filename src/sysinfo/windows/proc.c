@@ -8,15 +8,13 @@
 #include "utils/sds.h"
 
 
-static HANDLE openProcessByPID(pid_t pid)
-{
+static HANDLE openProcessByPID(pid_t pid) {
     return OpenProcess(PROCESS_QUERY_INFORMATION |
                        PROCESS_VM_READ, FALSE, pid);
 }
 
 #if 0
-static HANDLE openProcessByName(const char* name, pid_t* pid)
-{
+static HANDLE openProcessByName(const char *name, pid_t *pid) {
     DWORD aProcesses[1024], cbNeeded, cProcesses;
     unsigned int i;
     HANDLE hProcess;
@@ -51,9 +49,8 @@ static HANDLE openProcessByName(const char* name, pid_t* pid)
 }
 #endif
 
-int PROC_PID(const char* cmd,int argc, const char** argv, SYSINFO_RESULT* result)
-{
-    const char* name= getParam(argc, argv, 0);
+int PROC_PID(const char *cmd,int argc, const char **argv, SYSINFO_RESULT *result) {
+    const char *name= getParam(argc, argv, 0);
     sds pidstr = sdsnew("[");
     DWORD aProcesses[1024], cbNeeded, cProcesses;
     unsigned int i;
@@ -102,13 +99,11 @@ int PROC_PID(const char* cmd,int argc, const char** argv, SYSINFO_RESULT* result
     return UGOK;
 }
 
-int PROC_MEMORY_RSS(const char* cmd, int argc, const char** argv, SYSINFO_RESULT* result)
-{
+int PROC_MEMORY_RSS(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result) {
     return PROC_MEMORY_USED(cmd, argc, argv, result);
 }
 
-int PROC_MEMORY_USED(const char* cmd, int argc, const char** argv, SYSINFO_RESULT* result)
-{
+int PROC_MEMORY_USED(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result) {
     PROCESS_MEMORY_COUNTERS pmc;
     HANDLE hProcess ;
     int    ret = UGERR;
@@ -137,8 +132,7 @@ int PROC_MEMORY_USED(const char* cmd, int argc, const char** argv, SYSINFO_RESUL
     return ret;
 }
 
-int PROC_MEMORY_PUSED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int PROC_MEMORY_PUSED(const char *cmd,int argc,const char **argv,SYSINFO_RESULT *result) {
     //CreateToolhelp32Snapshot 根据 进程名
     PROCESS_MEMORY_COUNTERS pmc;
     MEMORYSTATUSEX      ms_ex;
@@ -163,25 +157,23 @@ int PROC_MEMORY_PUSED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT*
     return ret;
 }
 
-int PROC_CPU_LOAD(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int PROC_CPU_LOAD(const char *cmd,int argc,const char **argv,SYSINFO_RESULT *result) {
     SET_MSG_RESULT(result, xstrdup("not implemented"));
     return UGERR;
 }
 
-int PROC_STATINFO(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int PROC_STATINFO(const char *cmd,int argc,const char **argv,SYSINFO_RESULT *result) {
     int  ret = UGERR;
     pid_t  pid = 0;
-    const char* pidstr = NULL;
-    char* rst = NULL;
-    struct ProcessInfo* proc  = NULL;
+    const char *pidstr = NULL;
+    char *rst = NULL;
+    struct ProcessInfo *proc  = NULL;
     if(NULL == (pidstr=getParam(argc,argv,0))) {
         SET_MSG_RESULT(result, xstrdup("called must have param"));
         return ret;
     }
     pid = atoi(pidstr);
-   
+
     if (topIsRuning()) {
         proc = getProcessInfoByID(pid);
         if (!proc) {
@@ -200,17 +192,17 @@ int PROC_STATINFO(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* res
 
     /* convert to json */
     rst = xstrprintf("{\"PID\":%d,\"UID\":%d,\"Name\":\"%s\",\"Fullname\":\"%s\",\"Threads\":%d,\"VIRT\":%lu,\"RES\":%lu,\"SHR:\":%lu,\"State\":%d,\"PCPU\":%f,\"PMEM\":%f}",
-        proc->pid,
-        proc->uid,
-        proc->name,
-        proc->fullname,
-        proc->threads,
-        proc->vsize,
-        proc->rss,
-        proc->shared,
-        proc->state,
-        proc->pcpu,
-        proc->pmem);
+                     proc->pid,
+                     proc->uid,
+                     proc->name,
+                     proc->fullname,
+                     proc->threads,
+                     proc->vsize,
+                     proc->rss,
+                     proc->shared,
+                     proc->state,
+                     proc->pcpu,
+                     proc->pmem);
     SET_STR_RESULT(result, rst);
     ret = UGOK;
 

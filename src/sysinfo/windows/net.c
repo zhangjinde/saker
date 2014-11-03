@@ -5,22 +5,21 @@
 #include "utils/logger.h"
 
 
-static int  get_if_stats(const char* if_name, MIB_IFROW* pIfRow)
-{
+static int  get_if_stats(const char *if_name, MIB_IFROW *pIfRow) {
     DWORD       dwSize, dwRetVal, i;
     int     ret = UGERR;
     /* variables used for GetIfTable and GetIfEntry */
-    MIB_IFTABLE* pIfTable = NULL;
+    MIB_IFTABLE *pIfTable = NULL;
     MIB_IFROW   TmpIfRow;
     /* Allocate memory for our pointers. */
     dwSize = sizeof(MIB_IFTABLE);
-    pIfTable = (MIB_IFTABLE*)zmalloc( dwSize);
+    pIfTable = (MIB_IFTABLE *)zmalloc( dwSize);
 
     /* Before calling GetIfEntry, we call GetIfTable to make
        sure there are entries to get and retrieve the interface index.
        Make an initial call to GetIfTable to get the necessary size into dwSize */
     if (ERROR_INSUFFICIENT_BUFFER == GetIfTable(pIfTable, &dwSize, 0))
-        pIfTable = (MIB_IFTABLE*)zrealloc(pIfTable, dwSize);
+        pIfTable = (MIB_IFTABLE *)zrealloc(pIfTable, dwSize);
 
     /* Make a second call to GetIfTable to get the actual data we want. */
     if (NO_ERROR != (dwRetVal = GetIfTable(pIfTable, &dwSize, 0))) {
@@ -58,9 +57,8 @@ clean:
 
 
 
-int NET_IF_IN(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
-    const char* if_name = "MS TCP Loopback interface";
+int NET_IF_IN(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
+    const char *if_name = "MS TCP Loopback interface";
     MIB_IFROW   pIfRow;
     if (UGERR == get_if_stats(if_name, &pIfRow))
         return UGERR;
@@ -69,9 +67,8 @@ int NET_IF_IN(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result
     return UGOK;
 }
 
-int NET_IF_OUT(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
-    const char* if_name = "MS TCP Loopback interface";
+int NET_IF_OUT(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
+    const char *if_name = "MS TCP Loopback interface";
     MIB_IFROW   pIfRow;
     if (UGERR == get_if_stats(if_name, &pIfRow))
         return UGERR;
@@ -80,9 +77,8 @@ int NET_IF_OUT(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* resul
     return UGOK;
 }
 
-int NET_IF_TOTAL(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
-    const char* if_name = "MS TCP Loopback interface";
+int NET_IF_TOTAL(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
+    const char *if_name = "MS TCP Loopback interface";
     MIB_IFROW   pIfRow;
     if (UGERR == get_if_stats(if_name, &pIfRow))
         return UGERR;
@@ -91,8 +87,7 @@ int NET_IF_TOTAL(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* res
     return UGOK;
 }
 
-int NET_IF_COLLISIONS(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int NET_IF_COLLISIONS(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     SET_MSG_RESULT(result, xstrdup("not implemented"));
     return UGERR;
 }

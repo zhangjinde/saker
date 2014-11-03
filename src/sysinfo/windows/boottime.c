@@ -2,8 +2,7 @@
 #include <time.h>
 #include "utils/string.h"
 
-int SYSTEM_BOOTTIME(const char* cmd, int argc, const char** argv, SYSINFO_RESULT* result)
-{
+int SYSTEM_BOOTTIME(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result) {
     static int      corr = 0;
     LARGE_INTEGER   tickPerSecond, tick;
     static int  boottime = 0;

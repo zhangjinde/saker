@@ -3,8 +3,7 @@
 #include "luaworking.h"
 
 
-int core_log(lua_State* L)
-{
+int core_log(lua_State *L) {
     int idx = 1;
     int loglevel = 0;
     sds msg;
@@ -26,9 +25,9 @@ int core_log(lua_State* L)
     msg = sdsempty();
     for (idx= 1; idx < top; idx++) {
         size_t len;
-        char* s;
+        char *s;
 
-        s = (char*)lua_tolstring(L, (-top)+idx, &len);
+        s = (char *)lua_tolstring(L, (-top)+idx, &len);
         if (s) {
             if (idx != 1) msg = sdscatlen(msg," ",1);
             msg = sdscatlen(msg, s, len);

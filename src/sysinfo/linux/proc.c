@@ -27,8 +27,7 @@
  * Get system start time
  * @return seconds since unix epoch
  */
-static time_t get_starttime()
-{
+static time_t get_starttime() {
     char   buf[1024];
     double up = 0;
     int fd,bytes;
@@ -45,8 +44,7 @@ static time_t get_starttime()
     return time(NULL) - (time_t)up;
 }
 
-int proc_owner(int pid)
-{
+int proc_owner(int pid) {
     struct stat sb;
     char buffer[32];
     sprintf(buffer, "%d", pid);
@@ -56,8 +54,7 @@ int proc_owner(int pid)
     return (int)sb.st_uid;
 }
 
-static FILE* open_proc_file(const char* filename)
-{
+static FILE *open_proc_file(const char *filename) {
     struct stat s;
 
     if (0 != stat(filename, &s))
@@ -66,13 +63,12 @@ static FILE* open_proc_file(const char* filename)
     return fopen(filename, "r");
 }
 
-static int  get_cmdline(FILE* f_cmd, char** line, size_t* line_offset)
-{
+static int  get_cmdline(FILE *f_cmd, char **line, size_t *line_offset) {
     size_t  line_alloc = MAX_STRING_LEN, n;
 
     rewind(f_cmd);
 
-    *line = (char*)zmalloc(line_alloc + 2);
+    *line = (char *)zmalloc(line_alloc + 2);
     *line_offset = 0;
 
     while (0 != (n = fread(*line + *line_offset, 1, line_alloc - *line_offset, f_cmd))) {
@@ -100,8 +96,7 @@ static int  get_cmdline(FILE* f_cmd, char** line, size_t* line_offset)
     return UGERR;
 }
 
-static int  cmp_status(FILE* f_stat, const char* procname)
-{
+static int  cmp_status(FILE *f_stat, const char *procname) {
     char    tmp[MAX_STRING_LEN];
 
     rewind(f_stat);
@@ -119,9 +114,8 @@ static int  cmp_status(FILE* f_stat, const char* procname)
     return UGERR;
 }
 
-static int  check_procname(FILE* f_cmd, FILE* f_stat, const char* procname)
-{
-    char*    tmp = NULL, *p;
+static int  check_procname(FILE *f_cmd, FILE *f_stat, const char *procname) {
+    char    *tmp = NULL, *p;
     size_t  l;
     int ret = UGOK;
 
@@ -182,8 +176,7 @@ static int  check_user(FILE *f_stat, struct passwd *usrinfo)
 }
 */
 
-static int  check_procstate(FILE* f_stat, int proc_stat)
-{
+static int  check_procstate(FILE *f_stat, int proc_stat) {
     char    tmp[MAX_STRING_LEN], *p;
 
     if (0 == proc_stat)
@@ -215,22 +208,21 @@ static int  check_procstate(FILE* f_stat, int proc_stat)
 /*
  * @param argv[0]  =  processname
  */
-int PROC_PID(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int PROC_PID(const char *cmd,int argc,const char **argv,SYSINFO_RESULT *result) {
     int    ret = UGERR;
-    const char* procname = getParam(argc,argv,0);
+    const char *procname = getParam(argc,argv,0);
 
     // ! may be not enough !
     sds pidstr = sdsnew("[");
 
     char buff[MAX_STRING_LEN]= {0};
     int    flag = 0;
-    FILE* f_cmd = NULL;
-    FILE* f_stat = NULL;
-    DIR*  dir;
-    struct dirent*   entries;
+    FILE *f_cmd = NULL;
+    FILE *f_stat = NULL;
+    DIR  *dir;
+    struct dirent   *entries;
     if( procname == NULL) {
-        char* str =xstrdup("invaild param");
+        char *str =xstrdup("invaild param");
         SET_MSG_RESULT(result, str);
         return ret;
     }
@@ -296,18 +288,17 @@ int PROC_PID(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
     sdsfree(pidstr);
     return UGOK;
 }
-/* 
+/*
  * @param cmd "system.proc.mem.rss"
  * @param argv[0] pid
  * @param argv[1] mb|kb|gb|nil
  */
-int PROC_MEMORY_RSS(const char* cmd,int argc,const char** argv,SYSINFO_RESULT *result)
-{
-    int    ret = UGERR;    
+int PROC_MEMORY_RSS(const char *cmd,int argc,const char **argv,SYSINFO_RESULT *result) {
+    int    ret = UGERR;
     uint64_t memsize = 0;
     char   tmp[MAX_STRING_LEN]= {0};
     char   buff[MAX_STRING_LEN]= {0};
-    FILE*  fp = NULL;
+    FILE  *fp = NULL;
     const char *pidstr;
     char *p, *p1;
     int    pid = 0;
@@ -360,13 +351,12 @@ int PROC_MEMORY_RSS(const char* cmd,int argc,const char** argv,SYSINFO_RESULT *r
 }
 
 /// argv[0] == pid argv[1] == mb|kb|gb|nil
-int PROC_MEMORY_USED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
-{
-    int    ret = UGERR;    
+int PROC_MEMORY_USED(const char *cmd,int argc,const char **argv,SYSINFO_RESULT *result) {
+    int    ret = UGERR;
     uint64_t memsize = 0;
     char   tmp[MAX_STRING_LEN]= {0};
     char   buff[MAX_STRING_LEN]= {0};
-    FILE*  fp = NULL;
+    FILE  *fp = NULL;
     const char *pidstr;
     char *p, *p1;
     int    pid = 0;
@@ -419,10 +409,9 @@ int PROC_MEMORY_USED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* 
 }
 
 /// argv[0] == pid
-int PROC_MEMORY_PUSED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int PROC_MEMORY_PUSED(const char *cmd,int argc,const char **argv,SYSINFO_RESULT *result) {
     SYSINFO_RESULT tmpresult;
-    const char* inparam = argv[0];
+    const char *inparam = argv[0];
     struct sysinfo  info;
 
     if (0 != sysinfo(&info) || 0 == info.totalram)
@@ -431,7 +420,7 @@ int PROC_MEMORY_PUSED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT*
     if ( UGERR == PROC_MEMORY_USED(NULL,1,&inparam,&tmpresult)) {
         return UGERR;
     }
-    
+
     SET_DBL_RESULT(result,GET_UI64_RESULT(&tmpresult)/ (double)info.totalram * 100);
 
     return UGOK;
@@ -439,26 +428,24 @@ int PROC_MEMORY_PUSED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT*
 
 
 /// argv[0] == pid
-int PROC_CPU_LOAD(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int PROC_CPU_LOAD(const char *cmd,int argc,const char **argv,SYSINFO_RESULT *result) {
     int    ret = UGERR;
     /* todo here */
     return ret;
 }
 
-int PROC_STATINFO(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int PROC_STATINFO(const char *cmd,int argc,const char **argv,SYSINFO_RESULT *result) {
     int  ret = UGERR;
     pid_t  pid = 0;
-    const char* pidstr;
-    char* rst = NULL;
-    struct ProcessInfo* proc  = NULL;
+    const char *pidstr;
+    char *rst = NULL;
+    struct ProcessInfo *proc  = NULL;
     if(NULL == (pidstr=getParam(argc,argv,0))) {
         SET_MSG_RESULT(result, xstrdup("called must have param"));
         return ret;
     }
     pid = atoi(pidstr);
-    
+
     if (topIsRuning()) {
         proc = getProcessInfoByID(pid);
         if (!proc) {
@@ -477,17 +464,17 @@ int PROC_STATINFO(const char* cmd,int argc,const char** argv,SYSINFO_RESULT* res
 
     /* convert to json */
     rst = xstrprintf("{\"PID\":%d,\"UID\":%d,\"Name\":\"%s\",\"Fullname\":\"%s\",\"Threads\":%d,\"VIRT\":%lu,\"RES\":%lu,\"SHR:\":%lu,\"State\":%d,\"PCPU\":%f,\"PMEM\":%f}",
-                           proc->pid,
-                           proc->uid,
-                           proc->name,
-                           proc->fullname,
-                           proc->threads,
-                           proc->vsize,
-                           proc->rss,
-                           proc->shared,
-                           proc->state,
-                           proc->pcpu,
-                           proc->pmem);
+                     proc->pid,
+                     proc->uid,
+                     proc->name,
+                     proc->fullname,
+                     proc->threads,
+                     proc->vsize,
+                     proc->rss,
+                     proc->shared,
+                     proc->state,
+                     proc->pcpu,
+                     proc->pmem);
 
     SET_STR_RESULT(result, rst);
     ret = UGOK;

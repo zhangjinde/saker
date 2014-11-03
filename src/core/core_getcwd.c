@@ -2,10 +2,9 @@
 #include "utils/path.h"
 
 
-int core_getcwd(lua_State* L)
-{
+int core_getcwd(lua_State *L) {
     char buffer[MAX_STRING_LEN] = {0};
-    char* ch;
+    char *ch;
     if(xgetcwd(buffer) == UGERR) {
         lua_pushnil(L);
         lua_pushstring(L, "call getcwd failed");

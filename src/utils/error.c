@@ -5,8 +5,7 @@
 #include "common/types.h"
 
 
-int   xerrno()
-{
+int   xerrno() {
 #if defined(OS_WIN)
     return GetLastError();
 #else
@@ -15,8 +14,7 @@ int   xerrno()
 }
 
 
-const char* xerrstr(unsigned long errnum)
-{
+const char *xerrstr(unsigned long errnum) {
 
 #ifdef OS_WIN
     size_t      offset = 0;
@@ -46,14 +44,12 @@ const char* xerrstr(unsigned long errnum)
 
 
 
-const char* xerrmsg()
-{
+const char *xerrmsg() {
     return xerrstr(xerrno());
 }
 
 
-void  xerrclear()
-{
+void  xerrclear() {
 #if defined(OS_WIN)
     SetLastError(0);
 #else

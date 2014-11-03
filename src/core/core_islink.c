@@ -1,9 +1,8 @@
 #include "core_declarer.h"
 
 
-int core_islink(lua_State* L)
-{
-    const char* path = luaL_checkstring(L, 1);
+int core_islink(lua_State *L) {
+    const char *path = luaL_checkstring(L, 1);
 #ifdef OS_WIN
     /** have a bug? **/
     DWORD attr;

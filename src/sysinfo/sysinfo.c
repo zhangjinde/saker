@@ -6,42 +6,37 @@
 
 
 
-static dict* g_dict_sysinfo_function = NULL;
+static dict *g_dict_sysinfo_function = NULL;
 
 
 /* Functions managing dictionary of callbacks for pub/sub. */
-static unsigned int callbackHash(const void* key)
-{
-    return dictGenHashFunction((unsigned char*)key,strlen((const char*)key));
+static unsigned int callbackHash(const void *key) {
+    return dictGenHashFunction((unsigned char *)key,strlen((const char *)key));
 }
 
-static void* callbackValDup(void* privdata, const void* src)
-{
+static void *callbackValDup(void *privdata, const void *src) {
     ((void) privdata);
     /* readonly str ,so copy it directly*/
-    return (void*)src;
+    return (void *)src;
 }
 
-static int callbackKeyCompare(void* privdata, const void* key1, const void* key2)
-{
+static int callbackKeyCompare(void *privdata, const void *key1, const void *key2) {
     int l1, l2;
     ((void) privdata);
 
-    l1 = strlen((const char*)key1);
-    l2 = strlen((const char*)key2);
+    l1 = strlen((const char *)key1);
+    l2 = strlen((const char *)key2);
     if (l1 != l2) return 0;
     return memcmp(key1,key2,l1) == 0;
 }
 
-static void callbackKeyDestructor(void* privdata, void* key)
-{
+static void callbackKeyDestructor(void *privdata, void *key) {
     /* do nothing */
     ((void) privdata);
     ((void) key);
 }
 
-static void callbackValDestructor(void* privdata, void* val)
-{
+static void callbackValDestructor(void *privdata, void *val) {
     ((void) privdata);
     ((void) val);
 }
@@ -55,8 +50,7 @@ static dictType callbackDict = {
     callbackValDestructor
 };
 
-uint64_t bytesConvert(uint64_t value,const char* param)
-{
+uint64_t bytesConvert(uint64_t value,const char *param) {
     if (param == NULL) {
         //nothing
     } else if (0 == xstrncasecmp(param, "kb", 2)) {
@@ -71,16 +65,14 @@ uint64_t bytesConvert(uint64_t value,const char* param)
     return value;
 }
 
-const char*  getParam(int argc,const char** argv, int pos)
-{
+const char  *getParam(int argc,const char **argv, int pos) {
     if (argv != NULL) {
         return argc>pos ? argv[pos] : NULL;
     }
     return NULL;
 }
 
-void    initResult(SYSINFO_RESULT* result)
-{
+void    initResult(SYSINFO_RESULT *result) {
     result->type = 0;
 
     result->ui64 = 0;
@@ -90,8 +82,7 @@ void    initResult(SYSINFO_RESULT* result)
     result->msg = NULL;
 }
 
-void    freeResult(SYSINFO_RESULT* result)
-{
+void    freeResult(SYSINFO_RESULT *result) {
     UNSET_UI64_RESULT(result);
     UNSET_DBL_RESULT(result);
     UNSET_STR_RESULT(result);
@@ -159,8 +150,7 @@ static const sysinfoMap sysinfo_map[] = {
 };
 
 
-int initSysinfoDic()
-{
+int initSysinfoDic() {
     int idx;
     g_dict_sysinfo_function = dictCreate(&callbackDict,NULL);
     if (g_dict_sysinfo_function == NULL) {
@@ -177,19 +167,17 @@ int initSysinfoDic()
 }
 
 
-void freeSysinfoDic()
-{
+void freeSysinfoDic() {
     if (g_dict_sysinfo_function) {
         dictRelease(g_dict_sysinfo_function);
         g_dict_sysinfo_function = NULL;
     }
 }
 
-int sysInfo(lua_State* L)
-{
-    const char* cmd = NULL;
-    const char** argv =  NULL;
-    dictEntry* pit = NULL;
+int sysInfo(lua_State *L) {
+    const char *cmd = NULL;
+    const char **argv =  NULL;
+    dictEntry *pit = NULL;
     SYSINFO_RESULT result;
     sysinfo_function_t fun = NULL;
     char errmsg[MAX_STRING_LEN]= {0};
@@ -205,9 +193,9 @@ int sysInfo(lua_State* L)
     }
     cmd = luaL_checkstring(L,1);
     if (top > 1) {
-        argv = (const char**)zmalloc(sizeof(char*)*(top-1));
+        argv = (const char **)zmalloc(sizeof(char *)*(top-1));
         for(idx=2; idx<=top; ++idx) {
-            argv[idx-2] = (char*)luaL_checkstring(L,idx);
+            argv[idx-2] = (char *)luaL_checkstring(L,idx);
         }
     }
 
@@ -252,7 +240,7 @@ int sysInfo(lua_State* L)
 
 END:
     if (argv) {
-        zfree((char**)argv);
+        zfree((char **)argv);
         argv = NULL;
     }
     freeResult(&result);

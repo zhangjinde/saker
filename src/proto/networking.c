@@ -9,9 +9,8 @@
 
 
 
-static void acceptCommonhandler(int fd, int flags)
-{
-    ugClient* c;
+static void acceptCommonhandler(int fd, int flags) {
+    ugClient *c;
     if ((c = createClient(fd)) == NULL) {
         LOG_TRACE(
             "Error registering fd event for the new client: %s (fd=%d)",
@@ -23,10 +22,10 @@ static void acceptCommonhandler(int fd, int flags)
 #endif
         return;
     }
-        /* If maxclient directive is set and this is one client more... close the
-     * connection. Note that we create the client instead to check before
-     * for this condition, since now the socket is already set in non-blocking
-     * mode and we can send an error for free using the Kernel I/O */
+    /* If maxclient directive is set and this is one client more... close the
+    * connection. Note that we create the client instead to check before
+    * for this condition, since now the socket is already set in non-blocking
+    * mode and we can send an error for free using the Kernel I/O */
     if ((unsigned long long)listLength(server.clients) > server.config->maxclients) {
         char *err = "-ERR max number of clients reached\r\n";
 
@@ -46,9 +45,8 @@ static void acceptCommonhandler(int fd, int flags)
     c->flags |= flags;
 }
 
-void readQueryFromClient(aeEventLoop* el, int fd, void* privdata, int mask)
-{
-    ugClient* c = (ugClient*) privdata;
+void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
+    ugClient *c = (ugClient *) privdata;
     int nread, readlen;
     size_t qblen;
     UG_NOTUSED(el);
@@ -121,8 +119,7 @@ void readQueryFromClient(aeEventLoop* el, int fd, void* privdata, int mask)
 
 
 
-void acceptTcpHandler(aeEventLoop* el, int fd, void* privdata, int mask)
-{
+void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask) {
     int cport, cfd;
     char cip[128];
     char errbuff[MAX_STRING_LEN] = {0};
@@ -177,7 +174,7 @@ void sendReplyListDone(aeEventLoop *el, int fd, void *privdata, int written) {
         aeDeleteFileEvent(server.el,c->fd,AE_WRITABLE);
 
         /* Close connection after entire reply has been sent. */
-        if (c->flags & UG_CLOSE_AFTER_REPLY){
+        if (c->flags & UG_CLOSE_AFTER_REPLY) {
             freeClientAsync(c);
         }
     }
@@ -213,7 +210,7 @@ void sendReplyToClient(aeEventLoop *el, int fd, void *privdata, int mask) {
         if (c->bufpos > c->sentlen) {
             nwritten = c->bufpos - c->sentlen;
             result = aeWinSocketSend(fd,c->buf+c->sentlen, nwritten,0,
-                                        el, c, c->buf, sendReplyBufferDone);
+                                     el, c, c->buf, sendReplyBufferDone);
             if (result == SOCKET_ERROR && errno != WSA_IO_PENDING) {
                 LOG_ERROR("Error writing to client: %s", wsa_strerror(errno));
                 freeClient(c);
@@ -235,8 +232,8 @@ void sendReplyToClient(aeEventLoop *el, int fd, void *privdata, int mask) {
 
             /* object ref placed in request, release in sendReplyListDone */
             incrRefCount(o);
-            result = aeWinSocketSend(fd, ((char*)o->ptr), objlen, 0,
-                                        el, c, o, sendReplyListDone);
+            result = aeWinSocketSend(fd, ((char *)o->ptr), objlen, 0,
+                                     el, c, o, sendReplyListDone);
             if (result == SOCKET_ERROR && errno != WSA_IO_PENDING) {
                 LOG_TRACE("Error writing to client: %s", wsa_strerror(errno));
                 decrRefCount(o);
@@ -258,8 +255,8 @@ void sendReplyToClient(aeEventLoop *el, int fd, void *privdata, int mask) {
          * However if we are over the maxmemory limit we ignore that and
          * just deliver as much data as it is possible to deliver. */
         if (totwritten > UG_MAX_WRITE_PER_EVENT &&
-            (server.maxmemory == 0 ||
-             zmalloc_used_memory() < server.maxmemory)) break;
+                (server.maxmemory == 0 ||
+                 zmalloc_used_memory() < server.maxmemory)) break;
     }
     if (totwritten > 0) c->lastinteraction = server.unixtime;
 
@@ -306,7 +303,7 @@ void sendReplyToClient(aeEventLoop *el, int fd, void *privdata, int mask) {
                 /* Don't reply to a master */
                 nwritten = objlen - c->sentlen;
             } else {
-                nwritten = write(fd, ((char*)o->ptr)+c->sentlen,objlen-c->sentlen);
+                nwritten = write(fd, ((char *)o->ptr)+c->sentlen,objlen-c->sentlen);
                 if (nwritten <= 0) break;
             }
             c->sentlen += nwritten;
@@ -328,8 +325,8 @@ void sendReplyToClient(aeEventLoop *el, int fd, void *privdata, int mask) {
          * However if we are over the maxmemory limit we ignore that and
          * just deliver as much data as it is possible to deliver. */
         if (totwritten > UG_MAX_WRITE_PER_EVENT &&
-            (server.maxmemory == 0 ||
-             zmalloc_used_memory() < server.maxmemory)) break;
+                (server.maxmemory == 0 ||
+                 zmalloc_used_memory() < server.maxmemory)) break;
     }
     if (nwritten == -1) {
         if (errno == EAGAIN) {
@@ -352,8 +349,7 @@ void sendReplyToClient(aeEventLoop *el, int fd, void *privdata, int mask) {
 #endif
 
 
-int  prepareClientToWrite(ugClient* c)
-{
+int  prepareClientToWrite(ugClient *c) {
     if (c->fd <= 0) return UGERR; /* Fake client */
     if (listLength(c->reply) == 0 &&
             aeCreateFileEvent(server.el, c->fd, AE_WRITABLE,

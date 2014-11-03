@@ -1,11 +1,10 @@
 #include "core_declarer.h"
 
 
-int core_copyfile(lua_State* L)
-{
+int core_copyfile(lua_State *L) {
     int z;
-    const char* src = luaL_checkstring(L, 1);
-    const char* dst = luaL_checkstring(L, 2);
+    const char *src = luaL_checkstring(L, 1);
+    const char *dst = luaL_checkstring(L, 2);
 
 #if OS_WIN
     struct stat buf;

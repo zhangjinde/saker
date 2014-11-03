@@ -16,8 +16,7 @@
 #ifdef OS_WIN
 #include <process.h>
 
-int get_procname(HANDLE hProcess, char* procname,int len)
-{
+int get_procname(HANDLE hProcess, char *procname,int len) {
     HMODULE hMod;
     DWORD   dwSize;
 
@@ -44,8 +43,7 @@ int get_procname(HANDLE hProcess, char* procname,int len)
 
 #define LOCKMODE (S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)
 
-static int lock_file(int fd)
-{
+static int lock_file(int fd) {
     struct flock fl;
     (void) memset(&fl, 0, sizeof(fl));
     fl.l_type = F_WRLCK;
@@ -54,11 +52,10 @@ static int lock_file(int fd)
     return(fcntl(fd, F_SETLK, &fl));
 }
 
-static int get_procname(pid_t pid, char* procname, int len)
-{
+static int get_procname(pid_t pid, char *procname, int len) {
     char tmp[MAX_STRING_LEN] = {0};
     char buff[MAX_STRING_LEN] = {0};
-    FILE* fp =  NULL;
+    FILE *fp =  NULL;
     struct stat s;
     ugAssert(procname != NULL);
     *procname = 0;
@@ -72,7 +69,7 @@ static int get_procname(pid_t pid, char* procname, int len)
 
     while (NULL != fgets(tmp, sizeof(tmp), fp)) {
         if (0 == strncmp(tmp, "State:\t", 7)) {
-            char* proc_stat = tmp + 7;
+            char *proc_stat = tmp + 7;
             if (*proc_stat == 'Z') {
                 *procname = 0;
                 break;
@@ -96,8 +93,7 @@ static int get_procname(pid_t pid, char* procname, int len)
 #endif
 
 
-void daemonize()
-{
+void daemonize() {
 #ifdef OS_WIN
 
 #else
@@ -153,10 +149,9 @@ void daemonize()
 #endif
 }
 
-int pidfile_create( const char* pidfile,const char* appname,pid_t pid )
-{
+int pidfile_create( const char *pidfile,const char *appname,pid_t pid ) {
 #ifdef OS_WIN
-    FILE* fp = NULL;
+    FILE *fp = NULL;
     if (pidfile_verify(pidfile) == UGOK) {
         return UGERR;
     }
@@ -189,15 +184,13 @@ int pidfile_create( const char* pidfile,const char* appname,pid_t pid )
 #endif
 }
 
-void pidfile_remove( const char* pidfile )
-{
+void pidfile_remove( const char *pidfile ) {
     xfiledel(pidfile);
 }
 
 
-int  pidfile_getpid( const char* pidfile,int* pid )
-{
-    FILE* fp = fopen(pidfile, "r");
+int  pidfile_getpid( const char *pidfile,int *pid ) {
+    FILE *fp = fopen(pidfile, "r");
     if (!fp) {
         /* fprintf(stderr, "fopen %s failed", pidfile); */
         return UGERR;
@@ -208,20 +201,18 @@ int  pidfile_getpid( const char* pidfile,int* pid )
 }
 
 
-int  pidfile_exists(const char* pidfile)
-{
+int  pidfile_exists(const char *pidfile) {
     return (xfileisregular(pidfile) == UGERR) ;
 }
 
 
-int pidfile_verify(const char* pidfile)
-{
+int pidfile_verify(const char *pidfile) {
     int ret = UGERR;
-    
-#ifdef OS_WIN
-	pid_t pid;
 
-    FILE* fp = fopen(pidfile, "r");
+#ifdef OS_WIN
+    pid_t pid;
+
+    FILE *fp = fopen(pidfile, "r");
 
     if (fp) {
         char procname[1024]= {0};
@@ -243,7 +234,7 @@ int pidfile_verify(const char* pidfile)
         //lock  and  some  portion of the segment of a file to be locked is already shared-locked or exclusive-locked by
         //another process.
         if (errno == EACCES || errno == EAGAIN) {
-			ret = UGOK;
+            ret = UGOK;
         }
     }
     close(fd);
@@ -252,8 +243,7 @@ int pidfile_verify(const char* pidfile)
 #endif
 }
 
-int pkill(pid_t pid,int sig)
-{
+int pkill(pid_t pid,int sig) {
     if (sig == -1) {
         sig = SIGTERM;
     }
@@ -279,8 +269,7 @@ int pkill(pid_t pid,int sig)
 }
 
 
-int  proc_isrunning(pid_t pid, const char* matchstr)
-{
+int  proc_isrunning(pid_t pid, const char *matchstr) {
     char name[MAX_STRING_LEN]= {0};
 #ifdef OS_WIN
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);

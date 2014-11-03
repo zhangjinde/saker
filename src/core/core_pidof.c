@@ -3,9 +3,8 @@
 
 #include "utils/process.h"
 
-int core_pidof(lua_State* L)
-{
-    const char* path = NULL, *key= NULL ;
+int core_pidof(lua_State *L) {
+    const char *path = NULL, *key= NULL ;
     int pid;
     int top = lua_gettop(L);
     if (top == 0) {

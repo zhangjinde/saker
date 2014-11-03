@@ -4,23 +4,21 @@
 
 
 
-int   updateProcess(struct ProcessInfo* proc)
-{
+int   updateProcess(struct ProcessInfo *proc) {
     HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, proc->pid);
 
     return 0;
 }
 
 
-int   topUpdate(void)
-{
-    struct ProcessInfo* p = NULL;
+int   topUpdate(void) {
+    struct ProcessInfo *p = NULL;
     pid_t pid;
     DWORD aProcesses[1024], cbNeeded, cProcesses;
     unsigned int i;
     HANDLE hProcess;
     char procname[1024]= {0};
-    if ( !EnumProcesses( aProcesses, sizeof(aProcesses), &cbNeeded ) ) {       
+    if ( !EnumProcesses( aProcesses, sizeof(aProcesses), &cbNeeded ) ) {
         return UGERR;
     }
 
@@ -30,7 +28,7 @@ int   topUpdate(void)
     for ( i = 0; i < cProcesses; i++ ) {
         hProcess = OpenProcess(  PROCESS_QUERY_INFORMATION |
                                  PROCESS_VM_READ,
-                                 FALSE, aProcesses[i] );		
+                                 FALSE, aProcesses[i] );
         if (NULL == hProcess)
             continue;
         if (get_procname(hProcess,procname, 1024) != UGOK) {
@@ -38,28 +36,28 @@ int   topUpdate(void)
             CloseHandle(hProcess);
             continue;
         }
-		 pid = aProcesses[i];        
-         p = findProcess(pid);
-         if (!p) {
-             p = newProcess(pid);
-         }
-            /* Mark process as up-to-date. */
-               p->time_stamp = g_time;
+        pid = aProcesses[i];
+        p = findProcess(pid);
+        if (!p) {
+            p = newProcess(pid);
+        }
+        /* Mark process as up-to-date. */
+        p->time_stamp = g_time;
 
-            updateProcess(p);
+        updateProcess(p);
 
-            /* Calc process cpu usage */
-           // calcProcesssPCPU(p, elapsed);
+        /* Calc process cpu usage */
+        // calcProcesssPCPU(p, elapsed);
 
-           // calcProcesssPMEM(p);
-					
+        // calcProcesssPMEM(p);
+
         CloseHandle(hProcess);
         hProcess = NULL;
 
     }
 
     CloseHandle(hProcess);
-	
+
     return UGOK;
 }
 

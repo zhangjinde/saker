@@ -3,9 +3,8 @@
 
 
 
-int VFS_FS_SIZE(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
-    char*        mode = NULL;
+int VFS_FS_SIZE(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
+    char        *mode = NULL;
     ULARGE_INTEGER  freeBytes, totalBytes;
     mode = strrchr(cmd,'.')+1;
 

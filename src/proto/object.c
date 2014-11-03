@@ -69,7 +69,7 @@ robj *createStringObjectFromLongLong(long long value) {
         if (value >= LONG_MIN && value <= LONG_MAX) {
             o = createObject(UG_STRING, NULL);
             o->encoding = UG_ENCODING_INT;
-            o->ptr = (void*)(value);
+            o->ptr = (void *)(value);
         } else {
             o = createObject(UG_STRING,sdsfromlonglong(value));
         }
@@ -128,7 +128,7 @@ void freeStringObject(robj *o) {
 void freeListObject(robj *o) {
     switch (o->encoding) {
     case UG_ENCODING_LINKEDLIST:
-        listRelease((list*) o->ptr);
+        listRelease((list *) o->ptr);
         break;
     case UG_ENCODING_ZIPLIST:
         zfree(o->ptr);
@@ -148,9 +148,15 @@ void decrRefCount(void *obj) {
     if (o->refcount <= 0) ugPanic("decrRefCount against refcount <= 0");
     if (o->refcount == 1) {
         switch(o->type) {
-        case UG_STRING: freeStringObject(o); break;
-        case UG_LIST: freeListObject(o); break;
-        default: ugPanic("Unknown object type"); break;
+        case UG_STRING:
+            freeStringObject(o);
+            break;
+        case UG_LIST:
+            freeListObject(o);
+            break;
+        default:
+            ugPanic("Unknown object type");
+            break;
         }
         zfree(o);
     } else {
@@ -204,7 +210,7 @@ robj *tryObjectEncoding(robj *o) {
     /* It's not safe to encode shared objects: shared objects can be shared
      * everywhere in the "object space" of Redis. Encoded objects can only
      * appear as "values" (and not, for instance, as keys) */
-     if (o->refcount > 1) return o;
+    if (o->refcount > 1) return o;
 
     /* Currently we try to encode only strings */
     ugAssert(o->type == UG_STRING);
@@ -226,7 +232,7 @@ robj *tryObjectEncoding(robj *o) {
     } else {
         o->encoding = UG_ENCODING_INT;
         sdsfree(o->ptr);
-        o->ptr = (void*) value;
+        o->ptr = (void *) value;
         return o;
     }
 }
@@ -287,7 +293,7 @@ int compareStringObjects(robj *a, robj *b) {
  * this function is faster then checking for (compareStringObject(a,b) == 0)
  * because it can perform some more optimization. */
 int equalStringObjects(robj *a, robj *b) {
-    if (a->encoding != UG_ENCODING_RAW && b->encoding != UG_ENCODING_RAW){
+    if (a->encoding != UG_ENCODING_RAW && b->encoding != UG_ENCODING_RAW) {
         return a->ptr == b->ptr;
     } else {
         return compareStringObjects(a,b) == 0;
@@ -316,8 +322,8 @@ int getDoubleFromObject(robj *o, double *target) {
         if (o->encoding == UG_ENCODING_RAW) {
             errno = 0;
             value = strtod(o->ptr, &eptr);
-            if (isspace(((char*)o->ptr)[0]) || eptr[0] != '\0' ||
-                errno == ERANGE || isnan(value))
+            if (isspace(((char *)o->ptr)[0]) || eptr[0] != '\0' ||
+                    errno == ERANGE || isnan(value))
                 return UGERR;
         } else if (o->encoding == UG_ENCODING_INT) {
             value = (long)o->ptr;
@@ -333,7 +339,7 @@ int getDoubleFromObjectOrReply(ugClient *c, robj *o, double *target, const char 
     double value;
     if (getDoubleFromObject(o, &value) != UGOK) {
         if (msg != NULL) {
-            addReplyErrorFormat(c,(char*)msg);
+            addReplyErrorFormat(c,(char *)msg);
         } else {
             addReplyErrorFormat(c,"value is not a valid float");
         }
@@ -358,8 +364,8 @@ int getLongDoubleFromObject(robj *o, long double *target) {
 #else
             value = strtold(o->ptr, &eptr);
 #endif
-            if (isspace(((char*)o->ptr)[0]) || eptr[0] != '\0' ||
-                errno == ERANGE || isnan(value))
+            if (isspace(((char *)o->ptr)[0]) || eptr[0] != '\0' ||
+                    errno == ERANGE || isnan(value))
                 return UGERR;
         } else if (o->encoding == UG_ENCODING_INT) {
             value = (long)o->ptr;
@@ -375,7 +381,7 @@ int getLongDoubleFromObjectOrReply(ugClient *c, robj *o, long double *target, co
     long double value;
     if (getLongDoubleFromObject(o, &value) != UGOK) {
         if (msg != NULL) {
-            addReplyErrorFormat(c,(char*)msg);
+            addReplyErrorFormat(c,(char *)msg);
         } else {
             addReplyErrorFormat(c,"value is not a valid float");
         }
@@ -396,8 +402,8 @@ int getLongLongFromObject(robj *o, long long *target) {
         if (o->encoding == UG_ENCODING_RAW) {
             errno = 0;
             value = strtoll(o->ptr, &eptr, 10);
-            if (isspace(((char*)o->ptr)[0]) || eptr[0] != '\0' ||
-                errno == ERANGE)
+            if (isspace(((char *)o->ptr)[0]) || eptr[0] != '\0' ||
+                    errno == ERANGE)
                 return UGERR;
         } else if (o->encoding == UG_ENCODING_INT) {
             value = (long)o->ptr;
@@ -413,7 +419,7 @@ int getLongLongFromObjectOrReply(ugClient *c, robj *o, long long *target, const 
     long long value;
     if (getLongLongFromObject(o, &value) != UGOK) {
         if (msg != NULL) {
-            addReplyErrorFormat(c,(char*)msg);
+            addReplyErrorFormat(c,(char *)msg);
         } else {
             addReplyErrorFormat(c,"value is not an integer or out of range");
         }
@@ -429,7 +435,7 @@ int getLongFromObjectOrReply(ugClient *c, robj *o, long *target, const char *msg
     if (getLongLongFromObjectOrReply(c, o, &value, msg) != UGOK) return UGERR;
     if (value < LONG_MIN || value > LONG_MAX) {
         if (msg != NULL) {
-            addReplyErrorFormat(c,(char*)msg);
+            addReplyErrorFormat(c,(char *)msg);
         } else {
             addReplyErrorFormat(c,"value is out of range");
         }
@@ -441,11 +447,16 @@ int getLongFromObjectOrReply(ugClient *c, robj *o, long *target, const char *msg
 
 char *strEncoding(int encoding) {
     switch(encoding) {
-    case UG_ENCODING_RAW: return "raw";
-    case UG_ENCODING_INT: return "int";
-    case UG_ENCODING_HT: return "hashtable";
-    case UG_ENCODING_SKIPLIST: return "skiplist";
-    default: return "unknown";
+    case UG_ENCODING_RAW:
+        return "raw";
+    case UG_ENCODING_INT:
+        return "int";
+    case UG_ENCODING_HT:
+        return "hashtable";
+    case UG_ENCODING_SKIPLIST:
+        return "skiplist";
+    default:
+        return "unknown";
     }
 }
 
@@ -456,7 +467,7 @@ unsigned long estimateObjectIdleTime(robj *o) {
         return (server.lruclock - o->lru) * UG_LRU_CLOCK_RESOLUTION;
     } else {
         return ((UG_LRU_CLOCK_MAX - o->lru) + server.lruclock) *
-                    UG_LRU_CLOCK_RESOLUTION;
+               UG_LRU_CLOCK_RESOLUTION;
     }
 }
 
@@ -493,38 +504,38 @@ void createSharedObjects(void) {
     shared.pong = createObject(UG_STRING,sdsnew("+PONG\r\n"));
     shared.queued = createObject(UG_STRING,sdsnew("+QUEUED\r\n"));
     shared.wrongtypeerr = createObject(UG_STRING,sdsnew(
-        "-ERR Operation against a key holding the wrong kind of value\r\n"));
+                                           "-ERR Operation against a key holding the wrong kind of value\r\n"));
     shared.nokeyerr = createObject(UG_STRING,sdsnew(
-        "-ERR no such key\r\n"));
+                                       "-ERR no such key\r\n"));
     shared.syntaxerr = createObject(UG_STRING,sdsnew(
-        "-ERR syntax error\r\n"));
+                                        "-ERR syntax error\r\n"));
     shared.sameobjecterr = createObject(UG_STRING,sdsnew(
-        "-ERR source and destination objects are the same\r\n"));
+                                            "-ERR source and destination objects are the same\r\n"));
     shared.outofrangeerr = createObject(UG_STRING,sdsnew(
-        "-ERR index out of range\r\n"));
+                                            "-ERR index out of range\r\n"));
     shared.noscripterr = createObject(UG_STRING,sdsnew(
-        "-NOSCRIPT No matching script. Please use EVAL.\r\n"));
+                                          "-NOSCRIPT No matching script. Please use EVAL.\r\n"));
     shared.loadingerr = createObject(UG_STRING,sdsnew(
-        "-LOADING Redis is loading the dataset in memory\r\n"));
+                                         "-LOADING Redis is loading the dataset in memory\r\n"));
     shared.slowscripterr = createObject(UG_STRING,sdsnew(
-        "-BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE.\r\n"));
+                                            "-BUSY Redis is busy running a script. You can only call SCRIPT KILL or SHUTDOWN NOSAVE.\r\n"));
     shared.masterdownerr = createObject(UG_STRING,sdsnew(
-        "-MASTERDOWN Link with MASTER is down and slave-serve-stale-data is set to 'no'.\r\n"));
+                                            "-MASTERDOWN Link with MASTER is down and slave-serve-stale-data is set to 'no'.\r\n"));
     shared.bgsaveerr = createObject(UG_STRING,sdsnew(
-        "-MISCONF Redis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error.\r\n"));
+                                        "-MISCONF Redis is configured to save RDB snapshots, but is currently not able to persist on disk. Commands that may modify the data set are disabled. Please check Redis logs for details about the error.\r\n"));
     shared.roslaveerr = createObject(UG_STRING,sdsnew(
-        "-READONLY You can't write against a read only slave.\r\n"));
+                                         "-READONLY You can't write against a read only slave.\r\n"));
     shared.oomerr = createObject(UG_STRING,sdsnew(
-        "-OOM command not allowed when used memory > 'maxmemory'.\r\n"));
+                                     "-OOM command not allowed when used memory > 'maxmemory'.\r\n"));
     shared.execaborterr = createObject(UG_STRING,sdsnew(
-        "-EXECABORT Transaction discarded because of previous errors.\r\n"));
+                                           "-EXECABORT Transaction discarded because of previous errors.\r\n"));
     shared.space = createObject(UG_STRING,sdsnew(" "));
     shared.colon = createObject(UG_STRING,sdsnew(":"));
     shared.plus = createObject(UG_STRING,sdsnew("+"));
 
     for (j = 0; j < UG_SHARED_SELECT_CMDS; j++) {
         shared.select[j] = createObject(UG_STRING,
-            sdscatprintf(sdsempty(),"select %d\r\n", j));
+                                        sdscatprintf(sdsempty(),"select %d\r\n", j));
     }
     shared.messagebulk = createStringObject("$7\r\nmessage\r\n",13);
     shared.pmessagebulk = createStringObject("$8\r\npmessage\r\n",14);
@@ -537,19 +548,18 @@ void createSharedObjects(void) {
     shared.lpop = createStringObject("LPOP",4);
     shared.lpush = createStringObject("LPUSH",5);
     for (j = 0; j < UG_SHARED_INTEGERS; j++) {
-        shared.integers[j] = createObject(UG_STRING,(void*)(long)j);
+        shared.integers[j] = createObject(UG_STRING,(void *)(long)j);
         shared.integers[j]->encoding = UG_ENCODING_INT;
     }
     for (j = 0; j < UG_SHARED_BULKHDR_LEN; j++) {
         shared.mbulkhdr[j] = createObject(UG_STRING,
-            sdscatprintf(sdsempty(),"*%d\r\n",j));
+                                          sdscatprintf(sdsempty(),"*%d\r\n",j));
         shared.bulkhdr[j] = createObject(UG_STRING,
-            sdscatprintf(sdsempty(),"$%d\r\n",j));
+                                         sdscatprintf(sdsempty(),"$%d\r\n",j));
     }
 }
 
-void destroySharedObjects(void) 
-{
+void destroySharedObjects(void) {
     int j;
     decrRefCount(shared.crlf);
     decrRefCount(shared.ok);
@@ -563,22 +573,22 @@ void destroySharedObjects(void)
     decrRefCount(shared.emptymultibulk );
     decrRefCount(shared.pong );
     decrRefCount(shared.queued );
-    decrRefCount(shared.wrongtypeerr); 
-    decrRefCount(shared.nokeyerr); 
+    decrRefCount(shared.wrongtypeerr);
+    decrRefCount(shared.nokeyerr);
     decrRefCount(shared.syntaxerr );
-    decrRefCount(shared.sameobjecterr); 
+    decrRefCount(shared.sameobjecterr);
     decrRefCount(shared.outofrangeerr );
-    decrRefCount(shared.noscripterr); 
-    decrRefCount(shared.loadingerr); 
+    decrRefCount(shared.noscripterr);
+    decrRefCount(shared.loadingerr);
     decrRefCount(shared.slowscripterr );
-    decrRefCount(shared.masterdownerr); 
-    decrRefCount(shared.bgsaveerr); 
+    decrRefCount(shared.masterdownerr);
+    decrRefCount(shared.bgsaveerr);
     decrRefCount(shared.roslaveerr );
-    decrRefCount(shared.oomerr); 
-    decrRefCount(shared.execaborterr); 
+    decrRefCount(shared.oomerr);
+    decrRefCount(shared.execaborterr);
     decrRefCount(shared.space );
     decrRefCount(shared.colon );
-    decrRefCount(shared.plus); 
+    decrRefCount(shared.plus);
 
     for (j = 0; j < UG_SHARED_SELECT_CMDS; j++) {
         decrRefCount(shared.select[j] );
@@ -597,18 +607,17 @@ void destroySharedObjects(void)
         decrRefCount(shared.integers[j] );
     }
     for (j = 0; j < UG_SHARED_BULKHDR_LEN; j++) {
-        decrRefCount(shared.mbulkhdr[j]); 
+        decrRefCount(shared.mbulkhdr[j]);
         decrRefCount(shared.bulkhdr[j] );
     }
 
 }
 
-int equalObjects( robj* a, robj* b )
-{
+int equalObjects( robj *a, robj *b ) {
     int cmp;
     int l1,l2;
     if (a->encoding == UG_ENCODING_INT &&
-        b->encoding == UG_ENCODING_INT)
+            b->encoding == UG_ENCODING_INT)
         return a->ptr == b->ptr;
 
     a = getDecodedObject(a);

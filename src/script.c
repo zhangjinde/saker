@@ -1,5 +1,5 @@
 
-const char* builtin_scripts[] = {
+const char *builtin_scripts[] = {
     "LOG_FATAL    = 1 \n"
     "LOG_CRITICAL = 2 \n"
     "LOG_ERROR    = 3 \n"

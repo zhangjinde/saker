@@ -14,7 +14,7 @@
 
 void asyncCloseClientOnOutputBufferLimitReached(ugClient *c);
 
-static void setProtocolError(ugClient* c, int pos);
+static void setProtocolError(ugClient *c, int pos);
 
 
 /* Call() is the core of  execution of a command */
@@ -25,7 +25,7 @@ static void call(ugClient *c, int flags) {
     c->cmd->proc(c);
 
     duration = ustime()-start;
-    
+
     c->cmd->microseconds += duration;
     c->cmd->calls++;
 }
@@ -35,9 +35,8 @@ size_t zmalloc_size_sds(sds s) {
 }
 
 /* Functions managing dictionary of callbacks for pub/sub. */
-static unsigned int callbackHash(const void* key)
-{    
-    robj *o = (robj*) key;
+static unsigned int callbackHash(const void *key) {
+    robj *o = (robj *) key;
 
     if (o->encoding == UG_ENCODING_RAW) {
         return dictGenHashFunction(o->ptr, (int)sdslen((sds)o->ptr));
@@ -46,7 +45,7 @@ static unsigned int callbackHash(const void* key)
             char buf[32];
             int len;
             len = ll2string(buf, 32, (long)o->ptr);
-            return dictGenHashFunction((unsigned char*)buf, len);
+            return dictGenHashFunction((unsigned char *)buf, len);
         } else {
             unsigned int hash;
 
@@ -58,15 +57,13 @@ static unsigned int callbackHash(const void* key)
     }
 }
 
-static int callbackKeyCompare(void* privdata, const void* key1, const void* key2)
-{
-    robj *o1 = (robj*) key1, *o2 = (robj*) key2;
+static int callbackKeyCompare(void *privdata, const void *key1, const void *key2) {
+    robj *o1 = (robj *) key1, *o2 = (robj *) key2;
 
     return equalObjects(o1, o2);
 }
 
-static void callbackKeyDestructor(void* privdata, void* key)
-{
+static void callbackKeyDestructor(void *privdata, void *key) {
     DICT_NOTUSED(privdata);
 
     if (key == NULL) return; /* Values of swapped out keys as set to NULL */
@@ -84,35 +81,30 @@ static dictType callbackDict = {
     NULL
 };
 
-static int listMatchPubsubPattern(void* a, void* b)
-{
+static int listMatchPubsubPattern(void *a, void *b) {
     sds s1 = (sds) a;
     sds s2 = (sds) b;
     return strcmp(s1, s2);
 }
 
-static void listFreePubsubPattern(void* ptr)
-{
+static void listFreePubsubPattern(void *ptr) {
     sds s = ptr;
     sdsfree(s);
 }
 
-static void listFreeReplyObjects(void* ptr)
-{
+static void listFreeReplyObjects(void *ptr) {
     sds s = ptr;
     sdsfree(s);
 }
 
-static int  listMatchClientObjects(void* a, void* b)
-{
-    ugClient* ca = (ugClient*) a;
-    ugClient* cb = (ugClient*) b;
+static int  listMatchClientObjects(void *a, void *b) {
+    ugClient *ca = (ugClient *) a;
+    ugClient *cb = (ugClient *) b;
     return ca->fd == cb->fd;
 }
 
-static void listDeleteClientObjects(void* cl)
-{
-    ugClient* c = (ugClient*) cl;
+static void listDeleteClientObjects(void *cl) {
+    ugClient *c = (ugClient *) cl;
     resetClient(c);
     if (c->querybuf) sdsfree(c->querybuf);
 
@@ -136,8 +128,7 @@ static void listDeleteClientObjects(void* cl)
     c = NULL;
 }
 
-sds getClientInfoString(ugClient* client)
-{
+sds getClientInfoString(ugClient *client) {
     sds s = sdsnew("clientinfo:");
     char ip[32];
     int port = 0;
@@ -148,8 +139,7 @@ sds getClientInfoString(ugClient* client)
 
 /* Helper function. Trims query buffer to make the function that processes
  * multi bulk requests idempotent. */
-static void setProtocolError(ugClient* c, int pos)
-{
+static void setProtocolError(ugClient *c, int pos) {
     sds client = getClientInfoString(c);
     LOG_ERROR("Protocol error from client: %s", client);
     sdsfree(client);
@@ -166,9 +156,8 @@ static void freeClientArgv(ugClient *c) {
 }
 
 
-ugClient* createClient(int fd)
-{
-    ugClient* c = zmalloc(sizeof(ugClient));
+ugClient *createClient(int fd) {
+    ugClient *c = zmalloc(sizeof(ugClient));
     memset(c,0,sizeof(ugClient));
     if (fd != -1) {
         anetNonBlock(NULL,fd);
@@ -186,7 +175,7 @@ ugClient* createClient(int fd)
             return NULL;
         }
     }
-    
+
     if (server.config->password == NULL) {
         c->authenticated = 1;
     }
@@ -211,58 +200,52 @@ ugClient* createClient(int fd)
     if (!server.clients) {
         server.clients = createClientlist();
     }
-	
+
     listAddNodeTail(server.clients, c);
 
     return c;
 }
 
-void  freeClient(void* vc)
-{
-    ugClient* c = (ugClient*) vc;
-    listNode* node = listSearchKey(server.clients, c);
+void  freeClient(void *vc) {
+    ugClient *c = (ugClient *) vc;
+    listNode *node = listSearchKey(server.clients, c);
     if (node) {
         listDelNode(server.clients, node);
     }
 
 }
 
-void freeClientAsync(void *c)
-{
+void freeClientAsync(void *c) {
     freeClient(c);
 }
 
-void  resetClient(ugClient* c)
-{
+void  resetClient(ugClient *c) {
     if (c->argc) {
         freeClientArgv(c);
         zfree(c->argv);
         c->argv = NULL;
     }
-    
+
     c->cmd = NULL;
     c->multibulklen = 0;
     c->reqtype = 0;
     c->bulklen = -1;
 }
 
-list* createClientlist( )
-{
-    list* clients = listCreate();
+list *createClientlist( ) {
+    list *clients = listCreate();
     listSetFreeMethod(clients, listDeleteClientObjects);
     listSetMatchMethod(clients, listMatchClientObjects);
     return clients;
 }
 
-void freeClientlist(list* l)
-{
+void freeClientlist(list *l) {
     if(l) {
         listRelease(l);
     }
 }
 
-int  processLineBuffer(ugClient* c)
-{
+int  processLineBuffer(ugClient *c) {
     char *newline = strstr(c->querybuf, "\r\n");
     int argc, j;
     sds *argv;
@@ -286,7 +269,7 @@ int  processLineBuffer(ugClient* c)
 
     /* Setup argv array on client structure */
     if (c->argv) zfree(c->argv);
-    c->argv = zmalloc(sizeof(robj*)*argc);
+    c->argv = zmalloc(sizeof(robj *)*argc);
 
     /* Create redis objects for all arguments. */
     for (c->argc = 0, j = 0; j < argc; j++) {
@@ -301,9 +284,8 @@ int  processLineBuffer(ugClient* c)
     return UGOK;
 }
 
-int  processMultbuff(ugClient* c)
-{
-    char* newline = NULL;
+int  processMultbuff(ugClient *c) {
+    char *newline = NULL;
     int pos = 0, ok;
     long long ll;
 
@@ -345,7 +327,7 @@ int  processMultbuff(ugClient* c)
 
         /* Setup argv array on client structure */
         if (c->argv) zfree(c->argv);
-        c->argv = zmalloc(sizeof(robj*)*c->multibulklen);
+        c->argv = zmalloc(sizeof(robj *)*c->multibulklen);
     }
 
     ugAssert(c->multibulklen > 0);
@@ -414,7 +396,7 @@ int  processMultbuff(ugClient* c)
                 c->querybuf = sdsMakeRoomFor(c->querybuf,c->bulklen+2);
                 pos = 0;
             } else {
-                    c->argv[c->argc++] =
+                c->argv[c->argc++] =
                     createStringObject(c->querybuf+pos, c->bulklen);
                 pos += c->bulklen+2;
             }
@@ -433,8 +415,7 @@ int  processMultbuff(ugClient* c)
     return UGERR;
 }
 
-void  processInputBuffer(ugClient* c)
-{
+void  processInputBuffer(ugClient *c) {
     while(sdslen(c->querybuf)) {
         if (c->flags & UG_CLOSE_AFTER_REPLY) return;
 
@@ -467,8 +448,7 @@ void  processInputBuffer(ugClient* c)
 }
 
 
-int  processCommand(ugClient* c)
-{
+int  processCommand(ugClient *c) {
     if (!strcasecmp(c->argv[0]->ptr,"quit")) {
         addReply(c,shared.ok);
         c->flags |= UG_CLOSE_AFTER_REPLY;
@@ -479,13 +459,13 @@ int  processCommand(ugClient* c)
         return UGOK;
     }
     c->cmd = lookupCommand((sds)c->argv[0]->ptr)  ;
-    if (!c->cmd) {        
+    if (!c->cmd) {
         addReplyErrorFormat(c,"unknown command '%s'",
-            (char*)c->argv[0]->ptr);
+                            (char *)c->argv[0]->ptr);
         return UGOK;
     }  else if (c->cmd->params != -1 && c->argc-1 != c->cmd->params) {
         addReplyErrorFormat(c,"wrong number of arguments for '%s' command",
-        c->cmd->name);
+                            c->cmd->name);
         return UGOK;
     }
     call(c, 0);
@@ -495,7 +475,7 @@ int  processCommand(ugClient* c)
     //    c->flags |= UG_CLOSE_AFTER_REPLY;
     //    return UGERR;
     //}
-    
+
 
     return UGOK;
 }
@@ -551,8 +531,7 @@ void _addReplyObjectToList(ugClient *c, robj *o) {
 
         /* Append to this object when possible. */
         if (tail->ptr != NULL &&
-            sdslen(tail->ptr)+sdslen(o->ptr) <= UG_REPLY_CHUNK_BYTES)
-        {
+                sdslen(tail->ptr)+sdslen(o->ptr) <= UG_REPLY_CHUNK_BYTES) {
             c->reply_bytes -= (unsigned long)zmalloc_size_sds(tail->ptr);
             tail = dupLastObjectIfNeeded(c->reply);
             tail->ptr = sdscatlen(tail->ptr,o->ptr,sdslen(o->ptr));
@@ -584,8 +563,7 @@ void _addReplySdsToList(ugClient *c, sds s) {
 
         /* Append to this object when possible. */
         if (tail->ptr != NULL &&
-            sdslen(tail->ptr)+sdslen(s) <= UG_REPLY_CHUNK_BYTES)
-        {
+                sdslen(tail->ptr)+sdslen(s) <= UG_REPLY_CHUNK_BYTES) {
             c->reply_bytes -= (unsigned long)zmalloc_size_sds(tail->ptr);
             tail = dupLastObjectIfNeeded(c->reply);
             tail->ptr = sdscatlen(tail->ptr,s,sdslen(s));
@@ -614,8 +592,7 @@ void _addReplyStringToList(ugClient *c, char *s, size_t len) {
 
         /* Append to this object when possible. */
         if (tail->ptr != NULL &&
-            sdslen(tail->ptr)+len <= UG_REPLY_CHUNK_BYTES)
-        {
+                sdslen(tail->ptr)+len <= UG_REPLY_CHUNK_BYTES) {
             c->reply_bytes -= (unsigned long)zmalloc_size_sds(tail->ptr);
             tail = dupLastObjectIfNeeded(c->reply);
             tail->ptr = sdscatlen(tail->ptr,s,len);
@@ -751,7 +728,7 @@ void *addDeferredMultiBulkLength(ugClient *c) {
 
 /* Populate the length object and try gluing it to the next chunk. */
 void setDeferredMultiBulkLength(ugClient *c, void *node, long length) {
-    listNode *ln = (listNode*)node;
+    listNode *ln = (listNode *)node;
     robj *len, *next;
 
     /* Abort when *node is NULL (see addDeferredMultiBulkLength). */

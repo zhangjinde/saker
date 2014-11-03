@@ -5,9 +5,8 @@
 #include <string.h>
 
 #ifdef _WIN32
-static void xpathtranslate(char* value, const char sep)
-{
-    char* ch;
+static void xpathtranslate(char *value, const char sep) {
+    char *ch;
     for (ch = value; *ch != '\0'; ++ch) {
         if (*ch == '/' || *ch == '\\') {
             *ch = sep;
@@ -16,8 +15,7 @@ static void xpathtranslate(char* value, const char sep)
 }
 #endif
 
-int xchdir(const char* path)
-{
+int xchdir(const char *path) {
     int z = UGERR;
 #ifdef _WIN32
     z = !SetCurrentDirectory(path);
@@ -28,8 +26,7 @@ int xchdir(const char* path)
 }
 
 
-int xisabsolutepath(const char* path)
-{
+int xisabsolutepath(const char *path) {
     if (path[0] == '/' ||
             path[0] == '\\' ||
             path[0] == '$' ||
@@ -42,8 +39,7 @@ int xisabsolutepath(const char* path)
 }
 
 
-int xgetcwd(char* path)
-{
+int xgetcwd(char *path) {
     int result = UGERR;
     if (NULL == path)
         return result;
@@ -62,8 +58,7 @@ int xgetcwd(char* path)
 }
 
 
-int xmkdir(const char* path)
-{
+int xmkdir(const char *path) {
     int z = UGERR;
     if (path) {
 #ifdef _WIN32
@@ -75,9 +70,8 @@ int xmkdir(const char* path)
     return z;
 }
 
-int xgetapppath(char* path)
-{
-    char* p = NULL;
+int xgetapppath(char *path) {
+    char *p = NULL;
 #ifdef _WIN32
     DWORD len = GetModuleFileName(NULL, path, MAX_STRING_LEN);
 #else
@@ -96,8 +90,7 @@ int xgetapppath(char* path)
 
 
 
-int xchtoapppath(void)
-{
+int xchtoapppath(void) {
     char path[MAX_STRING_LEN]= {0};
     if (xgetapppath(path)==UGERR) {
         fprintf(stderr,"locate app path failed");

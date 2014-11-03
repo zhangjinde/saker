@@ -16,21 +16,18 @@
 #endif
 #define bytetok(x)  (((x) + 512) >> 10)
 
-static inline char* skip_ws(const char* p)
-{
+static inline char *skip_ws(const char *p) {
     while ((*p == ' ')) p++;
-    return (char*)p;
+    return (char *)p;
 }
 
-static inline char* skip_token(const char* p)
-{
+static inline char *skip_token(const char *p) {
     while ((*p) == ' ') p++;
     while (*p && !(*p==' ')) p++;
-    return (char*)p;
+    return (char *)p;
 }
 
-static void xfrm_cmdline(char* p, int len)
-{
+static void xfrm_cmdline(char *p, int len) {
     while (--len > 0) {
         if (*p == '\0') {
             *p = ' ';
@@ -49,8 +46,7 @@ static uint64_t previous_total = 0;
  * idle values in proc stat.
  * Kernels around 2.6 and greater report these PLUS iowait, irq, softirq,
  * and steal */
-static int determineLongStat(char* buf)
-{
+static int determineLongStat(char *buf) {
     unsigned long long iowait = 0;
     /* scanf will either return -1 or 1 because there is only 1 assignment */
     if (sscanf(buf, "%*s %*d %*d %*d %*d %llu", &iowait) > 0) {
@@ -60,8 +56,7 @@ static int determineLongStat(char* buf)
 }
 
 
-static unsigned long long calc_cpu_total(void)
-{
+static unsigned long long calc_cpu_total(void) {
     unsigned long long total = 0;
     unsigned long long t = 0;
     int rc;
@@ -75,7 +70,7 @@ static unsigned long long calc_cpu_total(void)
     unsigned long long irq = 0;
     unsigned long long softirq = 0;
     unsigned long long steal = 0;
-    const char* mytemplate =NULL;
+    const char *mytemplate =NULL;
 
     ps = open("/proc/stat", O_RDONLY);
     rc = read(ps, line, sizeof(line));
@@ -96,8 +91,7 @@ static unsigned long long calc_cpu_total(void)
 }
 
 
-static void update_procname(struct ProcessInfo* proc, char* cmd)
-{
+static void update_procname(struct ProcessInfo *proc, char *cmd) {
     if (proc->name == NULL) {
         proc->name = xstrdup(cmd);
     } else if (strcmp(proc->name, cmd) != 0) {
@@ -106,8 +100,7 @@ static void update_procname(struct ProcessInfo* proc, char* cmd)
     }
 }
 
-static void calcProcesssPCPU(struct ProcessInfo* proc, uint64_t elapsed)
-{
+static void calcProcesssPCPU(struct ProcessInfo *proc, uint64_t elapsed) {
     if ((proc->pcpu = (proc->user_time + proc->kernel_time -  proc->previous_user_time - proc->previous_kernel_time ) / (double)elapsed) < 0.0001) {
         proc->pcpu = 0;
     }
@@ -116,8 +109,7 @@ static void calcProcesssPCPU(struct ProcessInfo* proc, uint64_t elapsed)
     proc->previous_kernel_time = proc->kernel_time;
 }
 
-static void calcProcesssPMEM(struct ProcessInfo* proc)
-{
+static void calcProcesssPMEM(struct ProcessInfo *proc) {
     static uint64_t totalram  = 0;
     if (totalram == 0) {
         struct sysinfo  info;
@@ -127,8 +119,7 @@ static void calcProcesssPMEM(struct ProcessInfo* proc)
     proc->pmem = proc->rss*1024 / (double)totalram * 100;
 }
 
-int updateProcess(struct ProcessInfo* proc)
-{
+int updateProcess(struct ProcessInfo *proc) {
     int  ret = UGERR;
     char buffer[4096], *p, *q;
     int fd, len;
@@ -148,10 +139,10 @@ int updateProcess(struct ProcessInfo* proc)
         /* (theres no sense in reading more than we can fit) */
         if ((len = read(fd, buffer, 255)) > 1) {
             buffer[len] = '\0';
-        if (proc->fullname && (strcmp(proc->fullname, buffer)!=0)) {
-            zfree(proc->fullname);
-            proc->fullname = xstrdup(buffer);
-        }
+            if (proc->fullname && (strcmp(proc->fullname, buffer)!=0)) {
+                zfree(proc->fullname);
+                proc->fullname = xstrdup(buffer);
+            }
             xfrm_cmdline(buffer, len);
             update_procname(proc, buffer);
         } else {
@@ -260,11 +251,10 @@ int updateProcess(struct ProcessInfo* proc)
 }
 
 
-int topUpdate()
-{
-    DIR* dir;
+int topUpdate() {
+    DIR *dir;
     pid_t pid;
-    struct dirent* entry;
+    struct dirent *entry;
     uint64_t  elapsed = calc_cpu_total();
 
     if (!(dir = opendir("/proc"))) {
@@ -281,7 +271,7 @@ int topUpdate()
         }
 
         if (sscanf(entry->d_name, "%d", &pid) > 0) {
-            struct ProcessInfo* p;
+            struct ProcessInfo *p;
 
             p = findProcess(pid);
             if (!p) {

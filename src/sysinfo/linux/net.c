@@ -15,11 +15,10 @@ typedef struct {
 net_stat_t;
 
 //if_name not used now ,but maybe use in the futhre
-static int  get_net_stat(const char* if_name, net_stat_t* result)
-{
+static int  get_net_stat(const char *if_name, net_stat_t *result) {
     int ret = UGERR;
     char    line[MAX_STRING_LEN], name[MAX_STRING_LEN], *p;
-    FILE*    f;
+    FILE    *f;
 
     assert(result);
     net_stat_t  tmp_net_stat;
@@ -70,11 +69,10 @@ static int  get_net_stat(const char* if_name, net_stat_t* result)
     return ret;
 }
 
-int NET_IF_IN(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int NET_IF_IN(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     net_stat_t  ns;
 
-    static const char* if_name = "lo";
+    static const char *if_name = "lo";
 
     if (UGOK != get_net_stat(if_name, &ns)) {
 
@@ -87,11 +85,10 @@ int NET_IF_IN(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result
     return UGOK;
 }
 
-int NET_IF_OUT(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int NET_IF_OUT(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     net_stat_t  ns;
 
-    static const char* if_name = "lo";
+    static const char *if_name = "lo";
 
     if (UGOK != get_net_stat(if_name, &ns))
         return UGERR;
@@ -101,11 +98,10 @@ int NET_IF_OUT(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* resul
     return UGOK;
 }
 
-int NET_IF_TOTAL(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int NET_IF_TOTAL(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     net_stat_t  ns;
 
-    static const char* if_name = "lo";
+    static const char *if_name = "lo";
 
     if (UGOK != get_net_stat(if_name, &ns))
         return UGERR;
@@ -115,11 +111,10 @@ int NET_IF_TOTAL(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* res
     return UGOK;
 }
 
-int NET_IF_COLLISIONS(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int NET_IF_COLLISIONS(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     net_stat_t  ns;
 
-    static const char* if_name = "lo";
+    static const char *if_name = "lo";
 
     if (UGOK != get_net_stat(if_name, &ns))
         return UGERR;

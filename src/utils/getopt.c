@@ -73,15 +73,15 @@
 int opterr = 1;
 int optind = 1;
 int optopt;
-char* optarg;
+char *optarg;
 
 int
-xgetopt(int argc, char** argv, char* opts)
+xgetopt(int argc, char **argv, char *opts)
 
 {
     static int sp = 1;
     register int c;
-    register char* cp;
+    register char *cp;
 
     if(sp == 1) {
         if(optind >= argc ||

@@ -1,11 +1,10 @@
 #include "core_declarer.h"
 #include "utils/path.h"
 
-int core_mkdir(lua_State* L)
-{
+int core_mkdir(lua_State *L) {
     int z;
     int top = lua_gettop(L);
-    const char* path = NULL;
+    const char *path = NULL;
     int idx = 0;
     for ( ; idx<top; ++idx) {
         path = luaL_checkstring(L, idx+1);

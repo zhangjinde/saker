@@ -4,8 +4,7 @@
 
 
 
-int VM_MEMORY_TOTAL(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_TOTAL(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     struct sysinfo  info;
 
     if (0 != sysinfo(&info)) {
@@ -18,8 +17,7 @@ int VM_MEMORY_TOTAL(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* 
     return UGOK;
 }
 
-int VM_MEMORY_FREE(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_FREE(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     struct sysinfo  info;
 
     if (0 != sysinfo(&info)) {
@@ -32,8 +30,7 @@ int VM_MEMORY_FREE(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* r
     return UGOK;
 }
 
-int VM_MEMORY_BUFFERS(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_BUFFERS(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     struct sysinfo  info;
 
     if (0 != sysinfo(&info)) {
@@ -46,10 +43,9 @@ int VM_MEMORY_BUFFERS(const char* cmd, int argc,const char** argv,SYSINFO_RESULT
     return UGOK;
 }
 
-int VM_MEMORY_CACHED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
-    FILE*        f;
-    char*        t, c[MAX_STRING_LEN];
+int VM_MEMORY_CACHED(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
+    FILE        *f;
+    char        *t, c[MAX_STRING_LEN];
     uint64_t    res = 0;
 
     if (NULL == (f = fopen("/proc/meminfo", "r"))) {
@@ -84,8 +80,7 @@ int VM_MEMORY_CACHED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT*
     return UGOK;
 }
 
-int VM_MEMORY_USED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_USED(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     struct sysinfo  info;
 
     if (0 != sysinfo(&info)) {
@@ -98,8 +93,7 @@ int VM_MEMORY_USED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* r
     return UGOK;
 }
 
-int VM_MEMORY_PUSED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_PUSED(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     struct sysinfo  info;
 
     if (0 != sysinfo(&info) || 0 == info.totalram) {
@@ -112,8 +106,7 @@ int VM_MEMORY_PUSED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* 
     return UGOK;
 }
 
-int VM_MEMORY_AVAILABLE(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_AVAILABLE(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     struct sysinfo  info;
     SYSINFO_RESULT  result_tmp;
 
@@ -134,8 +127,7 @@ int VM_MEMORY_AVAILABLE(const char* cmd, int argc,const char** argv,SYSINFO_RESU
     return UGOK;
 }
 
-int VM_MEMORY_PAVAILABLE(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_PAVAILABLE(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     struct sysinfo  info;
     SYSINFO_RESULT  result_tmp;
     uint64_t    available, total;
@@ -165,8 +157,7 @@ int VM_MEMORY_PAVAILABLE(const char* cmd, int argc,const char** argv,SYSINFO_RES
     return UGOK;
 }
 
-int VM_MEMORY_SHARED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_SHARED(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
 #ifdef KERNEL_2_4
     struct sysinfo  info;
 

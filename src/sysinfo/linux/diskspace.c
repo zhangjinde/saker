@@ -10,9 +10,8 @@
 #endif
 
 
-static int  get_fs_size_stat(const char* fsname, uint64_t* total, uint64_t* free,
-                             uint64_t* used, double* pfree, double* pused)
-{
+static int  get_fs_size_stat(const char *fsname, uint64_t *total, uint64_t *free,
+                             uint64_t *used, double *pfree, double *pused) {
     struct statvfs      s;
     assert(fsname);
 
@@ -44,9 +43,8 @@ static int  get_fs_size_stat(const char* fsname, uint64_t* total, uint64_t* free
 }
 
 
-int VFS_FS_SIZE(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
-    char* mode = NULL;
+int VFS_FS_SIZE(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
+    char *mode = NULL;
     uint64_t      total, free, used;
     double      pfree, pused;
     if (argc == 0) {

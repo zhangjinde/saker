@@ -7,13 +7,13 @@
 #include "utils/logger.h"
 #include "common/defines.h"
 
-static const char* default_configfile="config";
+static const char *default_configfile="config";
 
 
 /**
  *   for init config
  */
-static const char* luacode = LOGFILE_PATH"   ./"APPNAME".log"ENDFLAG
+static const char *luacode = LOGFILE_PATH"   ./"APPNAME".log"ENDFLAG
                              LOGFILE_LEVEL"  debug"ENDFLAG
                              SCRIPT_DIR"  ./script"ENDFLAG
                              PIDFILE_DIR"  ./pid"ENDFLAG
@@ -22,20 +22,19 @@ static const char* luacode = LOGFILE_PATH"   ./"APPNAME".log"ENDFLAG
                              LOCAL_PORT"   12007"ENDFLAG
                              TOP_MODE" 3000"ENDFLAG
                              MAXCLIENTS" 1000"ENDFLAG
-                             "#"PASSWORD" qazplm"ENDFLAG 
+                             "#"PASSWORD" qazplm"ENDFLAG
                              ;
 
 
-static void parse_string(config_t* config, char* configstr)
-{
-    char* err = NULL;
+static void parse_string(config_t *config, char *configstr) {
+    char *err = NULL;
     int linenum = 0, totlines, i;
-    sds* lines;
+    sds *lines;
 
     lines = sdssplitlen(configstr, strlen(configstr), "\n", 1, &totlines);
 
     for (i = 0; i < totlines; i++) {
-        sds* argv;
+        sds *argv;
         int argc;
 
         linenum = i+1;
@@ -111,13 +110,13 @@ static void parse_string(config_t* config, char* configstr)
         else if (!xstrcasecmp(argv[0], BIND) && argc == 2) {
             zfree(config->bind);
             config->bind = xstrdup(argv[1]);
-        }else if (!xstrcasecmp(argv[0], LOCAL_PORT) && argc == 2) {
+        } else if (!xstrcasecmp(argv[0], LOCAL_PORT) && argc == 2) {
             config->port = atoi(argv[1]);
             if (config->port < 0 || config->port > 65535) {
                 err = "Invalid port";
                 goto loaderr;
             }
-        }else if (!xstrcasecmp(argv[0], MAXCLIENTS) && argc == 2) {
+        } else if (!xstrcasecmp(argv[0], MAXCLIENTS) && argc == 2) {
             config->maxclients = atoi(argv[1]);
             if (config->port < 0) {
                 err = "Invalid "MAXCLIENTS;
@@ -141,9 +140,8 @@ loaderr:
 }
 
 
-config_t*  createConfig(const char* filename )
-{
-    config_t* pconfig = zmalloc(sizeof(config_t));
+config_t  *createConfig(const char *filename ) {
+    config_t *pconfig = zmalloc(sizeof(config_t));
     sds config = sdsempty();
     char buf[MAX_STRING_LEN+1];
     memset(pconfig,0,sizeof(config_t));
@@ -155,7 +153,7 @@ config_t*  createConfig(const char* filename )
     }
     /* Load the file content */
     if (filename) {
-        FILE* fp;
+        FILE *fp;
         if (filename[0] == '-' && filename[1] == '\0') {
             fp = stdin;
         } else {
@@ -175,8 +173,7 @@ config_t*  createConfig(const char* filename )
 }
 
 
-void freeConfig(config_t* pconfig)
-{
+void freeConfig(config_t *pconfig) {
     if (!pconfig) {
         return;
     }

@@ -7,8 +7,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#ifndef _WIN32
 #include <sys/types.h>  /* for getpid */
 #include <unistd.h>    /* for getpid */
+#endif
 
 #include "common/defines.h"
 #include "common/common.h"
@@ -16,7 +18,7 @@
 #include "utils/error.h"
 
 
-static const char* const log_array[]= {"[FATAL]",
+static const char *const log_array[]= {"[FATAL]",
                                        "[CRITICAL]",
                                        "[ERROR]",
                                        "[WARNING]",
@@ -28,12 +30,11 @@ static const char* const log_array[]= {"[FATAL]",
 
 
 static int   loglv    = LOGTRACE;
-static const  char* const defaultfilename =  APPNAME".log";
-static char* logfilename =  NULL    ;
+static const  char *const defaultfilename =  APPNAME".log";
+static char *logfilename =  NULL    ;
 
-int logger_open(const char* logfile, int level)
-{
-    FILE* logfp = fopen(logfile, "a");
+int logger_open(const char *logfile, int level) {
+    FILE *logfp = fopen(logfile, "a");
     int len = strlen(logfile) + 1;
     char buff[MAX_STRING_LEN]= {0};
     if (logfp == NULL) {
@@ -53,7 +54,7 @@ int logger_open(const char* logfile, int level)
             }
         }
 
-        logfilename = (char*) zmalloc(len);
+        logfilename = (char *) zmalloc(len);
         memset(logfilename, 0, len);
         strcpy(logfilename, buff);
         strcat(logfilename, logfile);
@@ -62,19 +63,18 @@ int logger_open(const char* logfile, int level)
     return UGOK;
 }
 
-void logger_write(int level, const char* file, int line, const char* fmt, ...)
-{
+void logger_write(int level, const char *file, int line, const char *fmt, ...) {
     char buffer[128]= {0};
-    FILE* logfp = NULL;
+    FILE *logfp = NULL;
     va_list vl;
     time_t now ;
-    struct tm* ptm = NULL;
+    struct tm *ptm = NULL;
 
     if (level > loglv ) {
         return;
     }
     if (NULL == logfilename) {
-        logfilename = (char*) defaultfilename;
+        logfilename = (char *) defaultfilename;
     }
     logfp = fopen(logfilename, "a");
     if (logfp == NULL) {
@@ -88,8 +88,11 @@ void logger_write(int level, const char* file, int line, const char* fmt, ...)
     snprintf(buffer, 128, "[%04d-%02d-%02d %02d:%02d:%02d]",
              ptm->tm_year + 1900, ptm->tm_mon + 1, ptm->tm_mday,
              ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
-
+#ifndef _WIN32
     fprintf(logfp, "%s %s [%d] [%s:%d] ",buffer, log_array[level-1], getpid(), file, line);
+#else 
+	fprintf(logfp, "%s %s [%s:%d] ",buffer, log_array[level-1], file, line);
+#endif
 
     va_start(vl,fmt);
     vfprintf(logfp,fmt,vl);
@@ -101,8 +104,7 @@ void logger_write(int level, const char* file, int line, const char* fmt, ...)
     }
 }
 
-void logger_close()
-{
+void logger_close() {
     if ((logfilename != NULL) &&
             (logfilename != defaultfilename)) {
         zfree(logfilename);

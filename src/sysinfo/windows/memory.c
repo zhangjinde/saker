@@ -2,8 +2,7 @@
 #include "utils/string.h"
 
 
-int VM_MEMORY_TOTAL(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_TOTAL(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     MEMORYSTATUSEX      ms_ex;
     ms_ex.dwLength = sizeof (ms_ex);
     GlobalMemoryStatusEx(&ms_ex);
@@ -11,8 +10,7 @@ int VM_MEMORY_TOTAL(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* 
     return UGOK;
 }
 
-int VM_MEMORY_FREE(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_FREE(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     MEMORYSTATUSEX      ms_ex;
     ms_ex.dwLength = sizeof (ms_ex);
     GlobalMemoryStatusEx(&ms_ex);
@@ -21,14 +19,12 @@ int VM_MEMORY_FREE(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* r
     return UGOK;
 }
 
-int VM_MEMORY_BUFFERS(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_BUFFERS(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     SET_MSG_RESULT(result,xstrdup("not implemented"));
     return UGERR;
 }
 
-int VM_MEMORY_CACHED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_CACHED(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
 
     PERFORMANCE_INFORMATION pfi;
     GetPerformanceInfo(&pfi, sizeof(PERFORMANCE_INFORMATION));
@@ -38,8 +34,7 @@ int VM_MEMORY_CACHED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT*
     return UGOK;
 }
 
-int VM_MEMORY_USED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_USED(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     MEMORYSTATUSEX      ms_ex;
     ms_ex.dwLength = sizeof (ms_ex);
     GlobalMemoryStatusEx(&ms_ex);
@@ -47,8 +42,7 @@ int VM_MEMORY_USED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* r
     return UGOK;
 }
 
-int VM_MEMORY_PUSED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_PUSED(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
 
     MEMORYSTATUSEX      ms_ex;
     ms_ex.dwLength = sizeof (ms_ex);
@@ -58,8 +52,7 @@ int VM_MEMORY_PUSED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* 
     return UGOK;
 }
 
-int VM_MEMORY_AVAILABLE(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_AVAILABLE(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     MEMORYSTATUSEX      ms_ex;
     ms_ex.dwLength = sizeof (ms_ex);
     GlobalMemoryStatusEx(&ms_ex);
@@ -68,8 +61,7 @@ int VM_MEMORY_AVAILABLE(const char* cmd, int argc,const char** argv,SYSINFO_RESU
     return UGOK;
 }
 
-int VM_MEMORY_PAVAILABLE(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_PAVAILABLE(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     MEMORYSTATUSEX      ms_ex;
     ms_ex.dwLength = sizeof (ms_ex);
     GlobalMemoryStatusEx(&ms_ex);
@@ -77,8 +69,7 @@ int VM_MEMORY_PAVAILABLE(const char* cmd, int argc,const char** argv,SYSINFO_RES
     return UGOK;
 }
 
-int VM_MEMORY_SHARED(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int VM_MEMORY_SHARED(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     SET_MSG_RESULT(result,xstrdup("not implemented"));
     return UGERR;
 }

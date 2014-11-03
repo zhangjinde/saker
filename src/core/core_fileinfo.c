@@ -2,9 +2,8 @@
 #include "utils/error.h"
 
 
-int core_fileinfo(lua_State* L)
-{
-    const char* path = luaL_checkstring(L, 1);
+int core_fileinfo(lua_State *L) {
+    const char *path = luaL_checkstring(L, 1);
     const int more_info = lua_toboolean(L, 2);
 #ifndef _WIN32
     struct stat st;

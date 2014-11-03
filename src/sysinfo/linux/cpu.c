@@ -16,8 +16,7 @@
 *       config dir : /sys/devices/system/cpu/
 */
 
-int SYSTEM_CPU_NUM_ONLINE(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int SYSTEM_CPU_NUM_ONLINE(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     long    ncpu;
     if (-1 == (ncpu = sysconf(_SC_NPROCESSORS_ONLN))) {
         SET_MSG_RESULT(result,xstrdup("call sysconf failed"));
@@ -30,8 +29,7 @@ int SYSTEM_CPU_NUM_ONLINE(const char* cmd, int argc,const char** argv,SYSINFO_RE
 }
 
 
-int SYSTEM_CPU_NUM_MAX(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int SYSTEM_CPU_NUM_MAX(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     long    ncpu;
     if (-1 == (ncpu = sysconf(_SC_NPROCESSORS_CONF))) {
         SET_MSG_RESULT(result,xstrdup("call sysconf failed"));
@@ -44,12 +42,11 @@ int SYSTEM_CPU_NUM_MAX(const char* cmd, int argc,const char** argv,SYSINFO_RESUL
 }
 
 
-int SYSTEM_CPU_LOAD(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int SYSTEM_CPU_LOAD(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     int mode, per_cpu = 0, cpu_num;
     double  load[CPU_AVG_COUNT], value;
 
-    const char* avgparam = getParam(argc,argv,0);
+    const char *avgparam = getParam(argc,argv,0);
     if (avgparam==NULL || strcmp("avg1",avgparam)==0)  {
         mode = CPU_AVG1;
     } else if (strcmp("avg5",avgparam)==0) {
@@ -84,8 +81,7 @@ int SYSTEM_CPU_LOAD(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* 
 }
 
 
-int SYSTEM_CPU_UTIL(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int SYSTEM_CPU_UTIL(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
 
     SET_MSG_RESULT(result,xstrdup("not implemented"));
     return UGERR;

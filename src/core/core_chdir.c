@@ -2,9 +2,8 @@
 #include "utils/path.h"
 
 
-int core_chdir(lua_State* L)
-{
-    const char* path = luaL_checkstring(L, 1);
+int core_chdir(lua_State *L) {
+    const char *path = luaL_checkstring(L, 1);
 
     if (xchdir(path) != UGOK) {
         lua_pushnil(L);

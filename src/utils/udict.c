@@ -96,7 +96,7 @@ int dictExpand(dict *ht, unsigned long size) {
     _dictInit(&n, ht->type, ht->privdata);
     n.size = realsize;
     n.sizemask = realsize-1;
-    n.table = calloc(realsize,sizeof(dictEntry*));
+    n.table = calloc(realsize,sizeof(dictEntry *));
 
     /* Copy all the elements from the old to the new table:
      * note that if the old hash table is empty ht->size is zero,
@@ -336,16 +336,16 @@ static int _dictKeyIndex(dict *ht, const void *key) {
 }
 
 
-int          dictForeach(dict* ht,operator_function_t fun,void* ap) {
-	int z = DICT_OK;
-	dictIterator *di = dictGetIterator(ht);
-	dictEntry *de;
-	while((de = dictNext(di)) != NULL) {
-		if(fun(dictGetEntryVal(de), ap)!=0) {
-			z = DICT_ERR;
-			break;
-		}
-	}
-	dictReleaseIterator(di);
-	return z;
+int          dictForeach(dict *ht,operator_function_t fun,void *ap) {
+    int z = DICT_OK;
+    dictIterator *di = dictGetIterator(ht);
+    dictEntry *de;
+    while((de = dictNext(di)) != NULL) {
+        if(fun(dictGetEntryVal(de), ap)!=0) {
+            z = DICT_ERR;
+            break;
+        }
+    }
+    dictReleaseIterator(di);
+    return z;
 }

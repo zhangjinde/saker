@@ -1,11 +1,10 @@
 #include "sysinfo/sysinfo.h"
 
 
-static int  read_uint64_from_procfs(const char* path, uint64_t* value)
-{
+static int  read_uint64_from_procfs(const char *path, uint64_t *value) {
     int ret = UGERR;
     char    line[MAX_STRING_LEN];
-    FILE*    f;
+    FILE    *f;
 
     if (NULL != (f = fopen(path, "r"))) {
         if (NULL != fgets(line, sizeof(line), f)) {
@@ -18,8 +17,7 @@ static int  read_uint64_from_procfs(const char* path, uint64_t* value)
     return ret;
 }
 
-int KERNEL_MAXFILES(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int KERNEL_MAXFILES(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     int     ret = UGERR;
     uint64_t    value;
 
@@ -31,8 +29,7 @@ int KERNEL_MAXFILES(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* 
     return ret;
 }
 
-int KERNEL_MAXPROC(const char* cmd, int argc,const char** argv,SYSINFO_RESULT* result)
-{
+int KERNEL_MAXPROC(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {
     int     ret = UGERR;
     uint64_t    value;
 

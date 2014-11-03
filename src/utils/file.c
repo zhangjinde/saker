@@ -9,9 +9,8 @@
 #include <dirent.h>
 #endif
 
-static void freebuff(void* p)
-{
-    char* buff = (char*)p;
+static void freebuff(void *p) {
+    char *buff = (char *)p;
     if (buff) {
         zfree(buff);
         buff = NULL;
@@ -19,8 +18,7 @@ static void freebuff(void* p)
 }
 
 
-int xfileisregular(const char* filename)
-{
+int xfileisregular(const char *filename) {
     struct stat buf;
     if (stat(filename, &buf) == 0) {
         if (buf.st_mode & S_IFREG) return UGOK;
@@ -28,8 +26,7 @@ int xfileisregular(const char* filename)
     return UGERR;
 }
 
-int xfileisdir(const char* path)
-{
+int xfileisdir(const char *path) {
     struct stat buf;
     if (stat(path, &buf) == 0) {
         if (buf.st_mode & S_IFDIR) return UGOK;
@@ -38,9 +35,8 @@ int xfileisdir(const char* path)
 }
 
 
-int xfilewrite(const char* filename, const char* text)
-{
-    FILE* fp = fopen(filename,"wb");
+int xfilewrite(const char *filename, const char *text) {
+    FILE *fp = fopen(filename,"wb");
     if (fp) {
         fwrite(text,strlen(text),1,fp);
         fclose(fp);
@@ -49,9 +45,8 @@ int xfilewrite(const char* filename, const char* text)
     return UGERR;
 }
 
-int xfilelistdir(const char* dirpath, const char* match, list* queue)
-{
-    char* path = NULL;
+int xfilelistdir(const char *dirpath, const char *match, list *queue) {
+    char *path = NULL;
 #ifdef OS_WIN
     HANDLE          fh;
     WIN32_FIND_DATA fd;
@@ -76,8 +71,8 @@ int xfilelistdir(const char* dirpath, const char* match, list* queue)
     } while ((FindNextFile(fh, &fd) != 0));
     FindClose(fh);
 #else
-    DIR* pDir = opendir(dirpath);
-    struct dirent* pEntry = NULL;
+    DIR *pDir = opendir(dirpath);
+    struct dirent *pEntry = NULL;
     if (pDir == NULL) {
         return UGERR;
     }
@@ -103,8 +98,7 @@ int xfilelistdir(const char* dirpath, const char* match, list* queue)
 }
 
 
-int xfiledel(const char* filepath)
-{
+int xfiledel(const char *filepath) {
     if (!filepath) return UGERR;
 #ifdef  OS_WIN
     if ( _unlink(filepath) == -1 ) {

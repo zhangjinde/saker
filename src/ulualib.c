@@ -10,13 +10,12 @@ static getlib baselibs[] = {
     NULL
 };
 
-LUAMOD_API int luaopen_saker(lua_State* L)
-{
-    getlib* mylib = baselibs;
-    luaL_Reg* array = NULL;
+LUAMOD_API int luaopen_saker(lua_State *L) {
+    getlib *mylib = baselibs;
+    luaL_Reg *array = NULL;
     int len = 0;
     for (mylib=baselibs; *mylib; ++mylib) {
-        const luaL_Reg* lib ;
+        const luaL_Reg *lib ;
         int idx = 0;
         for (lib = (*mylib)(); lib->func; ++lib) {
             ++idx;
