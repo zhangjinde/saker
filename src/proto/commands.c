@@ -195,8 +195,7 @@ static void execCommand(ugClient *c) {
         ret = lua_tointeger(server.ls, -2);
 
         if (!lua_isnil(server.ls, -1))  pret = lua_tostring(server.ls, -1);
-        /* consume stack ,avoid memory increase*/
-        lua_settop(server.ls, top);
+
         if (pret) {
             robj *o = createStringObject((char *)pret, strlen(pret));
             addReplyBulk(c, o);
@@ -205,6 +204,9 @@ static void execCommand(ugClient *c) {
             if (ret == UGOK) addReplyStatusFormat(c, "exec successed for '%s'", ptask->func);
             else addReplyErrorFormat(c, "exec successed ,but return fail for '%s'", ptask->func );
         }
+        
+        /* consume stack ,avoid memory increase*/
+        lua_settop(server.ls, top);
     } else {
         addReplyErrorFormat(c, "can not find for 'exec' '%s'", primarykey->ptr);
     }

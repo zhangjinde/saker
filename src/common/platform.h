@@ -65,7 +65,7 @@
 //#define _WINDOWS 1
 //#define _WINDOWS_CE
 #elif defined(_WIN32) || defined(_WIN64)
-#define OS_WIN		(1)
+#define OS_WIN      (1)
 #define OS_TYPE     "WIN"
 #define OS_STRING   "WINDOWS_NT"
 #elif defined(__VMS)
@@ -93,13 +93,13 @@
 #endif
 
 /* Test for backtrace() */
-#if defined(__APPLE__) || defined(__linux__)
+#if defined(OS_UNIX)
 #define HAVE_BACKTRACE 1
 #endif
 
 
 /* A success return code */
 #define UGOK   (0)  
-#define	UGERR	  (-1)
+#define UGERR  (-1)
 
 #endif
