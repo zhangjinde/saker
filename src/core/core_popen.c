@@ -1,6 +1,13 @@
 #include "core_declarer.h"
+
 #include "utils/error.h"
 #include "utils/sds.h"
+#ifdef _WIN32
+#define popen _popen
+#define pclose _pclose
+#endif
+
+
 
 int core_popen(lua_State *L) {
     FILE *fp = NULL;

@@ -204,7 +204,7 @@ static void execCommand(ugClient *c) {
             if (ret == UGOK) addReplyStatusFormat(c, "exec successed for '%s'", ptask->func);
             else addReplyErrorFormat(c, "exec successed ,but return fail for '%s'", ptask->func );
         }
-
+        
         /* consume stack ,avoid memory increase*/
         lua_settop(server.ls, top);
     } else {

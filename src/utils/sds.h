@@ -36,6 +36,10 @@
 #include <sys/types.h>
 #include <stdarg.h>
 
+#ifdef _WIN32
+#define inline __inline
+#endif
+
 typedef char *sds;
 
 struct sdshdr {
@@ -56,7 +60,7 @@ static inline size_t sdsavail(const sds s) {
 
 sds sdsnewlen(const void *init, size_t initlen);
 sds sdsnew(const char *init);
-sds sdsempty(void);
+sds sdsempty();
 size_t sdslen(const sds s);
 sds sdsdup(const sds s);
 void sdsfree(sds s);
@@ -77,7 +81,7 @@ sds sdscatprintf(sds s, const char *fmt, ...);
 #endif
 
 sds sdstrim(sds s, const char *cset);
-void sdsrange(sds s, int start, int end);
+sds sdsrange(sds s, int start, int end);
 void sdsupdatelen(sds s);
 void sdsclear(sds s);
 int sdscmp(const sds s1, const sds s2);
@@ -89,7 +93,6 @@ sds sdsfromlonglong(long long value);
 sds sdscatrepr(sds s, const char *p, size_t len);
 sds *sdssplitargs(const char *line, int *argc);
 sds sdsmapchars(sds s, const char *from, const char *to, size_t setlen);
-sds sdsjoin(char **argv, int argc, char *sep);
 
 /* Low level functions exposed to the user API */
 sds sdsMakeRoomFor(sds s, size_t addlen);

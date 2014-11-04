@@ -1,9 +1,15 @@
 #ifndef _TOP__H_
 #define _TOP__H_
 
+
+
 #include "utils/udict.h"
 #include "utils/ulist.h"
 #include "common/common.h"
+
+#ifdef _WIN32
+#define uid_t int
+#endif
 
 extern uint32_t g_time;
 

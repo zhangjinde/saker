@@ -1,4 +1,5 @@
 #include "debug.h"
+
 #include "common/defines.h"
 #include "utils/logger.h"
 
@@ -95,7 +96,7 @@ static void stacktrace(ucontext_t *uc) {
     free(strings);
 }
 
-void sigsegvHandler(int sig, siginfo_t *info, void *secret) {
+void sigsegv_handler(int sig, siginfo_t *info, void *secret) {
     ucontext_t *uc = (ucontext_t *) secret;
     struct sigaction act;
     LOG_FATAL("%s %s crashed by signal: %d", APPNAME, VERSION, sig);

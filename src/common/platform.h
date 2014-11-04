@@ -1,6 +1,7 @@
 #ifndef _PLATFORM__H_
 #define _PLATFORM__H_
 
+
 #if defined(__FreeBSD__)
 #define OS_UNIX     (1)
 #define OS_BSD      (1)
@@ -64,7 +65,9 @@
 //#define _WINDOWS 1
 //#define _WINDOWS_CE
 #elif defined(_WIN32) || defined(_WIN64)
-#error "can't support this platform"
+#define OS_WIN      (1)
+#define OS_TYPE     "WIN"
+#define OS_STRING   "WINDOWS_NT"
 #elif defined(__VMS)
 //#define _FAMILY_VMS 1
 //#define _OS_VMS
@@ -73,9 +76,24 @@
 #error "can't support this platform"
 #endif
 
+
+
+/* Pull in platform-specific headers required by built-in functions */
+#if OS_WIN
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <psapi.h>
+#include <process.h>
+#include <Iphlpapi.h>
+#pragma comment(lib, "Psapi.lib")
+#pragma comment(lib, "Iphlpapi.lib")
+#pragma comment(lib, "Advapi32.lib")
+#else
+#include <unistd.h>
+#endif
+
 /* Test for backtrace() */
 #if defined(OS_UNIX)
-#include <unistd.h>
 #define HAVE_BACKTRACE 1
 #endif
 

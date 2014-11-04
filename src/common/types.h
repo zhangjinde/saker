@@ -71,6 +71,8 @@ typedef int                  pid_t;
 
 #else	/* _WINDOWS */
 
+
+
 #	define ug_stat(path, buf)		stat(path, buf)
 #	define ug_open(pathname, flags)	open(pathname, flags)
 
@@ -106,6 +108,8 @@ typedef int                  pid_t;
 #endif
 
 #endif	/* _WINDOWS */
+
+
 
 
 #define UG_STR2UINT64(uint, string) sscanf(string, UG_FS_UI64, &uint)

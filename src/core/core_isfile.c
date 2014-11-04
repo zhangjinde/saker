@@ -6,3 +6,4 @@ int core_isfile(lua_State *L) {
     lua_pushboolean(L, UGOK == xfileisregular(filename));
     return 1;
 }
+

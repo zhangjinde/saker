@@ -1,3 +1,4 @@
+
 #include "core_declarer.h"
 
 #include <unistd.h>
@@ -24,3 +25,4 @@ int core_getuid(lua_State *L) {
     lua_pushfstring(L, "getuid failed.may be user is not exists or .");
     return 2;
 }
+

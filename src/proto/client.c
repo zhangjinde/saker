@@ -119,7 +119,11 @@ static void listDeleteClientObjects(void *cl) {
 
     aeDeleteFileEvent(server.el, c->fd, AE_READABLE);
     aeDeleteFileEvent(server.el, c->fd, AE_WRITABLE);
+#ifdef _WIN32
+    aeWinCloseSocket(c->fd);
+#else
     close(c->fd);
+#endif
     zfree(c);
     c = NULL;
 }
@@ -128,7 +132,7 @@ sds getClientInfoString(ugClient *client) {
     sds s = sdsnew("clientinfo:");
     char ip[32];
     int port = 0;
-    anetPeerToString(client->fd, ip, 32, &port);
+    anetPeerToString(client->fd, ip, &port);
     s = sdscatprintf(s, "%s:%d" , ip, port);
     return s;
 }
@@ -140,7 +144,7 @@ static void setProtocolError(ugClient *c, int pos) {
     LOG_ERROR("Protocol error from client: %s", client);
     sdsfree(client);
     c->flags |= UG_CLOSE_AFTER_REPLY;
-    sdsrange(c->querybuf,pos,-1);
+    c->querybuf = sdsrange(c->querybuf,pos,-1);
 }
 
 
@@ -162,7 +166,11 @@ ugClient *createClient(int fd) {
             anetKeepAlive(NULL, fd, server.tcpkeepalive);
         if (aeCreateFileEvent(server.el, fd, AE_READABLE,
                               readQueryFromClient, c) == AE_ERR) {
+#ifdef _WIN32
+            aeWinCloseSocket(fd);
+#else
             close(fd);
+#endif
             zfree(c);
             return NULL;
         }
@@ -257,7 +265,7 @@ int  processLineBuffer(ugClient *c) {
     argv = sdssplitlen(c->querybuf,(int)querylen," ",1,&argc);
 
     /* Leave data after the first line of the query in the buffer */
-    sdsrange(c->querybuf,(int)(querylen+2),-1);
+    c->querybuf = sdsrange(c->querybuf,(int)(querylen+2),-1);
 
     /* Setup argv array on client structure */
     if (c->argv) zfree(c->argv);
@@ -311,7 +319,7 @@ int  processMultbuff(ugClient *c) {
 
         pos = (int)(newline-c->querybuf)+2;
         if (ll <= 0) {
-            sdsrange(c->querybuf,pos,-1);
+            c->querybuf = sdsrange(c->querybuf,pos,-1);
             return UGOK;
         }
 
@@ -360,7 +368,7 @@ int  processMultbuff(ugClient *c) {
                  * try to make it likely that it will start at c->querybuf
                  * boundary so that we can optimized object creation
                  * avoiding a large copy of data. */
-                sdsrange(c->querybuf,pos,-1);
+                c->querybuf = sdsrange(c->querybuf,pos,-1);
                 pos = 0;
                 /* Hint the sds library about the amount of bytes this string is
                  * going to contain. */
@@ -398,7 +406,7 @@ int  processMultbuff(ugClient *c) {
     }
 
     /* Trim to pos */
-    if (pos) sdsrange(c->querybuf,pos,-1);
+    if (pos) c->querybuf = sdsrange(c->querybuf,pos,-1);
 
     /* We're done when c->multibulk == 0 */
     if (c->multibulklen == 0) return UGOK;
@@ -748,7 +756,20 @@ void setDeferredMultiBulkLength(ugClient *c, void *node, long length) {
 void addReplyDouble(ugClient *c, double d) {
     char dbuf[128], sbuf[128];
     int dlen, slen;
+#ifdef _WIN32
+    if (isnan(d)) {
+        dlen = snprintf(dbuf,sizeof(dbuf),"nan");
+    } else if (isinf(d)) {
+        if (d < 0)
+            dlen = snprintf(dbuf,sizeof(dbuf),"-inf");
+        else
+            dlen = snprintf(dbuf,sizeof(dbuf),"inf");
+    } else {
+        dlen = snprintf(dbuf,sizeof(dbuf),"%.17g",d);
+    }
+#else
     dlen = snprintf(dbuf,sizeof(dbuf),"%.17g",d);
+#endif
     slen = snprintf(sbuf,sizeof(sbuf),"$%d\r\n%s\r\n",dlen,dbuf);
     addReplyString(c,sbuf,slen);
 }
