@@ -1,0 +1,21 @@
+{
+"Service-nginx":
+  { "check":"yes",
+    "daemon":"yes",
+    "key":"nginx",
+    "scmd":"/usr/local/openresty/nginx/sbin/nginx",
+    "ksignal":0,
+    "kcmd":"/usr/local/openresty/nginx/sbin/nginx -s stop",
+    "pidfile":"/var/run/nginx.pid"
+  }
+  ,
+"Service-redis":
+  { "check":"yes",
+    "daemon":"yes",
+    "key":"redis-server",
+    "scmd":"/usr/local/bin/redis-server /etc/redis/6379.conf",
+    "ksignal":0,
+    "kcmd":"/usr/local/bin/redis-cli shutdown",
+    "pidfile":"/var/run/redis_6379.pid"
+  }
+}

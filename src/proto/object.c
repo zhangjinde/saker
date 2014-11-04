@@ -30,6 +30,7 @@
 
 #include "object.h"
 #include "utils/error.h"
+#include "common/winfixes.h"
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
@@ -81,7 +82,18 @@ robj *createStringObjectFromLongLong(long long value) {
 robj *createStringObjectFromLongDouble(long double value) {
     char buf[256];
     int len;
+
+    /* We use 17 digits precision since with 128 bit floats that precision
+     * after rounding is able to represent most small decimal numbers in a way
+     * that is "non surprising" for the user (that is, most small decimal
+     * numbers will be represented in a way that when converted back into
+     * a string are exactly the same as what the user typed.) */
+#ifdef _WIN32
+    /* on Windows the magic number is 15 */
+    len = snprintf(buf,sizeof(buf),"%.15Lf", value);
+#else
     len = snprintf(buf,sizeof(buf),"%.17Lf", value);
+#endif
     /* Now remove trailing zeroes after the '.' */
     if (strchr(buf,'.') != NULL) {
         char *p = buf+len-1;
@@ -347,7 +359,11 @@ int getLongDoubleFromObject(robj *o, long double *target) {
         ugAssert(o->type == UG_STRING);
         if (o->encoding == UG_ENCODING_RAW) {
             errno = 0;
+#ifdef _WIN32
+            value = wstrtod(o->ptr, &eptr);
+#else
             value = strtold(o->ptr, &eptr);
+#endif
             if (isspace(((char *)o->ptr)[0]) || eptr[0] != '\0' ||
                     errno == ERANGE || isnan(value))
                 return UGERR;

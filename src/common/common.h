@@ -9,6 +9,9 @@
 #include "platform.h"
 #include "types.h"
 #include "event/zmalloc.h"
+#include "common/winfixes.h"
+
+
 
 #ifndef MAX
 #	define MAX(a, b) ((a) > (b) ? (a) : (b))

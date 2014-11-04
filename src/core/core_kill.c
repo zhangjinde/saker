@@ -1,4 +1,5 @@
 #include "core_declarer.h"
+
 #include "utils/process.h"
 
 int core_kill(lua_State *L) {
@@ -23,4 +24,6 @@ int core_kill(lua_State *L) {
         lua_pushstring(L, "kill failed");
         return 2;
     }
+
 }
+

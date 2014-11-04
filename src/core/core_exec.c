@@ -9,14 +9,21 @@
 #include "utils/process.h"
 #include "utils/sds.h"
 #include "saker.h"
+#ifndef OS_WIN
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <sys/time.h>
+#endif
 
 int core_exec(lua_State *L) {
+#ifdef OS_WIN
+    PROCESS_INFORMATION processInfo;
+    STARTUPINFO startupInfo;
+    char procname[1024]= {0};
+#else
     struct timeval t_start,t_end;
     long start_ms, end_ms;
-
+#endif
     int timeout = 10; /* default 10 ms */
     int ret = 2;
     int status = 0;
@@ -43,6 +50,45 @@ int core_exec(lua_State *L) {
     argv[argc] = 0;
     for (idx=0 ; idx<argc; ++idx) argv[idx] = tmpargv[idx];
 
+#ifdef OS_WIN
+    UG_NOTUSED(rc);
+    GetStartupInfo(&startupInfo); /* take defaults from current process */
+    startupInfo.cb          = sizeof(STARTUPINFO);
+    startupInfo.lpReserved  = NULL;
+    startupInfo.lpDesktop   = NULL;
+    startupInfo.lpTitle     = NULL;
+    startupInfo.dwFlags     = STARTF_USESTDHANDLES;
+    startupInfo.cbReserved2 = 0;
+    startupInfo.lpReserved2 = NULL;
+
+    if (!CreateProcess(
+                NULL,
+                cmd,
+                NULL,
+                NULL,
+                FALSE,  // Do NOT inherit handles
+                CREATE_NEW_PROCESS_GROUP | CREATE_UNICODE_ENVIRONMENT,
+                NULL,
+                NULL,
+                &startupInfo,
+                &processInfo
+            )) {
+        lua_pushnil(L);
+        lua_pushfstring(L, "cannot fork process for  '%s'", argv[0]);
+        goto End;
+    }
+    pid = processInfo.dwProcessId;
+
+    if (WAIT_TIMEOUT == WaitForSingleObject(processInfo.hProcess, timeout)) {
+        lua_pushnil(L);
+        lua_pushfstring(L, "WaitForSingleObject  '%s' timeout.", startcmd);
+        pkill(pid, -1);
+        goto End;
+    }
+    /*  give the retval to user     */
+    GetExitCodeProcess(processInfo.hProcess, (DWORD *) &status);
+
+#else
     pid = fork();
     if (pid < 0 ) {
         lua_pushnil(L);
@@ -105,6 +151,7 @@ int core_exec(lua_State *L) {
     } else if (WIFSTOPPED(status)) {
         LOG_TRACE( "%s stopped by signal %d", startcmd, WSTOPSIG(status));
     }
+#endif
     lua_pushinteger(L, status);
     lua_pushnil(L);
 End:

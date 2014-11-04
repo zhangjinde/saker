@@ -7,13 +7,19 @@
 #include "utils/logger.h"
 #include "utils/error.h"
 
+
+
 static void acceptCommonhandler(int fd, int flags) {
     ugClient *c;
     if ((c = createClient(fd)) == NULL) {
         LOG_TRACE(
             "Error registering fd event for the new client: %s (fd=%d)",
             xerrmsg(),fd);
+#ifdef _WIN32
+        aeWinCloseSocket(fd); /* May be already closed, just ingore errors */
+#else
         close(fd); /* May be already closed, just ignore errors */
+#endif
         return;
     }
     /* If maxclient directive is set and this is one client more... close the
@@ -24,7 +30,11 @@ static void acceptCommonhandler(int fd, int flags) {
         char *err = "-ERR max number of clients reached\r\n";
 
         /* That's a best effort error message, don't check write errors */
+#ifdef _WIN32
+        if (send((SOCKET)c->fd,err,(int)strlen(err),0) == SOCKET_ERROR) {
+#else
         if (write(c->fd,err,strlen(err)) == -1) {
+#endif
             /* Nothing to do, Just to avoid the warning... */
         }
         server.stat_rejected_conn++;
@@ -60,7 +70,25 @@ void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
     if (sdsavail(c->querybuf) < (size_t) readlen) {
         c->querybuf = sdsMakeRoomFor(c->querybuf, readlen-sdsavail(c->querybuf));
     }
+
+#ifdef _WIN32
+    nread = recv((SOCKET)fd, c->querybuf+qblen, readlen, 0);
+    if (nread < 0) {
+        errno = WSAGetLastError();
+        if (errno == WSAECONNRESET) {
+            /* Windows fix: Not an error, intercept it.  */
+            LOG_TRACE("Client closed connection");
+            freeClient(c);
+            return;
+        } else if ((errno == ENOENT) || (errno == WSAEWOULDBLOCK)) {
+            /* Windows fix: Intercept winsock slang for EAGAIN */
+            errno = EAGAIN;
+            nread = -1; /* Winsock can send ENOENT instead EAGAIN */
+        }
+    }
+#else
     nread = read(fd, c->querybuf+qblen, readlen);
+#endif
     if (nread == -1) {
         if (errno == EAGAIN) {
             nread = 0;
@@ -74,15 +102,22 @@ void readQueryFromClient(aeEventLoop *el, int fd, void *privdata, int mask) {
         freeClient(c);
         return;
     }
+#ifdef _WIN32
+    aeWinReceiveDone(fd);
+#endif
     if (nread) {
         sdsIncrLen(c->querybuf, nread);
         c->lastinteraction = time(NULL);
     } else {
         return;
     }
+
     LOG_TRACE("read buff from client : %s", c->querybuf);
     processInputBuffer(c);
 }
+
+
+
 
 void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask) {
     int cport, cfd;
@@ -92,7 +127,7 @@ void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask) {
     UG_NOTUSED(mask);
     UG_NOTUSED(privdata);
 
-    cfd = anetTcpAccept(errbuff, fd, cip, sizeof(cip), &cport);
+    cfd = anetTcpAccept(errbuff, fd, cip, &cport);
     if (cfd == AE_ERR) {
         LOG_WARNING("Accepting client connection: %s", errbuff);
         return;
@@ -101,6 +136,133 @@ void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask) {
     acceptCommonhandler(cfd, 0);
 }
 
+
+
+#ifdef _WIN32
+void sendReplyBufferDone(aeEventLoop *el, int fd, void *privdata, int written) {
+    aeWinSendReq *req = (aeWinSendReq *)privdata;
+    ugClient *c = (ugClient *)req->client;
+    int offset = (int)(req->buf - (char *)req->data + written);
+    UG_NOTUSED(el);
+    UG_NOTUSED(fd);
+
+    if (c->bufpos == offset) {
+        c->bufpos = 0;
+        c->sentlen = 0;
+    }
+    if (c->bufpos == 0 && listLength(c->reply) == 0) {
+        aeDeleteFileEvent(server.el,c->fd,AE_WRITABLE);
+
+        /* Close connection after entire reply has been sent. */
+        if (c->flags & UG_CLOSE_AFTER_REPLY) {
+            freeClientAsync(c);
+        }
+    }
+}
+
+void sendReplyListDone(aeEventLoop *el, int fd, void *privdata, int written) {
+    aeWinSendReq *req = (aeWinSendReq *)privdata;
+    ugClient *c = (ugClient *)req->client;
+    robj *o = (robj *)req->data;
+    UG_NOTUSED(el);
+    UG_NOTUSED(fd);
+
+    decrRefCount(o);
+
+    if (c->bufpos == 0 && listLength(c->reply) == 0) {
+        c->sentlen = 0;
+        aeDeleteFileEvent(server.el,c->fd,AE_WRITABLE);
+
+        /* Close connection after entire reply has been sent. */
+        if (c->flags & UG_CLOSE_AFTER_REPLY) {
+            freeClientAsync(c);
+        }
+    }
+}
+
+void sendReplyToClient(aeEventLoop *el, int fd, void *privdata, int mask) {
+    ugClient *c = (ugClient *)privdata;
+    int nwritten = 0, totwritten = 0, objlen;
+    size_t objmem;
+    robj *o;
+    int result = 0;
+    listIter li;
+    listNode *ln;
+    UG_NOTUSED(el);
+    UG_NOTUSED(mask);
+
+    if (c->flags & UG_MASTER) {
+        /* do not send to master */
+        c->bufpos = 0;
+        c->sentlen = 0;
+        while (listLength(c->reply)) {
+            listDelNode(c->reply,listFirst(c->reply));
+        }
+        c->lastinteraction = time(NULL);
+        return;
+    }
+
+    /* move list pointer to last one sent or first in list */
+    listRewind(c->reply, &li);
+    ln = listNext(&li);
+
+    while(c->bufpos > c->sentlen || ln != NULL) {
+        if (c->bufpos > c->sentlen) {
+            nwritten = c->bufpos - c->sentlen;
+            result = aeWinSocketSend(fd,c->buf+c->sentlen, nwritten,0,
+                                     el, c, c->buf, sendReplyBufferDone);
+            if (result == SOCKET_ERROR && errno != WSA_IO_PENDING) {
+                LOG_ERROR("Error writing to client: %s", wsa_strerror(errno));
+                freeClient(c);
+                return;
+            }
+            c->sentlen += nwritten;
+            totwritten += nwritten;
+
+        } else {
+            o = listNodeValue(ln);
+            objlen = (int)sdslen(o->ptr);
+            objmem = zmalloc_size_sds(o->ptr);
+
+            if (objlen == 0) {
+                listDelNode(c->reply,ln);
+                ln = listNext(&li);
+                continue;
+            }
+
+            /* object ref placed in request, release in sendReplyListDone */
+            incrRefCount(o);
+            result = aeWinSocketSend(fd, ((char *)o->ptr), objlen, 0,
+                                     el, c, o, sendReplyListDone);
+            if (result == SOCKET_ERROR && errno != WSA_IO_PENDING) {
+                LOG_TRACE("Error writing to client: %s", wsa_strerror(errno));
+                decrRefCount(o);
+                freeClient(c);
+                return;
+            }
+            totwritten += objlen;
+            /* remove from list - object kept alive due to incrRefCount */
+            listDelNode(c->reply,listFirst(c->reply));
+            c->reply_bytes -= (unsigned long)objmem;
+            ln = listNext(&li);
+        }
+        /* Note that we avoid to send more than REDIS_MAX_WRITE_PER_EVENT
+         * bytes, in a single threaded server it's a good idea to serve
+         * other clients as well, even if a very large request comes from
+         * super fast link that is always able to accept data (in real world
+         * scenario think about 'KEYS *' against the loopback interface).
+         *
+         * However if we are over the maxmemory limit we ignore that and
+         * just deliver as much data as it is possible to deliver. */
+        if (totwritten > UG_MAX_WRITE_PER_EVENT &&
+                (server.maxmemory == 0 ||
+                 zmalloc_used_memory() < server.maxmemory)) break;
+    }
+    if (totwritten > 0) c->lastinteraction = server.unixtime;
+
+}
+
+#else
 void sendReplyToClient(aeEventLoop *el, int fd, void *privdata, int mask) {
     ugClient *c = privdata;
     int nwritten = 0, totwritten = 0, objlen;
@@ -184,6 +346,8 @@ void sendReplyToClient(aeEventLoop *el, int fd, void *privdata, int mask) {
         if (c->flags & UG_CLOSE_AFTER_REPLY) freeClient(c);
     }
 }
+#endif
+
 
 int  prepareClientToWrite(ugClient *c) {
     if (c->fd <= 0) return UGERR; /* Fake client */

@@ -7,6 +7,5 @@ set Format=--style=java --lineend=linux --convert-tabs 4 --align-pointer=name
 %Astyle% -r %SourDir%\protocol\*.c %Format%
 %Astyle% -r %SourDir%\sysinfo\*.c %Format%
 %Astyle% -r %SourDir%\utils\*.c %Format%
-%Astyle% -r %SourDir%\service\*.c %Format%
 %Astyle% %SourDir%\*.c %Format%
 pause

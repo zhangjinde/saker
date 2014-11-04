@@ -1,0 +1,32 @@
+{
+"calc":
+  { "check":"yes",
+    "scmd":"calc",
+    "sparam":"",
+    "ksignal":15,
+    "kcmd":"",
+    "kparam":"",
+    "pidfile":"../pid/mycalc.pid"
+  }
+  ,
+
+  "MinerServerd":
+  { "check":"yes",
+    "scmd":"F:\\QDA3\\QDA\\analysis\\bin\\win32\\MinerServerd.exe",
+    "sparam":"",
+    "ksignal":15,
+    "kcmd":"",
+    "kparam":"",
+    "pidfile":"../pid/MinerServerd.pid"
+  }
+  ,
+    "python":
+  { "check":"yes",
+    "scmd":"C:\\python27\\python.exe",
+    "sparam":"",
+    "ksignal":15,
+    "kcmd":"",
+    "kparam":"",
+    "pidfile":"../pid/python.pid"
+  }
+}

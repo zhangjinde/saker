@@ -40,7 +40,11 @@ void zlibc_free(void *ptr) {
 }
 
 #include <string.h>
+#ifdef _WIN32
+#include "win32fixes.h"
+#else
 #include <pthread.h>
+#endif
 #include "config.h"
 #include "zmalloc.h"
 
@@ -107,11 +111,20 @@ void zlibc_free(void *ptr) {
 
 static size_t used_memory = 0;
 static int zmalloc_thread_safe = 0;
+#ifdef _WIN32
+pthread_mutex_t used_memory_mutex;
+#else
 pthread_mutex_t used_memory_mutex = PTHREAD_MUTEX_INITIALIZER;
+#endif
 
 static void zmalloc_default_oom(size_t size) {
+#ifdef _WIN32
+    fprintf(stderr, "zmalloc: Out of memory trying to allocate %llu bytes\n",
+        (unsigned long long)size);
+#else
     fprintf(stderr, "zmalloc: Out of memory trying to allocate %zu bytes\n",
         size);
+#endif
     fflush(stderr);
     abort();
 }
@@ -176,7 +189,7 @@ void *zrealloc(void *ptr, size_t size) {
 }
 
 /* Provide zmalloc_size() for systems where this function is not provided by
- * malloc itself, given that in that case we store a header with this
+ * malloc itself, given that in that case we store an header with this
  * information as the first bytes of every allocation. */
 #ifndef HAVE_MALLOC_SIZE
 size_t zmalloc_size(void *ptr) {
@@ -234,9 +247,23 @@ size_t zmalloc_used_memory(void) {
     return um;
 }
 
+#ifdef _WIN32
+void zmalloc_free_used_memory_mutex(void) {
+    /* Windows fix: Callabe mutex destroy.  */
+    if (zmalloc_thread_safe)
+        pthread_mutex_destroy(&used_memory_mutex);
+}
+void zmalloc_enable_thread_safeness(void) {
+    if (!zmalloc_thread_safe)
+        pthread_mutex_init(&used_memory_mutex,0);
+
+    zmalloc_thread_safe = 1;
+}
+#else
 void zmalloc_enable_thread_safeness(void) {
     zmalloc_thread_safe = 1;
 }
+#endif
 
 void zmalloc_set_oom_handler(void (*oom_handler)(size_t)) {
     zmalloc_oom_handler = oom_handler;
@@ -252,7 +279,7 @@ void zmalloc_set_oom_handler(void (*oom_handler)(size_t)) {
  * function RedisEstimateRSS() that is a much faster (and less precise)
  * version of the function. */
 
-#if defined(HAVE_PROC_STAT)
+#if defined(HAVE_PROCFS)
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -321,11 +348,11 @@ size_t zmalloc_get_rss(void) {
 #endif
 
 /* Fragmentation = RSS / allocated-bytes */
-float zmalloc_get_fragmentation_ratio(size_t rss) {
-    return (float)rss/zmalloc_used_memory();
+float zmalloc_get_fragmentation_ratio(void) {
+    return (float)zmalloc_get_rss()/zmalloc_used_memory();
 }
 
-#if defined(HAVE_PROC_SMAPS)
+#if defined(HAVE_PROCFS)
 size_t zmalloc_get_private_dirty(void) {
     char line[1024];
     size_t pd = 0;

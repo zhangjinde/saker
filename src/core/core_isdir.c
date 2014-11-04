@@ -8,3 +8,4 @@ int core_isdir(lua_State *L) {
     else  lua_pushboolean(L, 0);
     return 1;
 }
+
