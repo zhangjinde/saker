@@ -10,4 +10,3 @@ int core_isabsolutepath(lua_State *L) {
     }
     return 0;
 }
-

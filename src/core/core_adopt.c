@@ -9,14 +9,11 @@
 #include "utils/process.h"
 #include "utils/sds.h"
 #include "saker.h"
-#ifndef OS_WIN
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
-#endif
-
 
 sds getPidfile(const char *execfile) {
     sds   pidfile = sdsempty();
@@ -40,11 +37,6 @@ int core_adopt(lua_State *L) {
     int status = 0;
     sds cmd = sdsempty();
     sds pidfile = 0;
-#ifdef OS_WIN
-    PROCESS_INFORMATION processInfo;
-    STARTUPINFO startupInfo;
-    char        procname[1024]= {0};
-#endif
     int idx = 1, argc = 0;
     pid_t pid;
     const char **argv = NULL;
@@ -78,47 +70,6 @@ int core_adopt(lua_State *L) {
         lua_pushfstring(L, "the pidfile '%s' is exists", pidfile);
         goto End;
     }
-#ifdef OS_WIN
-    GetStartupInfo(&startupInfo); /* take defaults from current process */
-    startupInfo.cb          = sizeof(STARTUPINFO);
-    startupInfo.lpReserved  = NULL;
-    startupInfo.lpDesktop   = NULL;
-    startupInfo.lpTitle     = NULL;
-    startupInfo.dwFlags     = STARTF_USESTDHANDLES;
-    startupInfo.cbReserved2 = 0;
-    startupInfo.lpReserved2 = NULL;
-
-    if (!CreateProcess(
-                NULL,
-                cmd,
-                NULL,
-                NULL,
-                FALSE,  // Do NOT inherit handles
-                CREATE_NEW_PROCESS_GROUP | CREATE_UNICODE_ENVIRONMENT,
-                NULL,
-                NULL,
-                &startupInfo,
-                &processInfo
-            )) {
-        lua_pushnil(L);
-        lua_pushfstring(L, "cannot fork process for  '%s'", argv[0]);
-        goto End;
-    }
-    pid = processInfo.dwProcessId;
-    if (WAIT_TIMEOUT != WaitForSingleObject(processInfo.hProcess, 10)) {
-        GetExitCodeProcess(processInfo.hProcess, (DWORD *) &status);
-        lua_pushnil(L);
-        lua_pushfstring(L, "execute it [%s] failed ,status [%d] ,the pidfile :[%s]", cmd, status, pidfile);
-        goto End;
-    }
-
-    get_procname(processInfo.hProcess, procname,1024);
-    if (strlen(procname) != 0) {
-        pidfile_create(pidfile, procname, pid);
-    } else {
-        LOG_ERROR("get process name failed '%'", cmd);
-    }
-#else
     pid = fork();
     if (pid < 0 ) {
         lua_pushnil(L);
@@ -171,7 +122,6 @@ int core_adopt(lua_State *L) {
     /* avoid <defunct> Wait blocking */
     waitpid(pid, &status, 0);
     xsleep(10);
-#endif
     if (pidfile_verify(pidfile) == UGOK) {
         lua_pushnumber(L, pid);
         lua_pushstring(L, pidfile);

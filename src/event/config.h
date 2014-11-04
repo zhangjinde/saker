@@ -39,18 +39,15 @@
 #define redis_fstat fstat64
 #define redis_stat stat64
 #else
-#ifdef _WIN32
-#define redis_fstat _fstat64
-#define redis_stat _stat64
-#else
 #define redis_fstat fstat
 #define redis_stat stat
-#endif
 #endif
 
 /* Test for proc filesystem */
 #ifdef __linux__
-#define HAVE_PROCFS 1
+#define HAVE_PROC_STAT 1
+#define HAVE_PROC_MAPS 1
+#define HAVE_PROC_SMAPS 1
 #endif
 
 /* Test for task_info() */
@@ -106,6 +103,20 @@
 #define rdb_fsync_range(fd,off,size) sync_file_range(fd,off,size,SYNC_FILE_RANGE_WAIT_BEFORE|SYNC_FILE_RANGE_WRITE)
 #else
 #define rdb_fsync_range(fd,off,size) fsync(fd)
+#endif
+
+/* Check if we can use setproctitle().
+ * BSD systems have support for it, we provide an implementation for
+ * Linux and osx. */
+#if (defined __NetBSD__ || defined __FreeBSD__ || defined __OpenBSD__)
+#define USE_SETPROCTITLE
+#endif
+
+#if (defined __linux || defined __APPLE__)
+#define USE_SETPROCTITLE
+#define INIT_SETPROCTITLE_REPLACEMENT
+void spt_init(int argc, char *argv[]);
+void setproctitle(const char *fmt, ...);
 #endif
 
 /* Byte ordering detection */
@@ -164,12 +175,6 @@
 #endif
 #endif
 
-#ifdef _WIN32
-#ifndef BYTE_ORDER
-#define BYTE_ORDER LITTLE_ENDIAN
-#endif
-#endif
-
 #if !defined(BYTE_ORDER) || \
     (BYTE_ORDER != BIG_ENDIAN && BYTE_ORDER != LITTLE_ENDIAN)
 	/* you must determine what the correct bit order is for
@@ -188,4 +193,3 @@
 #endif
 
 #endif
-

@@ -34,53 +34,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#ifndef _WIN32
 #include <unistd.h>
-#endif
 #include <time.h>
 #include <ctype.h>
 #include <errno.h>
 #include <sys/stat.h>
-#ifndef _WIN32
+
 #include <sys/time.h>
-#endif
+
 #include <assert.h>
 #include <fcntl.h>
 #include <limits.h>
 
-#ifdef _WIN32
-#include <fcntl.h>
-#ifndef FD_SETSIZE
-#define FD_SETSIZE 16000
-#endif
-#ifndef STDIN_FILENO
-  #define STDIN_FILENO (_fileno(stdin))
-#endif
-#include <winsock2.h>
-#include <windows.h>
-#include "event/win32fixes.h"
-#define strcasecmp _stricmp
-#define strncasecmp _strnicmp
-#define strtoull _strtoui64
-#endif
-
-#ifdef _WIN32
-#include <fcntl.h>
-#ifndef FD_SETSIZE
-#define FD_SETSIZE 16000
-#endif
-#ifndef STDIN_FILENO
-  #define STDIN_FILENO (_fileno(stdin))
-#endif
-#include <winsock2.h>
-#include <windows.h>
-#include "event/win32fixes.h"
-#define strcasecmp _stricmp
-#define strncasecmp _strnicmp
-#define strtoull _strtoui64
-#endif
-
-#include "hiredis.h"
+#include "hiredis/hiredis.h"
 #include "utils/sds.h"
 #include "event/zmalloc.h"
 #include "linenoise.h"
@@ -200,21 +166,12 @@ static void cliInitHelp() {
 
 /* Output command help to stdout. */
 static void cliOutputCommandHelp(struct commandHelp *help, int group) {
-#ifndef _WIN32
     printf("\r\n  \x1b[1m%s\x1b[0m \x1b[90m%s\x1b[0m\r\n", help->name, help->params);
     printf("  \x1b[33msummary:\x1b[0m %s\r\n", help->summary);
     printf("  \x1b[33msince:\x1b[0m %s\r\n", help->since);
     if (group) {
         printf("  \x1b[33mgroup:\x1b[0m %s\r\n", commandGroups[help->group]);
     }
-#else 
-    printf("\r\n %s  %s", help->name, help->params);
-    printf(" summary: %s\r\n", help->summary);
-    printf(" since:  %s\r\n", help->since);
-    if (group) {
-        printf(" group: %s\r\n", commandGroups[help->group]);
-    }
-#endif
 }
 
 /* Print generic help. */
@@ -537,12 +494,7 @@ static int cliReadReply(int output_raw_strings) {
                 out = sdscat(out,"\n");
             }
         }
-#ifdef _WIN32
-        /* if size is too large, fwrite fails. Use fprintf */
-        fprintf(stdout, "%s", out);
-#else
         fwrite(out,sdslen(out),1,stdout);
-#endif
         sdsfree(out);
     }
     freeReplyObject(reply);
@@ -749,18 +701,10 @@ static void repl() {
     /* Only use history when stdin is a tty. */
     if (isatty(fileno(stdin))) {
         history = 1;
-
-#ifdef _WIN32
-        if (getenv("USERPROFILE") != NULL) {
-            historyfile = sdscatprintf(sdsempty(),"%s\\.rediscli_history",getenv("USERPROFILE"));
-            linenoiseHistoryLoad(historyfile);
-        }
-#else
         if (getenv("HOME") != NULL) {
             historyfile = sdscatprintf(sdsempty(),"%s/.rediscli_history",getenv("HOME"));
             linenoiseHistoryLoad(historyfile);
         }
-#endif
     }
 
     cliRefreshPrompt();
@@ -958,20 +902,7 @@ int main(int argc, char **argv) {
         config.output = OUTPUT_STANDARD;
     config.mb_delim = sdsnew("\n");
     cliInitHelp();
-
-#ifdef _WIN32
-    _fmode = _O_BINARY;
-    _setmode(_fileno(stdin), _O_BINARY);
-    _setmode(_fileno(stdout), _O_BINARY);
-    _setmode(_fileno(stderr), _O_BINARY);
-
-    if (!w32initWinSock()) {
-      printf("Winsock init error %d", WSAGetLastError());
-      exit(1);
-    };
-
-    atexit((void(*)(void)) WSACleanup);
-#endif
+    
     firstarg = parseOptions(argc,argv);
     argc -= firstarg;
     argv += firstarg;

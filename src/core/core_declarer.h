@@ -1,4 +1,3 @@
-
 #ifndef _CORE_DECLARER__H_
 #define _CORE_DECLARER__H_
 
@@ -8,8 +7,6 @@
 #include "lualib.h"
 
 #include "utils/logger.h"
-
-
 
 /* Built-in functions */
 int core_getuid(lua_State* L);
@@ -42,8 +39,5 @@ int core_uuid(lua_State* L);
 int core_pidof(lua_State* L);
 int core_log(lua_State* L);
 int core_md5(lua_State* L);
-
-
-
 
 #endif

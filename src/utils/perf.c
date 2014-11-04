@@ -1,8 +1,6 @@
 #include "perf.h"
-#ifndef _WIN32
 #include <sys/time.h>
 #include <sys/resource.h>
-#endif
 #include "logger.h"
 #include "error.h"
 
@@ -16,7 +14,6 @@
  * server.maxclients to the value that we can actually handle. */
 unsigned long long adjustOpenFilesLimit(unsigned long clientsnum) {
     unsigned long long maxclients = clientsnum;
-#ifndef _WIN32
     rlim_t maxfiles = maxclients+32;
     struct rlimit limit;
 
@@ -50,6 +47,5 @@ unsigned long long adjustOpenFilesLimit(unsigned long clientsnum) {
             }
         }
     }
-#endif
     return maxclients;
 }

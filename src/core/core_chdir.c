@@ -1,7 +1,6 @@
 #include "core_declarer.h"
 #include "utils/path.h"
 
-
 int core_chdir(lua_State *L) {
     const char *path = luaL_checkstring(L, 1);
 

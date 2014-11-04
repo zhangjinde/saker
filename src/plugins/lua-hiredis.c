@@ -2,8 +2,17 @@
 * lua-hiredis.c: Bindings for hiredis Redis-client library
 *                See copyright information in file COPYRIGHT.
 */
-#include "ulualib.h"
 
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
+#include <lua.h>
+#include <lauxlib.h>
+
+#if defined (__cplusplus)
+}
+#endif
 
 #include "hiredis/hiredis.h"
 
@@ -14,7 +23,7 @@
 #endif
 
 #define LUAHIREDIS_VERSION     "lua-hiredis 0.2.1"
-#define LUAHIREDIS_COPYRIGHT   "Copyright (C) 2011\u20142013, lua-hiredis authors"
+#define LUAHIREDIS_COPYRIGHT   "Copyright (C) 2011—2013, lua-hiredis authors"
 #define LUAHIREDIS_DESCRIPTION "Bindings for hiredis Redis-client library"
 
 #define LUAHIREDIS_CONN_MT   "lua-hiredis.connection"
@@ -587,7 +596,7 @@ LUALIB_API int luaopen_hiredis(lua_State * L)
   /*
   * Register module
   */
-  //luaL_register(L, "hiredis", E);
+  /* luaL_register(L, "hiredis", E); */
   luaL_newlib(L,E);
   /*
   * Register module information

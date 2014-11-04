@@ -16,7 +16,7 @@ void _ugPanic(char *msg, char *file, int line);
 
 #ifdef HAVE_BACKTRACE
 
-void  sigsegv_handler(int sig, siginfo_t *info, void *secret);
+void  sigsegvHandler(int sig, siginfo_t *info, void *secret);
 
 #endif
 

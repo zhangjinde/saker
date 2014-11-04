@@ -1,10 +1,9 @@
 #ifndef _CLIENT__H_
 #define _CLIENT__H_
 
-
+#include <time.h>
 #include "event/ae.h"
 #include "common/common.h"
-#include "common/winfixes.h"
 #include "utils/sds.h"
 #include "utils/error.h"
 #include "utils/ulist.h"
