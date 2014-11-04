@@ -46,7 +46,6 @@ static void setupSignalHandler(void) {
     sigaction(SIGTERM, &act, NULL);
 
 #ifdef HAVE_BACKTRACE
-    printf("##################\n");
     sigemptyset(&act.sa_mask);
     act.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
     act.sa_sigaction = sigsegv_handler;

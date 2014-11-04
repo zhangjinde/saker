@@ -11,16 +11,15 @@ event/util.c
 )
 
 if(CMAKE_SYSTEM MATCHES "Windows")
-list(APPEND EventSourcesFile event/win32_wsiocp.c)
-list(APPEND EventSourcesFile event/win32fixes.c)
+    list(APPEND EventSourcesFile event/win32_wsiocp.c)
+    list(APPEND EventSourcesFile event/win32fixes.c)
 endif()
-set(SubDir . utils core service sysinfo plugins proto luacompat)
 
+set(SubDir . utils core service sysinfo plugins proto luacompat)
 list(APPEND EXE_SRCS ${EventSourcesFile})
 
 foreach(TheDir ${SubDir})
     aux_source_directory(${TheDir} EXE_SRCS)
-
     if(NOT ${TheDir} STREQUAL ".")
         unset(TheSours)
         file(GLOB TheSours ${TheDir}/*.h)
