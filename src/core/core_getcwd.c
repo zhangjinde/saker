@@ -1,7 +1,6 @@
 #include "core_declarer.h"
 #include "utils/path.h"
 
-
 int core_getcwd(lua_State *L) {
     char buffer[MAX_STRING_LEN] = {0};
     char *ch;
@@ -19,5 +18,3 @@ int core_getcwd(lua_State *L) {
     lua_pushstring(L, buffer);
     return 1;
 }
-
-

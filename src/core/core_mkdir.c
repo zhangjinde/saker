@@ -15,7 +15,6 @@ int core_mkdir(lua_State *L) {
             return 2;
         }
     }
-
     lua_pushboolean(L, 1);
     return 1;
 }

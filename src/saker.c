@@ -1,20 +1,22 @@
 #include "saker.h"
 #include <assert.h>
 #include <signal.h>
+
 #include "common/types.h"
 #include "common/defines.h"
-#include "common/winfixes.h"
 #include "luaworking.h"
 #include "ulualib.h"
+
+#include "utils/debug.h"
 #include "utils/logger.h"
 #include "utils/file.h"
 #include "utils/path.h"
 #include "utils/error.h"
 #include "utils/getopt.h"
 #include "utils/process.h"
-#include "utils/debug.h"
 #include "utils/string.h"
 #include "utils/perf.h"
+
 #include "service/register.h"
 #include "sysinfo/sysinfo.h"
 #include "sysinfo/top.h"
@@ -24,7 +26,6 @@
 #include "proto/object.h"
 #include "proto/pubsub.h"
 
-
 extern const char *builtin_scripts[];
 
 struct sakerServer server;
@@ -32,7 +33,7 @@ struct sakerServer server;
 static void sigtermHandler(int sig) {
     UG_NOTUSED(sig);
     LOG_TRACE("Received SIGTERM, scheduling shutdown...");
-    exit(0);
+    if (server.el) aeStop(server.el);
 }
 
 static void setupSignalHandler(void) {
@@ -48,14 +49,13 @@ static void setupSignalHandler(void) {
 #ifdef HAVE_BACKTRACE
     sigemptyset(&act.sa_mask);
     act.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
-    act.sa_sigaction = sigsegv_handler;
+    act.sa_sigaction = sigsegvHandler;
     sigaction(SIGSEGV, &act, NULL);
     sigaction(SIGBUS, &act, NULL);
     sigaction(SIGFPE, &act, NULL);
     sigaction(SIGILL, &act, NULL);
 #endif
 }
-
 
 static int  timerHandler(aeEventLoop *el, long long id, void *clientData) {
     dictIterator *di = dictGetIterator(server.tasks);
@@ -172,15 +172,8 @@ void freeServer(struct sakerServer *server) {
     destroySharedObjects();
 }
 
-
-
 void exitProc(void) {
     freeServer(&server);
-
-#ifdef _WIN32
-    WSACleanup();
-#endif //_WIN32
-
     freeSysinfoDic();
     if (server.iskiller == UGERR)
         LOG_INFO("Exit Server ...");
@@ -191,34 +184,9 @@ static int doAction() {
     char buff[MAX_STRING_LEN] = {0};
     int  idx = 0;
     long long  timeeventid;
-
-#ifdef _WIN32
-    HMODULE lib;
-    /* Force binary mode on all files */
-    _fmode = _O_BINARY;
-    _setmode(_fileno(stdin),  _O_BINARY);
-    _setmode(_fileno(stdout), _O_BINARY);
-    _setmode(_fileno(stderr), _O_BINARY);
-
-    /* Set C locale, forcing strtod() to work with dots */
-    //setlocale(LC_ALL, "C");
-    /* MingGW 32 lacks declaration of RtlGenRandom, MinGw64 don't */
-    lib = LoadLibraryA("advapi32.dll");
-    RtlGenRandom = (RtlGenRandomFunc)GetProcAddress(lib, "SystemFunction036");
-
-    /* Winsocks must be initialized */
-    if (!w32initWinSock()) {
-
-        exit(1);
-    };
-    /* ... and cleaned at application exit */
-    //atexit((void(*)(void)) win32Cleanup);
-#else
     /* When the SA_SIGINFO flag is set in sa_flags then sa_sigaction is used.
      * Otherwise, sa_handler is used. */
     setupSignalHandler();
-
-#endif
 
     atexit(exitProc);
 
@@ -284,7 +252,7 @@ static int doAction() {
     server.config->maxclients = adjustOpenFilesLimit(server.config->maxclients);
 
     server.el = aeCreateEventLoop(server.config->maxclients + 1024);
-    server.ipfd = anetTcpServer(buff, server.config->port, server.config->bind);
+    server.ipfd = anetTcpServer(buff, server.config->port, server.config->bind, 0);
     if (server.ipfd == ANET_ERR) {
         LOG_ERROR("bind localhost:%d failed . %s. ", server.config->port, xerrmsg());
         server.ipfd = 0;
@@ -307,80 +275,15 @@ static int doAction() {
     }
     server.max_timeeventid = timeeventid;
     aeMain(server.el);
+
     return UGOK;
 }
-
-
-
-
-#ifdef OS_WIN
-static SERVICE_STATUS_HANDLE service_status_handle;
-static SERVICE_STATUS        service_status;
-
-static VOID WINAPI  ServiceControlHandler(DWORD fdwControl) {
-    switch (fdwControl) {
-    case SERVICE_CONTROL_STOP:
-    case SERVICE_CONTROL_SHUTDOWN:
-        service_status.dwWin32ExitCode = 0;
-        service_status.dwCurrentState  = SERVICE_STOPPED;
-        service_status.dwCheckPoint    = 0;
-        service_status.dwWaitHint      = 0;
-        LOG_DEBUG("recv ServiceControlHandler SERVICE_CONTROL_STOP");
-        if (!SetServiceStatus (service_status_handle, &service_status)) {
-            LOG_ERROR("SetServiceStatus error");
-        }
-        break;
-    case SERVICE_CONTROL_INTERROGATE:
-        break;
-    }
-}
-
-static VOID WINAPI SvcMain( DWORD dwArgc, LPTSTR *lpszArgv ) {
-    service_status.dwServiceType             = SERVICE_WIN32;
-    service_status.dwCurrentState            = SERVICE_START_PENDING;
-    service_status.dwControlsAccepted        = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN;
-    service_status.dwWin32ExitCode           = 0;
-    service_status.dwServiceSpecificExitCode = 0;
-    service_status.dwCheckPoint              = 0;
-    service_status.dwWaitHint                = 0;
-
-
-    service_status_handle = RegisterServiceCtrlHandler("", ServiceControlHandler);
-    if (service_status_handle == (SERVICE_STATUS_HANDLE)0) {
-        LOG_ERROR(APPNAME"  RegisterServiceCtrlHandler failed %s", xerrmsg());
-        return;
-    }
-    service_status.dwCurrentState       = SERVICE_RUNNING;
-    service_status.dwCheckPoint         = 0;
-    service_status.dwWaitHint           = 0;
-
-    if (!SetServiceStatus (service_status_handle, &service_status)) {
-        LOG_ERROR(APPNAME" SetServiceStatus error %ld",xerrmsg());
-    }
-
-    doAction();
-}
-
-void doBgAction() {
-    SERVICE_TABLE_ENTRY DispatchTable[] = {
-        { APPNAME, (LPSERVICE_MAIN_FUNCTION) SvcMain },
-        { NULL, NULL }
-    };
-    /* This call returns when the service has stopped.
-          The process should simply terminate when the call returns. */
-    if (!StartServiceCtrlDispatcher( DispatchTable )) {
-        LOG_ERROR("StartServiceCtrlDispatcher failed");
-    }
-}
-#else
 
 void doBgAction() {
     daemonize();
 
     doAction();
 }
-#endif
-
 
 static void doOptions(int argc, char **argv) {
     int idx;
@@ -424,5 +327,3 @@ int main(int argc,char **argv) {
 
     return UGOK;
 }
-
-

@@ -1,7 +1,6 @@
 #ifndef _PATH__H_
 #define _PATH__H_
 
-
 int xchdir(const char* path);
 
 int xisabsolutepath(const char* path) ;

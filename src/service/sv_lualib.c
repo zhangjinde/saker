@@ -1,4 +1,3 @@
-
 #include "ulualib.h"
 
 #include "register.h"
@@ -15,7 +14,6 @@ static const luaL_Reg svlib[] = {
 //    return 1;
 //}
 
-const luaL_Reg* getSvReg()
-{
+const luaL_Reg *getSvReg() {
     return svlib;
 }

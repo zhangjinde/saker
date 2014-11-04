@@ -1,12 +1,12 @@
 #ifndef _SAKER__H_
 #define _SAKER__H_
 
+#include <time.h>
 #include "event/ae.h"
 #include "lua.h"
 #include "utils/ulist.h"
 #include "utils/udict.h"
 #include "config.h"
-
 
 /* Client flags */
 #define UG_SLAVE (1<<0)   /* This client is a slave server */

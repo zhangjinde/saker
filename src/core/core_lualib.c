@@ -1,7 +1,5 @@
 #include "ulualib.h"
-
 #include "core_declarer.h"
-
 
 static const luaL_Reg corelib[] = {
     { "adopt",       core_adopt},
@@ -34,7 +32,6 @@ static const luaL_Reg corelib[] = {
 
     {NULL, NULL}
 };
-
 
 /*
 LUAMOD_API int luaopen_core(lua_State *L) {

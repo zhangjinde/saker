@@ -1,5 +1,3 @@
-
-
 #include "logger.h"
 
 #include <stdio.h>
@@ -7,16 +5,12 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#ifndef _WIN32
 #include <sys/types.h>  /* for getpid */
 #include <unistd.h>    /* for getpid */
-#endif
-
 #include "common/defines.h"
 #include "common/common.h"
 #include "utils/path.h"
 #include "utils/error.h"
-
 
 static const char *const log_array[]= {"[FATAL]",
                                        "[CRITICAL]",
@@ -88,11 +82,7 @@ void logger_write(int level, const char *file, int line, const char *fmt, ...) {
     snprintf(buffer, 128, "[%04d-%02d-%02d %02d:%02d:%02d]",
              ptm->tm_year + 1900, ptm->tm_mon + 1, ptm->tm_mday,
              ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
-#ifndef _WIN32
     fprintf(logfp, "%s %s [%d] [%s:%d] ",buffer, log_array[level-1], getpid(), file, line);
-#else 
-	fprintf(logfp, "%s %s [%s:%d] ",buffer, log_array[level-1], file, line);
-#endif
 
     va_start(vl,fmt);
     vfprintf(logfp,fmt,vl);

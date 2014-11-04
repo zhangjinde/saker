@@ -1,4 +1,3 @@
-
 #include "core_declarer.h"
 
 #include "utils/process.h"
