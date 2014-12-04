@@ -3,7 +3,22 @@ compiler:
   - gcc
 before_script:
 - sudo apt-get install cmake
-- sudo chmod +x build.sh
 script: 
-  - ./build.sh debug
+  - test -d cmake_build && rm -rf cmake_build
+  - mkdir -p cmake_build
+  - cd cmake_build
+  - cmake ../. -DCMAKE_BUILD_TYPE=Debug
 
+env:
+  global:
+   - secure: "juuwtUjESwqSp/30J5UevTikwLr50gKbULAVSuDoApljqOwRU3NS7dxP2CjvOGWn7f+VqWE5QEVseMZZsKEoyoNs5+jpBA9/dzo3y8I+INhXDsRqW/zZh7j+ablQqq0gTOstA1VcMtH2LzuzS/H2GX09TP8ttWrapVufIXGXmXk="
+
+addons:
+  coverity_scan:
+    project:
+      name: "cinience/saker"
+      description: "Build submitted via Travis CI"
+    notification_email: cinience@qq.com
+    build_command_prepend: "make"
+    build_command:   "./build.sh debug"
+    branch_pattern: coverity_scan
