@@ -94,7 +94,7 @@ static int topHandler(aeEventLoop *el, long long id, void *clientData) {
     return server.config->top_mode;
 }
 
-static void deferHandler() {
+static void deferHandler(void) {
     dictIterator *di = dictGetIterator(server.tasks);
     dictEntry *de;
     const char *innererr = NULL;
@@ -175,12 +175,13 @@ void freeServer(struct sakerServer *server) {
 void exitProc(void) {
     freeServer(&server);
     freeSysinfoDic();
-    if (server.iskiller == UGERR)
+    if (server.iskiller == UGERR) {
         LOG_INFO("Exit Server ...");
+    }
     logger_close();
 }
 
-static int doAction() {
+static int doAction(void) {
     char buff[MAX_STRING_LEN] = {0};
     int  idx = 0;
     long long  timeeventid;
@@ -279,7 +280,7 @@ static int doAction() {
     return UGOK;
 }
 
-void doBgAction() {
+void doBgAction(void) {
     daemonize();
 
     doAction();

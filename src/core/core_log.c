@@ -20,13 +20,10 @@ int core_log(lua_State *L) {
     loglevel = lua_tointeger(L, -top);
 
     /* Glue together all the arguments */
-
     msg = sdsempty();
-    for (idx= 1; idx < top; idx++) {
+    for (idx = 1; idx < top; idx++) {
         size_t len;
-        char *s;
-
-        s = (char *)lua_tolstring(L, (-top)+idx, &len);
+        char *s = (char *)lua_tolstring(L, (-top)+idx, &len);
         if (s) {
             if (idx != 1) msg = sdscatlen(msg," ",1);
             msg = sdscatlen(msg, s, len);

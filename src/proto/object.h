@@ -93,7 +93,7 @@ robj *getDecodedObject(robj *o) ;
 
 int compareStringObjects(robj *a, robj *b);
 
-int equalObjects(robj* a, robj* b);
+int equalObjects(robj *a, robj* b);
 
 int equalStringObjects(robj *a, robj *b);
 

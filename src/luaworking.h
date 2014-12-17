@@ -17,55 +17,55 @@ typedef int   LUA_HANDLE ;
 /**
  * open lua state
  */
-lua_State* luaworkOpen();
+lua_State* luaworkOpen(void);
 
 
 /**
  * close lua state
  */
-void luaworkClose(lua_State* L);
+void luaworkClose(lua_State *L);
 
 /* 
 * setenv 
 */
-void luaworkSetEnv(lua_State* L, const char* key, const char* value);
+void luaworkSetEnv(lua_State *L, const char *key, const char *value);
 
 /* 
 * getenv 
 */
-const char* luaworkGetEnv(lua_State* L, const char* key);
+const char* luaworkGetEnv(lua_State *L, const char *key);
 
 /**
  *  load inner lua lib 
  */
-int  luaworkRefLib(lua_State* L,const luaL_Reg* reg, char* err);
+int  luaworkRefLib(lua_State *L, const luaL_Reg *reg, char *err);
 
 
 /**
  *  execute lua string 
  */
-int  luaworkDoString(lua_State* L,const char* code, char* err);
+int  luaworkDoString(lua_State *L, const char *code, char *err);
 
 
 /**
  * execute lua file
  */
-int  luaworkDoFile(lua_State* L,const char* path,  char* err);
+int  luaworkDoFile(lua_State *L, const char *path,  char *err);
 
 
 /**
  * execute all file in dir xx
  */
-int  luaworkDoDir(lua_State* L,const char* path,  char* err);
+int  luaworkDoDir(lua_State *L, const char *path,  char *err);
 
 
-LUA_HANDLE luaworkRefFunction(lua_State* L,const char* func,char* err);
+LUA_HANDLE luaworkRefFunction(lua_State *L, const char *func, char *err);
 
 
-void luaworkUnrefFunction(lua_State* L, LUA_HANDLE handle,char* err);
+void luaworkUnrefFunction(lua_State *L, LUA_HANDLE handle, char *err);
 
 
-int luaworkInnerCall(lua_State* L, char* err, const char *sig, va_list vl);
+int luaworkInnerCall(lua_State *L, char *err, const char *sig, va_list vl);
 
 /**
  * howtouse:
@@ -75,13 +75,13 @@ int luaworkInnerCall(lua_State* L, char* err, const char *sig, va_list vl);
  * d (&double)-- double
  * s (&ptr) -- string
  */
-int luaworkCallByName(lua_State* L, const char* func, char* err, const char* sig, ...);
+int luaworkCallByName(lua_State *L, const char *func, char *err, const char *sig, ...);
 
 
-int luaworkCallByRef(lua_State* L, LUA_HANDLE handle,char* err, const char* sig, ...);
+int luaworkCallByRef(lua_State *L, LUA_HANDLE handle, char *err, const char *sig, ...);
 
 
-void luaworkTraceStack(lua_State* L, int n, char* msg, size_t msglen);
+void luaworkTraceStack(lua_State *L, int n, char *msg, size_t msglen);
 
 
 

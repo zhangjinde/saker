@@ -18,7 +18,7 @@ const char *property_string[] = {
     "defer"
 };
 
-ugTaskType *createTaskObj() {
+ugTaskType *createTaskObj(void) {
     ugTaskType *obj = zmalloc(sizeof(ugTaskType));
     memset(obj, 0 ,sizeof(ugTaskType));
     obj->prior =  PRIO_LOWEST;

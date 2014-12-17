@@ -94,7 +94,7 @@ void logger_write(int level, const char *file, int line, const char *fmt, ...) {
     }
 }
 
-void logger_close() {
+void logger_close(void) {
     if ((logfilename != NULL) &&
             (logfilename != defaultfilename)) {
         zfree(logfilename);

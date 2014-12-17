@@ -72,7 +72,7 @@ void freeClientAsync(void *c);
 
 void  resetClient(ugClient *c);
 
-list* createClientlist();
+list* createClientlist(void);
 
 void  freeClientlist(list *l);
 

@@ -10,9 +10,9 @@ typedef struct {
     int         type;
     uint64_t    ui64;
     double      dbl;
-    char*       str;
-    char*       text;
-    char*       msg;
+    char        *str;
+    char        *text;
+    char        *msg;
 } SYSINFO_RESULT;
 
 /* agent result types */
@@ -147,86 +147,82 @@ void  initResult(SYSINFO_RESULT *result);
 
 void  freeResult(SYSINFO_RESULT *result);
 
-const char*  getParam(int argc,const char** param, int pos) ;
+const char *getParam(int argc, const char **param, int pos) ;
 
-uint64_t  bytesConvert(uint64_t value,const char* param) ;
+uint64_t  bytesConvert(uint64_t value, const char *param) ;
 
-int sysInfo(lua_State* L) ;
+int sysInfo(lua_State *L) ;
 
-int initSysinfoDic();
+int initSysinfoDic(void);
 
-void freeSysinfoDic();
+void freeSysinfoDic(void);
 
-typedef int (*sysinfo_function_t)(const char*,int ,const char** , SYSINFO_RESULT*) ;
-
+typedef int (*sysinfo_function_t)(const char *, int , const char **, SYSINFO_RESULT *) ;
 
 typedef struct {
-    char* cmd;
+    char *cmd;
     sysinfo_function_t func;
 }
 sysinfoMap;
 
 
-int SYSTEM_BOOTTIME(const char *cmd,int argc,const char** argv,SYSINFO_RESULT *result);
+int SYSTEM_BOOTTIME(const char *cmd,int argc,const char **argv, SYSINFO_RESULT *result);
 
-int SYSTEM_CPU_NUM_ONLINE(const char*cmd,int argc,const char** argv, SYSINFO_RESULT *result);
+int SYSTEM_CPU_NUM_ONLINE(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
-int SYSTEM_CPU_NUM_MAX(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int SYSTEM_CPU_NUM_MAX(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
-int SYSTEM_CPU_LOAD(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int SYSTEM_CPU_LOAD(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
-int SYSTEM_CPU_UTIL(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int SYSTEM_CPU_UTIL(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
+int SYSTEM_UPTIME(const char *cmd, int argc,const char **argv, SYSINFO_RESULT *result);
 
-int SYSTEM_UPTIME(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int VM_MEMORY_TOTAL(const char *cmd, int argc,const char **argv, SYSINFO_RESULT *result);
 
+int VM_MEMORY_FREE(const char *cmd, int argc,const char **argv, SYSINFO_RESULT *result);
 
-int VM_MEMORY_TOTAL(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int VM_MEMORY_BUFFERS(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
-int VM_MEMORY_FREE(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int VM_MEMORY_CACHED(const char *cmd, int argc,const char **argv, SYSINFO_RESULT *result);
 
-int VM_MEMORY_BUFFERS(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int VM_MEMORY_USED(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
-int VM_MEMORY_CACHED(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int VM_MEMORY_PUSED(const char *cmd, int argc,const char **argv, SYSINFO_RESULT *result);
 
-int VM_MEMORY_USED(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int VM_MEMORY_AVAILABLE(const char *cmd, int argc,const char **argv, SYSINFO_RESULT *result);
 
-int VM_MEMORY_PUSED(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int VM_MEMORY_PAVAILABLE(const char *cmd, int argc,const char **argv, SYSINFO_RESULT *result);
 
-int VM_MEMORY_AVAILABLE(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int VM_MEMORY_SHARED(const char *cmd, int argc, const char ** argv, SYSINFO_RESULT *result);
 
-int VM_MEMORY_PAVAILABLE(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int NET_IF_IN(const char *cmd, int argc, const char** argv, SYSINFO_RESULT *result);
 
-int VM_MEMORY_SHARED(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int NET_IF_OUT(const char*cmd, int argc, const char** argv, SYSINFO_RESULT *result);
 
+int NET_IF_TOTAL(const char *cmd, int argc, const char** argv, SYSINFO_RESULT *result);
 
-int NET_IF_IN(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
-
-int NET_IF_OUT(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
-
-int NET_IF_TOTAL(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
-
-int NET_IF_COLLISIONS(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int NET_IF_COLLISIONS(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
 
-int KERNEL_MAXFILES(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int KERNEL_MAXFILES(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
-int KERNEL_MAXPROC(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
-
-
-int VFS_FS_SIZE(const char*cmd, int argc,const char** argv,SYSINFO_RESULT *result);
+int KERNEL_MAXPROC(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
 
-int PROC_PID(const char* cmd,int argc,const char** argv,SYSINFO_RESULT *result);
+int VFS_FS_SIZE(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
-int PROC_MEMORY_RSS(const char* cmd,int argc,const char** argv,SYSINFO_RESULT *result);
 
-int PROC_MEMORY_USED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT *result);
+int PROC_PID(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
-int PROC_MEMORY_PUSED(const char* cmd,int argc,const char** argv,SYSINFO_RESULT *result);
+int PROC_MEMORY_RSS(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
-int PROC_CPU_LOAD(const char* cmd,int argc,const char** argv,SYSINFO_RESULT *result);
+int PROC_MEMORY_USED(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
-int PROC_STATINFO(const char* cmd,int argc,const char** argv,SYSINFO_RESULT *result);
+int PROC_MEMORY_PUSED(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
+
+int PROC_CPU_LOAD(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
+
+int PROC_STATINFO(const char *cmd, int argc, const char **argv, SYSINFO_RESULT *result);
 
 #endif

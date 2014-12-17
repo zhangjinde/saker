@@ -10,8 +10,10 @@ int core_listdir(lua_State *L) {
     listNode *node=NULL;
     listIter *iter = NULL;
 
-    if (top == 2) match = lua_tostring(L, 2);
-
+    if (top == 2) {
+        match = lua_tostring(L, 2);
+    }
+    
     if (xfilelistdir(path, match, queue) == UGERR) {
         listRelease(queue);
         lua_pushnil(L);

@@ -14,6 +14,6 @@ static const luaL_Reg svlib[] = {
 //    return 1;
 //}
 
-const luaL_Reg *getSvReg() {
+const luaL_Reg *getSvReg(void) {
     return svlib;
 }

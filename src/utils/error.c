@@ -4,7 +4,7 @@
 #include <errno.h>
 #include "common/types.h"
 
-int xerrno() {
+int xerrno(void) {
     return errno;
 }
 
@@ -12,11 +12,11 @@ const char *xerrstr(unsigned long errnum) {
     return strerror(errnum);
 }
 
-const char *xerrmsg() {
+const char *xerrmsg(void) {
     return xerrstr(xerrno());
 }
 
-void  xerrclear() {
+void  xerrclear(void) {
     errno = 0;
 }
 

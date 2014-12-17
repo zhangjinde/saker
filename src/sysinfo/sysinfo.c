@@ -150,7 +150,7 @@ static const sysinfoMap sysinfo_map[] = {
 };
 
 
-int initSysinfoDic() {
+int initSysinfoDic(void) {
     int idx;
     g_dict_sysinfo_function = dictCreate(&callbackDict,NULL);
     if (g_dict_sysinfo_function == NULL) {
@@ -167,7 +167,7 @@ int initSysinfoDic() {
 }
 
 
-void freeSysinfoDic() {
+void freeSysinfoDic(void) {
     if (g_dict_sysinfo_function) {
         dictRelease(g_dict_sysinfo_function);
         g_dict_sysinfo_function = NULL;

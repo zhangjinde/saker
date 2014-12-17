@@ -4,28 +4,27 @@
 struct ugClient;
 struct protoObject;
 
-dict* createPubsubChannels();
+dict *createPubsubChannels(void);
 
-list* createPubsubPatterns();
+list *createPubsubPatterns(void);
 
-void destroyPubsubChannels(dict* channels);
+void destroyPubsubChannels(dict *channels);
 
-void destroyPubsubPatterns(list* patterns);
+void destroyPubsubPatterns(list *patterns);
 
-int pubsubSubscribeChannel(struct ugClient *c, struct protoObject * channel) ;
+int pubsubSubscribeChannel(struct ugClient *c, struct protoObject *channel) ;
 
-int pubsubUnsubscribeChannel(struct ugClient *c, struct protoObject * channel, int notify);
+int pubsubUnsubscribeChannel(struct ugClient *c, struct protoObject *channel, int notify);
 
-int pubsubSubscribePattern(struct ugClient *c, struct protoObject * pattern) ;
+int pubsubSubscribePattern(struct ugClient *c, struct protoObject *pattern) ;
 
-int pubsubUnsubscribePattern(struct ugClient *c, struct protoObject * pattern, int notify);
+int pubsubUnsubscribePattern(struct ugClient *c, struct protoObject *pattern, int notify);
 
 int pubsubUnsubscribeAllChannels(struct ugClient *c, int notify) ;
 
 int pubsubUnsubscribeAllPatterns(struct ugClient *c, int notify);
 
-int pubsubPublishMessage(struct protoObject * channel, struct protoObject * message);
-
+int pubsubPublishMessage(struct protoObject *channel, struct protoObject *message);
 
 void subscribeCommand(struct ugClient *c) ;
 
@@ -37,6 +36,6 @@ void punsubscribeCommand(struct ugClient *c) ;
 
 void publishCommand(struct ugClient *c) ;
 
-void freeAllPubsubObjs();
+void freeAllPubsubObjs(void);
 
 #endif

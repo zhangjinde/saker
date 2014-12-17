@@ -224,7 +224,7 @@ void  resetClient(ugClient *c) {
     c->bulklen = -1;
 }
 
-list *createClientlist( ) {
+list *createClientlist(void) {
     list *clients = listCreate();
     listSetFreeMethod(clients, listDeleteClientObjects);
     listSetMatchMethod(clients, listMatchClientObjects);

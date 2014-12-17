@@ -27,7 +27,7 @@
  * Get system start time
  * @return seconds since unix epoch
  */
-static time_t get_starttime() {
+static time_t get_starttime(void) {
     char   buf[1024];
     double up = 0;
     int fd,bytes;

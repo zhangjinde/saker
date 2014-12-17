@@ -15,6 +15,6 @@ static const luaL_Reg sysinfolib[] = {
 //}
 
 
-const luaL_Reg *getSysinfoReg() {
+const luaL_Reg *getSysinfoReg(void) {
     return sysinfolib;
 }

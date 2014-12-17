@@ -68,7 +68,7 @@ static void listFreePubsubPattern(void *ptr) {
     zfree(p);
 }
 
-dict *createPubsubChannels() {
+dict *createPubsubChannels(void) {
     return dictCreate(&callbackDict, NULL);
 }
 
@@ -80,14 +80,14 @@ void destroyPubsubPatterns(list *patterns) {
     listRelease(patterns);
 }
 
-list *createPubsubPatterns() {
+list *createPubsubPatterns(void) {
     list *pubsubPatterns =  listCreate();
     listSetFreeMethod(pubsubPatterns, listFreePubsubPattern);
     listSetMatchMethod(pubsubPatterns, listMatchPubsubPattern);
     return pubsubPatterns;
 }
 
-void freeAllPubsubObjs() {
+void freeAllPubsubObjs(void) {
     dictRelease(server.pubsub_channels);
     listRelease(server.pubsub_patterns);
 }

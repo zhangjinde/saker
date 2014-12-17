@@ -16,37 +16,37 @@ typedef enum {
 
 typedef enum {
   PROP_UNKNOW      = 0,
-  PROP_UNACTIVE    = 1,   /**< Î´¼¤»î */
-  PROP_ONCE        = 2,   /**< Ò»´ÎÐÔÈÎÎñ*/
-  PROP_CYCLE       = 3,   /**< ÖÜÆÚÐÔÈÎÎñ*/
-  PROP_PASSIVITY   = 4,   /**< ±»¶¯½ÓÊÜ */	
-  PROP_DEFER       = 5    /**< ÏµÍ³ÍË³öÊ±Ö´ÐÐµÄÈÎÎñ **/
+  PROP_UNACTIVE    = 1,   /**< éžæ¿€æ´»çŠ¶æ€ */
+  PROP_ONCE        = 2,   /**< ä¸€æ¬¡æ€§ä»»åŠ¡ */
+  PROP_CYCLE       = 3,   /**< å¾ªçŽ¯ä»»åŠ¡ */
+  PROP_PASSIVITY   = 4,   /**< ä¸»åŠ¨è§¦å‘ */	
+  PROP_DEFER       = 5    /**< é€€å‡ºæ—¶ä»»åŠ¡ **/
 } task_property_t;
 
 typedef struct {
-  char* alias;  /**< ÈÎÎñ±ðÃû */
+  char *alias;  /**< alias for task */
   task_priority_t prior;
-  task_property_t property; /**< ÈÎÎñÊôÐÔ */
+  task_property_t property; /**<  task property @see task_property_t */
   task_property_t oldproperty;
-  char* func;
+  char *func;
   LUA_HANDLE handle;
 } ugTaskType;
 
-extern const char* property_string[];
+extern const char *property_string[];
 
-ugTaskType*  createTaskObj();
+ugTaskType *createTaskObj(void);
 
-void  freeTaskObj(void* );
+void  freeTaskObj(void *);
 
-dict* createTaskMap();
+dict *createTaskMap(void);
 
-void  destroyTaskMap(dict* p);
+void  destroyTaskMap(dict *p);
 
-int   ugRegister(lua_State* L);
+int   ugRegister(lua_State *L);
 
-int   ugUnregister(lua_State* L);
+int   ugUnregister(lua_State *L);
 
-int   ugPublish(lua_State* L);
+int   ugPublish(lua_State *L);
 
 #endif
 

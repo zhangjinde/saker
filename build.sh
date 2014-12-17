@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ScriptDir=`echo $(cd "$(dirname "$0")"; pwd)`
 cd ${ScriptDir}

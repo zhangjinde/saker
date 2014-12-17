@@ -3,25 +3,23 @@
 
 #include <sys/types.h>
 #include <unistd.h>
+
 #include "common/types.h"
 
-int  pidfile_create(const char* pidfile,const char* appname,pid_t pid);
+void daemonize(void);
 
-void pidfile_remove(const char* pidfile);
+int  pidfile_create(const char *pidfile,const char *appname,pid_t pid);
 
-int  pidfile_getpid(const char* pidfile,int* pid);
+void pidfile_remove(const char *pidfile);
 
-int  pidfile_exists(const char* pidfile);
+int  pidfile_getpid(const char *pidfile,int *pid);
 
-int  pidfile_verify(const char* pidfile);
+int  pidfile_exists(const char *pidfile);
 
-int  proc_isrunning(pid_t pid, const char* matchstr);
+int  pidfile_verify(const char *pidfile);
 
-void daemonize();
+int  proc_isrunning(pid_t pid, const char *matchstr);
 
-int  pkill(pid_t pid,int sig);
-
-
-
+int  pkill(pid_t pid, int sig);
 
 #endif

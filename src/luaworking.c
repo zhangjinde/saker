@@ -16,7 +16,7 @@ static void luaworkSetError(char *err, const char *fmt, ...) {
     va_end(ap);
 }
 
-lua_State *luaworkOpen() {
+lua_State *luaworkOpen(void) {
     lua_State *L = L = luaL_newstate();
     luaL_openlibs(L);
     return L;

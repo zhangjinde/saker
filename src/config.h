@@ -19,24 +19,24 @@
 
 typedef struct config {
     int      work_interval;
-    char*    logfile_path;
+    char    *logfile_path;
     int      logfile_level;
     int      net_keeplive;
     int      net_timeout;
-    char*    script_dir;
-    char*    pidfile_dir;
-    char*    password;
-    char*    bind;
+    char    *script_dir;
+    char    *pidfile_dir;
+    char    *password;
+    char    *bind;
     int      port;
     int      top_mode;
     int      maxclients;
 } config_t;
 
 
-config_t*  createConfig(const char* file );
+config_t *createConfig(const char *file );
 
 
-void  freeConfig(config_t* pconfig);
+void  freeConfig(config_t *pconfig);
 
 
 

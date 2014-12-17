@@ -9,11 +9,9 @@
 #include <fcntl.h>
 #endif /* HAVE_BACKTRACE */
 
-
 static void bugReportStart(void) {
     LOG_WARNING("\n\n=== BUG REPORT START: Cut & paste starting from here ===");
 }
-
 
 void _ugAssert(char *estr, char *file, int line) {
     bugReportStart();
@@ -70,7 +68,6 @@ static void *getMcontextEip(ucontext_t *uc) {
 #endif
 }
 
-
 /* Logs the stack trace using the backtrace() call. This function is designed
  * to be called from signal handlers safely. */
 static void stacktrace(ucontext_t *uc) {
@@ -114,5 +111,3 @@ void sigsegvHandler(int sig, siginfo_t *info, void *secret) {
 }
 
 #endif /* HAVE_BACKTRACE */
-
-

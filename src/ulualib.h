@@ -12,13 +12,13 @@
 //LUAMOD_API int (luaopen_sv) (lua_State *L);
 
 
-typedef const luaL_Reg* (*getlib)();
+typedef const luaL_Reg *(*getlib)(void);
 
-const luaL_Reg* getCoreReg();
+const luaL_Reg *getCoreReg(void);
 
-const luaL_Reg* getSvReg();
+const luaL_Reg *getSvReg(void);
 
-const luaL_Reg* getSysinfoReg();
+const luaL_Reg *getSysinfoReg(void);
 
 #define LUA_SAKERNAME   "saker"
 LUAMOD_API int (luaopen_saker) (lua_State *L);

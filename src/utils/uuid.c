@@ -3,7 +3,7 @@
 #include <string.h>
 #include "common/types.h"
 
-static uint64_t read_andom_uint64() {
+static uint64_t read_andom_uint64(void) {
     uint64_t result;
     FILE *rnd = fopen("/dev/urandom", "rb");
     fread(&result, sizeof(result), 1, rnd);

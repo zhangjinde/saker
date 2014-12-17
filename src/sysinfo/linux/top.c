@@ -251,7 +251,7 @@ int updateProcess(struct ProcessInfo *proc) {
 }
 
 
-int topUpdate() {
+int topUpdate(void) {
     DIR *dir;
     pid_t pid;
     struct dirent *entry;

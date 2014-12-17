@@ -4,12 +4,12 @@
 #include "common/types.h"
 #include <errno.h>
 
-int   xerrno() ;
+int   xerrno(void);
 
-const char* xerrstr(unsigned long errnum);
+const char *xerrstr(unsigned long errnum);
 
-const char* xerrmsg();
+const char *xerrmsg(void);
 
-void  xerrclear();
+void  xerrclear(void);
 
 #endif

@@ -68,7 +68,7 @@ static int get_procname(pid_t pid, char *procname, int len) {
     return UGOK;
 }
 
-void daemonize() {
+void daemonize(void) {
     int i;
     pid_t pid;
 
@@ -113,6 +113,7 @@ void daemonize() {
             exit(1);
         }
     */
+    
     for (i= 0; i < 3; i++) {
         if (close(i) == -1 || open("/dev/null", O_RDWR) != i) {
             LOG_ERROR("Cannot reopen standard file descriptor (%d) -- \n", i);
@@ -136,7 +137,7 @@ int pidfile_create( const char *pidfile,const char *appname,pid_t pid ) {
     sprintf(buf, "%d\n", pid != 0 ? pid : getpid());
     /* sprintf(buf+strlen(buf), "%s", appname);  */
     write(fd, buf, strlen(buf)+1);
-    /* ´Ë´¦²»ÄÜ¹Ø±ÕÎÄ¼þÃèÊö·û£¬ÒòÎªÎÒÃÇÐèÒª±£³ÖÔÚ½ø³ÌÖÐÒÔ¶ÁËølock¸ÃÎÄ¼þ*/
+    /* ï¿½Ë´ï¿½ï¿½ï¿½ï¿½Ü¹Ø±ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½lockï¿½ï¿½ï¿½Ä¼ï¿½*/
     return UGOK;
 }
 

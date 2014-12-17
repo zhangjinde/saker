@@ -40,6 +40,6 @@ LUAMOD_API int luaopen_core(lua_State *L) {
 }
 */
 
-const luaL_Reg *getCoreReg() {
+const luaL_Reg *getCoreReg(void) {
     return corelib;
 }

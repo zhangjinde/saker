@@ -20,23 +20,23 @@ struct sakerServer
     int           ipfd;
     int           isdaemon;
     int           iskiller;         
-    dict*         commands;
-    dict*         pubsub_channels;
-    list*         pubsub_patterns;
+    dict         *commands;
+    dict         *pubsub_channels;
+    list         *pubsub_patterns;
     int           tcpkeepalive;               /* Set SO_KEEPALIVE if non-zero. */
-    list*         clients; 
+    list         *clients;
     long long     stat_rejected_conn;
     long long     stat_numconnections;
     long long     max_timeeventid;
-    aeEventLoop*  el; 
+    aeEventLoop  *el;
      
     /* private */
-    char*         pidfile;
-    config_t*     config; 
-    char*         configfile;
-    lua_State*    ls;
-    dict*         tasks;
-    dict*         process;
+    char         *pidfile;
+    config_t     *config;
+    char         *configfile;
+    lua_State    *ls;
+    dict         *tasks;
+    dict         *process;
     
     /* not used */
     time_t        unixtime;
@@ -47,9 +47,8 @@ struct sakerServer
 
 extern struct sakerServer server;
 
-void initServer(struct sakerServer* server);
+void initServer(struct sakerServer *server);
 
-void freeServer(struct sakerServer* server);
-
+void freeServer(struct sakerServer *server);
 
 #endif

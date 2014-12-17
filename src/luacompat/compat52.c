@@ -1,12 +1,10 @@
 #include "luacompat52.h"
 #include <assert.h>
 
-
-
 void luaL_newlibtablex(lua_State *L, const luaL_Reg *l)
 {
     int narry = 0;
-    const luaL_Reg* t = l;
+    const luaL_Reg *t = l;
     for (; t->name!=NULL; ++t) {
         ++narry;
     }

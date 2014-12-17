@@ -9,8 +9,8 @@ extern uint32_t g_time;
 
 struct ProcessInfo {
     pid_t pid;
-    char* name;
-    char* fullname;
+    char *name;
+    char *fullname;
     uid_t uid;
     float amount;
     // User and kernel times are in hundredths of seconds
@@ -47,9 +47,9 @@ struct ProcessInfo {
 
 /* just for platform */
 
-struct ProcessInfo* newProcess(pid_t pid);
+struct ProcessInfo *newProcess(pid_t pid);
 
-struct ProcessInfo* findProcess(pid_t pid);
+struct ProcessInfo *findProcess(pid_t pid);
 
 void  deleteProcess(pid_t pid);
 
@@ -59,19 +59,18 @@ int   topIsRuning(void);
 
 /* end for platform */
 
-void  freeProcess(struct ProcessInfo* p);
+void  freeProcess(struct ProcessInfo *p);
 
-int   updateProcess(struct ProcessInfo* proc);
+int   updateProcess(struct ProcessInfo *proc);
 
-struct ProcessInfo* getProcessInfoByID(pid_t pid);
+struct ProcessInfo *getProcessInfoByID(pid_t pid);
 
 int   topUpdate(void);
 
 int   topIsRuning(void);
 
-dict* createTop();
+dict* createTop(void);
 
-void  destroyTop(dict* p);
-
+void  destroyTop(dict *p);
 
 #endif

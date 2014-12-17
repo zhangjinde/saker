@@ -1,4 +1,3 @@
-
 #include "client.h"
 #include <time.h>
 #include "common/common.h"

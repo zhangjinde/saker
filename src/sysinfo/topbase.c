@@ -82,11 +82,11 @@ struct ProcessInfo *getProcessInfoByID(pid_t pid) {
     return p;
 }
 
-int   topIsRuning( ) {
+int   topIsRuning(void) {
     return server.config->top_mode;
 }
 
-dict *createTop() {
+dict *createTop(void) {
     return dictCreate(&callbackDict, NULL);
 }
 

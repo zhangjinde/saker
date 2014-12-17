@@ -13,7 +13,9 @@ int core_getuid(lua_State *L) {
         return 1;
 
     }
-    if (top > 0) user = lua_tostring(L, 1);
+    if (top > 0) {
+        user = lua_tostring(L, 1);
+    }
 
     pwd = getpwnam(user);
     if (pwd) {

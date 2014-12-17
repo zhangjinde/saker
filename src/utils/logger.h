@@ -40,10 +40,10 @@ enum log_priority
     logger_write(LOGTRACE,__FILE__,__LINE__,LOG_CONST_STRING(fmt),##__VA_ARGS__);
 
 
-int  logger_open(const char* logfile,int level);
+int  logger_open(const char *logfile,int level);
 
-void logger_write(int level,const char* file,int line,const char *fmt, ...);
+void logger_write(int level,const char *file,int line,const char *fmt, ...);
 
-void logger_close();
+void logger_close(void);
 
 #endif

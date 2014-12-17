@@ -14,7 +14,9 @@ int core_md5(lua_State *L) {
 
     if (top == 2) {
         len=luaL_checkinteger(L, 2);
-    } else len = strlen(str);
+    } else {
+        len = strlen(str);
+    }
     md5_init(&status);
     md5_append(&status, (md5_byte_t *)str, len);
     md5_finish(&status, (unsigned char *)digest);
