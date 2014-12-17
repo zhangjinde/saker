@@ -1,6 +1,6 @@
 #include "core_declarer.h"
 #include "utils/error.h"
-#include "utils/sds.h"
+#include "utils/xsds.h"
 
 int core_popen(lua_State *L) {
     FILE *fp = NULL;

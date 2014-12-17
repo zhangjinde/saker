@@ -1,6 +1,6 @@
 #include "sysinfo/sysinfo.h"
 #include <stdlib.h>
-#include "utils/string.h"
+#include "utils/xstring.h"
 
 
 #define CPU_AVG1        0

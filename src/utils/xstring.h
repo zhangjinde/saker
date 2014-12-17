@@ -1,5 +1,5 @@
-#ifndef _STRING__H_
-#define _STRING__H_
+#ifndef _XSTRING__H_
+#define _XSTRING__H_
 
 #include <string.h>
 

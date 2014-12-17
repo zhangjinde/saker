@@ -110,12 +110,6 @@ typedef struct dictIterator {
 #define dictSlots(ht) ((ht)->size)
 #define dictSize(ht) ((ht)->used)
 
-
-//add by cinience@qq.com
-typedef int  (*operator_function_t)(void*, void*);
-
-
-
 /* API */
 unsigned int dictGenHashFunction(const unsigned char *buf, int len);
 dict *       dictCreate(dictType *type, void *privDataPtr);
@@ -128,8 +122,5 @@ dictEntry *  dictFind(dict *ht, const void *key);
 dictIterator*dictGetIterator(dict *ht);
 dictEntry*   dictNext(dictIterator *iter);
 void         dictReleaseIterator(dictIterator *iter);
-
-//add by cinience@qq.com
-int          dictForeach(dict* ht,operator_function_t fun,void* ap);
 
 #endif /* __DICT_H */

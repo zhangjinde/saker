@@ -15,6 +15,7 @@ set(EventSourcesFile
     event/ae.c
     event/anet.c
     event/util.c
+    event/sds.c
 )
 
 set(SubDir . utils core service sysinfo plugins proto luacompat)

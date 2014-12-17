@@ -49,6 +49,3 @@ int   ugUnregister(lua_State *L);
 int   ugPublish(lua_State *L);
 
 #endif
-
-
-

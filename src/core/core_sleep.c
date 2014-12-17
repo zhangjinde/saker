@@ -6,4 +6,3 @@ int core_sleep(lua_State *L) {
     xsleep(tm);
     return 0;
 }
-

@@ -11,7 +11,7 @@ set(EXE_SRCS
     ../event/adlist.c
     ../event/ae.c
     ../event/anet.c
-    ../utils/sds.c
+    ../event/sds.c
     ${PROJECT_SOURCE_DIR}/deps/linenoise/linenoise.c
     saker-cli.c
 )

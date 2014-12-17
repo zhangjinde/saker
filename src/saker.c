@@ -14,7 +14,7 @@
 #include "utils/error.h"
 #include "utils/getopt.h"
 #include "utils/process.h"
-#include "utils/string.h"
+#include "utils/xstring.h"
 #include "utils/perf.h"
 
 #include "service/register.h"

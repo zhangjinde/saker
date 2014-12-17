@@ -2,12 +2,12 @@
 #include <assert.h>
 #include "common/types.h"
 #include "config.h"
-#include "utils/string.h"
+#include "utils/xstring.h"
 #include "utils/error.h"
 #include "utils/file.h"
 #include "utils/thread.h"
 #include "utils/process.h"
-#include "utils/sds.h"
+#include "utils/xsds.h"
 #include "saker.h"
 #include <fcntl.h>
 #include <sys/wait.h>
@@ -115,4 +115,3 @@ End:
     if(pidfile) sdsfree(pidfile);
     return ret;
 }
-

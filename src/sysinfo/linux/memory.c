@@ -1,7 +1,7 @@
 #include "sysinfo/sysinfo.h"
 #include <sys/sysinfo.h>
 
-#include "utils/string.h"
+#include "utils/xstring.h"
 
 
 int VM_MEMORY_TOTAL(const char *cmd, int argc,const char **argv,SYSINFO_RESULT *result) {

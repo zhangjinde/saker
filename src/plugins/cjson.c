@@ -44,7 +44,7 @@
 #include <math.h>
 
 #include "utils/strbuf.h"
-#include "utils/string.h"
+#include "utils/xstring.h"
 
 #ifdef _WIN32
 #include <float.h>

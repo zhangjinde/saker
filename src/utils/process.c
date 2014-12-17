@@ -16,7 +16,7 @@
 #include "utils/logger.h"
 #include "common/defines.h"
 #include "utils/error.h"
-#include "utils/string.h"
+#include "utils/xstring.h"
 #include "utils/file.h"
 #include "utils/debug.h"
 

@@ -4,7 +4,7 @@
 #include <dirent.h>
 
 #include "common/common.h"
-#include "string.h"
+#include "xstring.h"
 
 static void freebuff(void *p) {
     char *buff = (char *)p;

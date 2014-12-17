@@ -5,7 +5,7 @@
 #include <sys/time.h>
 #include <fcntl.h>
 #include <dirent.h>
-#include "utils/string.h"
+#include "utils/xstring.h"
 
 #ifdef HAVE_ASM_PARAM_H
 #include <asm/param.h>

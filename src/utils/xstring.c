@@ -1,4 +1,4 @@
-#include "string.h"
+#include "xstring.h"
 #include "common/common.h"
 #include <assert.h>
 #include <stdlib.h>

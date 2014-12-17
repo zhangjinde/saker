@@ -2,7 +2,7 @@
 #include "saker.h"
 #include "object.h"
 #include "event/util.h"
-#include "utils/string.h"
+#include "utils/xstring.h"
 #include "utils/debug.h"
 
 typedef struct pubsubPattern {

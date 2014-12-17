@@ -2,8 +2,8 @@
 #include "common/common.h"
 #include "utils/path.h"
 #include "utils/file.h"
-#include "utils/string.h"
-#include "utils/sds.h"
+#include "utils/xstring.h"
+#include "utils/xsds.h"
 #include "utils/logger.h"
 #include "common/defines.h"
 

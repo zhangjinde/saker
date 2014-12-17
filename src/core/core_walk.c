@@ -1,8 +1,8 @@
 #include "core_declarer.h"
 #include "utils/ulist.h"
-#include "utils/string.h"
+#include "utils/xstring.h"
 #include "utils/file.h"
-#include "utils/sds.h"
+#include "utils/xsds.h"
 
 static void freebuff(void *p) {
     char *buff = (char *)p;
@@ -64,4 +64,3 @@ int core_walk(lua_State *L) {
     listRelease(dirqueue);
     return 1;
 }
-

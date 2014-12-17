@@ -8,8 +8,8 @@
 #include <time.h>
 
 #include "sysinfo/top.h"
-#include "utils/string.h"
-#include "utils/sds.h"
+#include "utils/xstring.h"
+#include "utils/xsds.h"
 #include "common/types.h"
 
 #ifdef HAVE_ASM_PARAM_H

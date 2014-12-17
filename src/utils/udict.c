@@ -334,18 +334,3 @@ static int _dictKeyIndex(dict *ht, const void *key) {
     }
     return h;
 }
-
-
-int          dictForeach(dict *ht,operator_function_t fun,void *ap) {
-    int z = DICT_OK;
-    dictIterator *di = dictGetIterator(ht);
-    dictEntry *de;
-    while((de = dictNext(di)) != NULL) {
-        if(fun(dictGetEntryVal(de), ap)!=0) {
-            z = DICT_ERR;
-            break;
-        }
-    }
-    dictReleaseIterator(di);
-    return z;
-}

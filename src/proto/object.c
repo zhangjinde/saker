@@ -36,7 +36,7 @@
 #include "saker.h"
 
 #include "event/util.h"
-#include "utils/sds.h"
+#include "utils/xsds.h"
 #include "utils/udict.h"
 #include "utils/debug.h"
 

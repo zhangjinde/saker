@@ -7,7 +7,7 @@
 #include "pubsub.h"
 #include "event/util.h"
 #include "event/zmalloc.h"
-#include "utils/string.h"
+#include "utils/xstring.h"
 #include "utils/debug.h"
 #include "utils/logger.h"
 #include "utils/time.h"

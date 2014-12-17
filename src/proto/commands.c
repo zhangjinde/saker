@@ -3,7 +3,7 @@
 #include "object.h"
 #include "pubsub.h"
 #include "luaworking.h"
-#include "utils/string.h"
+#include "utils/xstring.h"
 #include "utils/file.h"
 #include "utils/debug.h"
 #include "service/register.h"

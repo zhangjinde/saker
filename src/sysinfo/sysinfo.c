@@ -1,7 +1,7 @@
 
 #include "sysinfo.h"
 #include <string.h>
-#include "utils/string.h"
+#include "utils/xstring.h"
 #include "utils/udict.h"
 
 

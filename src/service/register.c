@@ -3,7 +3,7 @@
 
 #include "saker.h"
 #include "utils/logger.h"
-#include "utils/string.h"
+#include "utils/xstring.h"
 #include "utils/debug.h"
 #include "proto/client.h"
 #include "proto/pubsub.h"

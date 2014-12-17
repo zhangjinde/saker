@@ -1,6 +1,6 @@
 #include "core_declarer.h"
 #include "utils/md5.h"
-#include "utils/string.h"
+#include "utils/xstring.h"
 
 int core_md5(lua_State *L) {
     int top = lua_gettop(L);

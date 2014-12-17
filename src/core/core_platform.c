@@ -9,4 +9,3 @@ int core_osname(lua_State *L) {
     lua_pushstring(L, OS_STRING);
     return 1;
 }
-

@@ -11,12 +11,12 @@
 
 #include "common/types.h"
 #include "config.h"
-#include "utils/string.h"
+#include "utils/xstring.h"
 #include "utils/error.h"
 #include "utils/file.h"
 #include "utils/thread.h"
 #include "utils/process.h"
-#include "utils/sds.h"
+#include "utils/xsds.h"
 #include "utils/ulist.h"
 #include "saker.h"
 

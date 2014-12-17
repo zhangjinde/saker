@@ -47,7 +47,7 @@
 #include <limits.h>
 
 #include "hiredis/hiredis.h"
-#include "utils/sds.h"
+#include "utils/xsds.h"
 #include "event/zmalloc.h"
 #include "linenoise.h"
 #include "help.h"

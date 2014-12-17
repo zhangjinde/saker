@@ -32,4 +32,3 @@ int core_pidof(lua_State *L) {
     lua_pushnil(L);
     return 1;
 }
-
