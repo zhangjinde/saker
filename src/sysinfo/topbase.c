@@ -4,7 +4,7 @@
 
 uint32_t g_time = 0;
 
-void freeProcess(struct ProcessInfo *p) {
+void freeProcess(struct processInfo *p) {
     if (p->name)  zfree(p->name);
     if (p->fullname) zfree(p->fullname);
     zfree(p);
@@ -33,7 +33,7 @@ static void callbackKeyDestructor(void *privdata, void *key) {
 
 static void callbackValDestructor(void *privdata, void *val) {
     ((void) privdata);
-    freeProcess((struct ProcessInfo *) val);
+    freeProcess((struct processInfo *) val);
 }
 
 static dictType callbackDict = {
@@ -49,15 +49,15 @@ void deleteProcess(pid_t pid) {
     dictDelete(server.process, &pid);
 }
 
-struct ProcessInfo *newProcess(pid_t pid) {
-    struct ProcessInfo *p = zmalloc(sizeof(struct ProcessInfo));
-    memset(p, 0 ,sizeof(struct ProcessInfo));
+struct processInfo *newProcess(pid_t pid) {
+    struct processInfo *p = zmalloc(sizeof(struct processInfo));
+    memset(p, 0 ,sizeof(struct processInfo));
     p->pid = pid;
     dictAdd(server.process, &pid, p);
     return p;
 }
 
-struct ProcessInfo *findProcess(pid_t pid) {
+struct processInfo *findProcess(pid_t pid) {
     dictEntry *de = dictFind(server.process, &pid);
     if (de) return dictGetEntryVal(de);
     return NULL;
@@ -67,14 +67,14 @@ void processCleanup(void) {
     dictIterator *di = dictGetIterator(server.process);
     dictEntry *de;
     while ((de = dictNext(di)) != NULL) {
-        struct ProcessInfo *p = dictGetEntryVal(de);
+        struct processInfo *p = dictGetEntryVal(de);
         if (p->time_stamp != g_time) deleteProcess(p->pid);
     }
     dictReleaseIterator(di);
 }
 
-struct ProcessInfo *getProcessInfoByID(pid_t pid) {
-    struct ProcessInfo *p = findProcess(pid);
+struct processInfo *getProcessInfoByID(pid_t pid) {
+    struct processInfo *p = findProcess(pid);
     if (!p) {
         topUpdate();
         p = findProcess(pid);

@@ -7,7 +7,7 @@
 
 extern uint32_t g_time;
 
-struct ProcessInfo {
+struct processInfo {
     pid_t pid;
     char *name;
     char *fullname;
@@ -47,9 +47,9 @@ struct ProcessInfo {
 
 /* just for platform */
 
-struct ProcessInfo *newProcess(pid_t pid);
+struct processInfo *newProcess(pid_t pid);
 
-struct ProcessInfo *findProcess(pid_t pid);
+struct processInfo *findProcess(pid_t pid);
 
 void  deleteProcess(pid_t pid);
 
@@ -59,11 +59,11 @@ int   topIsRuning(void);
 
 /* end for platform */
 
-void  freeProcess(struct ProcessInfo *p);
+void  freeProcess(struct processInfo *p);
 
-int   updateProcess(struct ProcessInfo *proc);
+int   updateProcess(struct processInfo *proc);
 
-struct ProcessInfo *getProcessInfoByID(pid_t pid);
+struct processInfo *getProcessInfoByID(pid_t pid);
 
 int   topUpdate(void);
 

@@ -6,7 +6,7 @@
 
 #include "common/types.h"
 
-void daemonize(void);
+void daemonize(int closestdfd);
 
 int  pidfile_create(const char *pidfile,const char *appname,pid_t pid);
 

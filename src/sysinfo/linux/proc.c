@@ -439,7 +439,7 @@ int PROC_STATINFO(const char *cmd,int argc,const char **argv,SYSINFO_RESULT *res
     pid_t  pid = 0;
     const char *pidstr;
     char *rst = NULL;
-    struct ProcessInfo *proc  = NULL;
+    struct processInfo *proc  = NULL;
     if(NULL == (pidstr=getParam(argc,argv,0))) {
         SET_MSG_RESULT(result, xstrdup("called must have param"));
         return ret;
@@ -453,8 +453,8 @@ int PROC_STATINFO(const char *cmd,int argc,const char **argv,SYSINFO_RESULT *res
             return ret;
         }
     } else {
-        proc = zmalloc(sizeof(struct ProcessInfo));
-        memset(proc, 0, sizeof(struct ProcessInfo));
+        proc = zmalloc(sizeof(struct processInfo));
+        memset(proc, 0, sizeof(struct processInfo));
         proc->pid = pid;
         if (updateProcess(proc) == UGERR) {
             SET_MSG_RESULT(result, xstrprintf("cannot found the process or read stat failed %d ", pid));

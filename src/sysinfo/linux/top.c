@@ -91,7 +91,7 @@ static unsigned long long calc_cpu_total(void) {
 }
 
 
-static void update_procname(struct ProcessInfo *proc, char *cmd) {
+static void update_procname(struct processInfo *proc, char *cmd) {
     if (proc->name == NULL) {
         proc->name = xstrdup(cmd);
     } else if (strcmp(proc->name, cmd) != 0) {
@@ -100,7 +100,7 @@ static void update_procname(struct ProcessInfo *proc, char *cmd) {
     }
 }
 
-static void calcProcesssPCPU(struct ProcessInfo *proc, uint64_t elapsed) {
+static void calcProcesssPCPU(struct processInfo *proc, uint64_t elapsed) {
     if ((proc->pcpu = (proc->user_time + proc->kernel_time -  proc->previous_user_time - proc->previous_kernel_time ) / (double)elapsed) < 0.0001) {
         proc->pcpu = 0;
     }
@@ -109,7 +109,7 @@ static void calcProcesssPCPU(struct ProcessInfo *proc, uint64_t elapsed) {
     proc->previous_kernel_time = proc->kernel_time;
 }
 
-static void calcProcesssPMEM(struct ProcessInfo *proc) {
+static void calcProcesssPMEM(struct processInfo *proc) {
     static uint64_t totalram  = 0;
     if (totalram == 0) {
         struct sysinfo  info;
@@ -119,7 +119,7 @@ static void calcProcesssPMEM(struct ProcessInfo *proc) {
     proc->pmem = proc->rss*1024 / (double)totalram * 100;
 }
 
-int updateProcess(struct ProcessInfo *proc) {
+int updateProcess(struct processInfo *proc) {
     int  ret = UGERR;
     char buffer[4096], *p, *q;
     int fd, len;
@@ -271,7 +271,7 @@ int topUpdate(void) {
         }
 
         if (sscanf(entry->d_name, "%d", &pid) > 0) {
-            struct ProcessInfo *p;
+            struct processInfo *p;
 
             p = findProcess(pid);
             if (!p) {

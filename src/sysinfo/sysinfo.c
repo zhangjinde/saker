@@ -1,13 +1,9 @@
-
 #include "sysinfo.h"
 #include <string.h>
 #include "utils/xstring.h"
 #include "utils/udict.h"
 
-
-
 static dict *g_dict_sysinfo_function = NULL;
-
 
 /* Functions managing dictionary of callbacks for pub/sub. */
 static unsigned int callbackHash(const void *key) {

@@ -281,7 +281,7 @@ static int doAction(void) {
 }
 
 void doBgAction(void) {
-    daemonize();
+    daemonize(1);
 
     doAction();
 }

@@ -17,16 +17,7 @@
 #include "utils/thread.h"
 #include "utils/process.h"
 #include "utils/xsds.h"
-#include "utils/ulist.h"
 #include "saker.h"
-
-static void freebuff(void *p) {
-    char *buff = (char *)p;
-    if (buff) {
-        zfree(buff);
-        buff = NULL;
-    }
-}
 
 static sds get_pidfile(const char *execfile) {
     sds   pidfile = sdsempty();
@@ -56,44 +47,49 @@ static sds get_pidfile(const char *execfile) {
     stderr: string
 */
 int core_adopt(lua_State *L) {
+    pid_t pid;
     int ret = 2;
     int status = 0;
-    int idx = 0, argc = 0;
-    pid_t pid;
-    const char **argv = NULL;
-    listNode *node=NULL;
-    list *queue = listCreate();
-    listIter *iter = NULL;
+    int idx = 0;
+    int t_argc = 0;
+    char **t_argv = NULL;
     sds cmd = NULL;
     sds pidfile = NULL;
     sds umask_str = NULL; 
     sds user = NULL;
     sds stdout_logfile = NULL;
     sds stderr_logfile = NULL;
-    
     const char *k, *v;
-    
     int top = lua_gettop(L);
     if (top == 0 || lua_type(L, 1) != LUA_TTABLE) {
         lua_pushnil(L);
         lua_pushstring(L, "wrong number of arguments for adopt");
         goto End;
     }
-    listSetFreeMethod(queue, freebuff);
+
     lua_pushnil(L);
     while (lua_next(L, -2)) {
         k = lua_tostring(L, -2);
-        if (k == NULL) 
+        if (k == NULL)
             continue;
         LOG_DEBUG("key %s", k);
         if (strcmp(k, "args") == 0) {
              if (lua_istable(L, -1)) {
-             lua_pushnil(L);
-             while (lua_next(L, -2) != 0) {
+                 t_argc = 0;
+                 lua_pushnil(L);
+                 while(lua_next(L,-2)) {
+                     lua_pop(L,1); /* remove value, keep key for next iteration. */
+                     ++t_argc;
+                 }
+                 t_argc += 2;
+                 t_argv = (char **)zmalloc(sizeof(char *)*(t_argc)); /* last null */
+                 idx = 1;
+                 lua_pushnil(L);
+                 while (lua_next(L, -2) != 0) {
                     /* value at -1, key is at -2 which we ignore */
                     const char *value = lua_tostring(L, -1);
-                    LOG_DEBUG("inner value %s", value);
-                    listAddNodeTail(queue, xstrdup(value));
+                    LOG_DEBUG("args value %s", value);
+                    t_argv[idx++] = zstrdup(value);
                     /* removes 'value'; keeps 'key' for next iteration */
                     lua_pop(L, 1);
                 }
@@ -101,11 +97,16 @@ int core_adopt(lua_State *L) {
             lua_pop(L, 1);
             continue;
         }
+        if (!lua_isstring(L, -1)) {
+            lua_pop(L, 1);
+            continue;
+        }
         v = lua_tostring(L, -1);
         lua_pop(L, 1);
-        if (v == NULL)
-            continue; 
-        LOG_DEBUG("value %s", v);            
+        if (v == NULL) {
+            continue;
+        }
+        LOG_DEBUG("value %s", v);
         if (strcmp(k, "cmd") == 0) {
             cmd = sdsnew(v);
         } else if (strcmp(k, "umask") == 0) {
@@ -120,16 +121,14 @@ int core_adopt(lua_State *L) {
             pidfile = sdsnew(v);
         }
     }
-    
-    iter = listGetIterator(queue, AL_START_HEAD);
-    argc = listLength(queue) + 1;  /* firest cmd */
-    argv = (const char **)zmalloc(sizeof(char *)*(argc+1)); /* last null */
-    argv[0] = cmd;
-    argv[argc] = NULL;
-    idx = 1;
-    while ((node=listNext(iter))!=NULL) {        
-        argv[idx++] = (const char *) (node->value);
+
+    if (t_argv == NULL) {
+        t_argc = 2;
+        t_argv = (char **)zmalloc(sizeof(char *)*(t_argc));
     }
+
+    t_argv[0] = zstrdup(cmd);
+    t_argv[t_argc - 1] = NULL;
 
     if (pidfile == NULL) {
         pidfile = get_pidfile(cmd);
@@ -143,31 +142,18 @@ int core_adopt(lua_State *L) {
     pid = fork();
     if (pid < 0 ) {
         lua_pushnil(L);
-        lua_pushfstring(L, "cannot fork process for  '%s'", argv[0]);
+        lua_pushfstring(L, "cannot fork process for  '%s'", t_argv[0]);
         goto End;
     } else if (pid == 0) {
         int fd;
         int maxFd = (int)sysconf(_SC_OPEN_MAX);
-        unsigned int flags = fcntl(server.ipfd, F_GETFD);
+        unsigned int flags = 0;
+        pid_t newpid = 0;
         int stdout_fd = STDOUT_FILENO, stderr_fd = STDERR_FILENO;
-        pid_t newpid;
-        umask(0);
-        if ((newpid = fork ()) < 0) {
-            LOG_ERROR("Cannot fork of a new process");
-            _exit (1);
-        } else if(pid != 0) {
-            _exit(0);
-        }
-        setsid();
-        if ((newpid= fork ()) < 0) {
-            LOG_ERROR("Cannot fork of a new process");
-            exit (1);
-        } else if(newpid != 0) {
-            _exit(0);
-        }
+        daemonize(0);
         /* Close all file descriptors, except for standard input,
                   standard output, standard error    and listen fd
-               */
+        */
         for(fd = 3; fd < maxFd; ++fd) {
             if (fd != server.ipfd) {
                 close(fd);
@@ -176,7 +162,8 @@ int core_adopt(lua_State *L) {
 
         /* FD_CLOEXEC, the close-on-exec flag.  If the FD_CLOEXEC bit is 0, the
                    file descriptor will remain open across an execve(2), otherwise it will be closed.
-              */
+         */
+        flags = fcntl(server.ipfd, F_GETFD);
         flags |= 1; /* FD_CLOEXEC */
         if(fcntl(server.ipfd, F_SETFD, flags) == -1) {
             close(server.ipfd);
@@ -185,6 +172,7 @@ int core_adopt(lua_State *L) {
         if (close(STDIN_FILENO) == -1 || open("/dev/null", O_RDWR) != STDIN_FILENO) {
             LOG_ERROR("Cannot reopen standard file descriptor (%d) -- \n", 0);
         }
+
         if (stdout_logfile) {
             stdout_fd = open(stdout_logfile, O_WRONLY | O_CREAT | O_APPEND, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
             if (stdout_fd == -1) {
@@ -214,7 +202,6 @@ int core_adopt(lua_State *L) {
         if (stderr_fd > 2 && dup2(stderr_fd, STDERR_FILENO) == -1) {
             LOG_ERROR("dup2 stderr to file '%s' failed. err:'%s'", stderr_logfile, xerrmsg());
         }
-
         newpid = getpid();
         if (pidfile_create(pidfile, cmd, newpid) == UGERR) {
             LOG_ERROR("cannot create pid for '%s' ,exit process. err: %s , mypid is '%d'", pidfile , xerrmsg(), newpid);
@@ -234,9 +221,11 @@ int core_adopt(lua_State *L) {
         }
         
         LOG_TRACE("exec %s", cmd);
-        execvp(cmd, (char * const *)argv);
-        LOG_TRACE("exec process exit, mypid is '%d'", xerrmsg(), newpid);
+        execvp(cmd, (char * const *)t_argv);
+        LOG_TRACE("exec process exit, mypid is '%d', err:'%s'.", newpid, xerrmsg());
         xfiledel(pidfile);
+        close(stdout_fd);
+        close(stderr_fd);
         _exit(72);
     }
     /* avoid <defunct> Wait blocking */
@@ -250,17 +239,18 @@ int core_adopt(lua_State *L) {
         lua_pushfstring(L, "child exited for '%s' ,please cat log by 'mypid is '%d''", pidfile, pid);
     }
 End:
-    if(top > 0) lua_pop(L, top);
-    if(argv) zfree((char **)argv);
     sdsfree(cmd);
     sdsfree(pidfile);
     sdsfree(umask_str);
     sdsfree(user);
     sdsfree(stdout_logfile);
     sdsfree(stderr_logfile);
-    if(iter) listReleaseIterator(iter);
-    if(queue) listRelease(queue);
-    if(pidfile) sdsfree(pidfile);
+    if(t_argv) {
+        for (idx=0; t_argv[idx]; ++idx) {
+            zfree(t_argv[idx]);
+        }
+        zfree((char **)t_argv);
+    }
     return ret;
 }
 
