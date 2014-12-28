@@ -9,54 +9,53 @@ local matchlist={"INFO", "ERROR"}
 
 function tailf()
 
-  saker.log(LOG_TRACE, "this is tailf")
-  local reader = assert(io.open(FileName, "rb"))
-  
-	local size    = reader:seek("end")
-	if current == 0 and size > 500 then
+    saker.log(LOG_TRACE, "this is tailf")
+    local reader = assert(io.open(FileName, "rb"))
+    local size    = reader:seek("end")
+    if current == 0 and size > 500 then
         current = size - 500
-  elseif current > size then
+    elseif current > size then
         if size > 500 then 
         current = size - 500
         else 
         current = 0
         end
-  end
+    end
   
-	reader:seek("set", current)
-	if current == size then
-		return true
-	end
+    reader:seek("set", current)
+    if current == size then
+        return true
+    end
   
-  --- also you can   reader:read("*all") ,that will look like tailf more
-  local isMatch = true
-  local logmsg = ""
-  while reader:seek("cur") < size 
-  do
-	   local ctx = reader:read("*line")
-     local isMatch = false
-     -- also you can filter something
-     for k,v in pairs(matchlist) 
-     do       
-         if string.find(ctx, v) ~= nil then
-             isMatch = true
-         end
-     end
+    --- also you can   reader:read("*all") ,that will look like tailf more
+    local isMatch = true
+    local logmsg = ""
+    while reader:seek("cur") < size 
+    do
+        local ctx = reader:read("*line")
+        local isMatch = false
+        -- also you can filter something
+        for k,v in pairs(matchlist) 
+        do       
+            if string.find(ctx, v) ~= nil then
+            isMatch = true
+            end
+        end
      
-	   if isMatch then 
-         ctx = string.gsub(ctx, "\r", "")
-         ctx = string.gsub(ctx, "\n", "")   
-         logmsg=logmsg.."\r\n"..ctx
-     end
-  end
+        if isMatch then 
+            ctx = string.gsub(ctx, "\r", "")
+            ctx = string.gsub(ctx, "\n", "")   
+            logmsg=logmsg.."\r\n"..ctx
+        end
+    end
+
+    if #logmsg ~= 0 then
+        saker.publish("log", logmsg) 
+    end
+    current = reader:seek("cur")
+    io.close(reader)
   
-  if #logmsg ~= 0 then
-      saker.publish("log", logmsg) 
-  end
-  current = reader:seek("cur")
-  io.close(reader)
-  
-  return true
+    return true
 end
 
 saker.register("tailf", "tailf", PROP_CYCLE)

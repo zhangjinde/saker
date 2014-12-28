@@ -1,4 +1,3 @@
-#find_package(lua REQUIRED)
 
 set(BinName ${PROJECT_NAME})
 
@@ -19,10 +18,10 @@ set(EventSourcesFile
 )
 
 set(SubDir . utils core service sysinfo plugins proto luacompat)
-list(APPEND EXE_SRCS ${EventSourcesFile})
+list(APPEND BinSrcs ${EventSourcesFile})
 
 foreach(TheDir ${SubDir})
-    aux_source_directory(${TheDir} EXE_SRCS)
+    aux_source_directory(${TheDir} BinSrcs)
     if(NOT ${TheDir} STREQUAL ".")
         unset(TheSours)
         file(GLOB TheSours ${TheDir}/*.h)
@@ -33,7 +32,7 @@ foreach(TheDir ${SubDir})
 endforeach()
 
 if (UNIX)
-    aux_source_directory(sysinfo/linux EXE_SRCS)    
+    aux_source_directory(sysinfo/linux BinSrcs)    
     file(GLOB SysInfoSours sysinfo/linux/*.[hc])
 endif()
 
@@ -43,7 +42,6 @@ include_directories(${PROJECT_SOURCE_DIR}/deps/lua/src)
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/src/event)
 
-add_executable(${BinName} ${EXE_SRCS})
+add_executable(${BinName} ${BinSrcs})
 
 TARGET_LINK_LIBRARIES(${BinName}  ${DepLibs})
-

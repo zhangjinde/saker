@@ -31,8 +31,8 @@ typedef struct ugClient {
     int     fd;
     sds     querybuf;
     int     argc;
-    struct protoObject  **argv;
-    ugCommand* cmd;
+    struct protoObject **argv;
+    ugCommand *cmd;
     int     flags;
     list   *reply;
     unsigned long reply_bytes; /* Tot bytes of objects in reply list */

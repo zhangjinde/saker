@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 2.6)
 
 project (saker C)
 
+set (SAKER_VERSION_MAJOR 1)
+set (SAKER_VERSION_MINOR 0)
+set (SAKER_VERSION_PATCH 1)
+
 option(ENABLE_DEBUG "Set to OFF|ON (default is OFF) to control Debug or Release" ON)
 option(ENABLE_JEMALLOC "Set to OFF|ON (default is ON) to control use jemalloc or not" ON)
 option(ENABLE_TESTS "Set to OFF|ON (default is OFF) to control build of tests " ON)
@@ -62,7 +66,6 @@ add_custom_command(OUTPUT ${LuaLib}
                   COMMENT "build lualib")
 
 #set(JEMALLOC_CFLAGS "-std=gnu99 -Wall -pipe -g3 -O3 -funroll-loops" $(CFLAGS))
-
 add_custom_command(OUTPUT ${JeMallocLib}
                   PRE_BUILD 
                   COMMAND chmod +x configure *sh
@@ -78,7 +81,7 @@ add_custom_target(run ALL DEPENDS ${HiRedisLib} ${LuaLib} ${JeMallocLib})
 
 if (ENABLE_TESTS)
     include(CTest)
-    ENABLE_TESTING()
+    enable_testing()
     message(STATUS "Building with tests ")
 else ()
     message(STATUS "Building without tests ")
@@ -86,6 +89,18 @@ endif ()
 
 add_subdirectory(src)
 add_subdirectory(src/client)
+
+#make install
+install(FILES ${EXECUTABLE_OUTPUT_PATH}/* DESTINATION saker)
+
+#cpack
+include (InstallRequiredSystemLibraries)
+set (CPACK_PACKAGE_VENDOR "cinience@hotmail.com")
+set (CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/COPYRIGHT")
+set (CPACK_PACKAGE_VERSION_MAJOR "${SAKER_VERSION_MAJOR}")
+set (CPACK_PACKAGE_VERSION_MINOR "${SAKER_VERSION_MINOR}")
+set (CPACK_PACKAGE_VERSION_PATCH "${SAKER_VERSION_PATCH}")
+include (CPack)
 
 message(STATUS "CMake ${CMAKE_VERSION} successfully configured ${PROJECT_NAME} using ${CMAKE_GENERATOR} generator")
 message(STATUS "Installation target path: ${CMAKE_INSTALL_PREFIX}")
