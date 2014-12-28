@@ -88,12 +88,12 @@ static int listMatchPubsubPattern(void *a, void *b) {
 }
 
 static void listFreePubsubPattern(void *ptr) {
-    decrRefCount(ptr);
+    sds s = ptr;
+    sdsfree(s);
 }
 
 static void listFreeReplyObjects(void *ptr) {
-    sds s = ptr;
-    sdsfree(s);
+    decrRefCount(ptr);
 }
 
 static int  listMatchClientObjects(void *a, void *b) {
