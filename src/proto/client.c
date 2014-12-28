@@ -70,8 +70,6 @@ static void callbackKeyDestructor(void *privdata, void *key) {
     decrRefCount(key);
 }
 
-
-
 static dictType callbackDict = {
     callbackHash,
     NULL,
@@ -93,8 +91,7 @@ static void listFreePubsubPattern(void *ptr) {
 }
 
 static void listFreeReplyObjects(void *ptr) {
-    sds s = ptr;
-    sdsfree(s);
+    decrRefCount(ptr);
 }
 
 static int  listMatchClientObjects(void *a, void *b) {

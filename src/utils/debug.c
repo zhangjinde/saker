@@ -1,4 +1,5 @@
 #include "debug.h"
+#include <stdio.h>
 #include "common/defines.h"
 #include "utils/logger.h"
 
@@ -86,7 +87,7 @@ static void stacktrace(ucontext_t *uc) {
     strings = backtrace_symbols(trace, trace_size);
 
     for (idx=0; idx<trace_size; ++idx) {
-        LOG_FATAL("%s", strings[idx]);
+        printf("%s", strings[idx]);
     }
 
     free(strings);
@@ -95,12 +96,12 @@ static void stacktrace(ucontext_t *uc) {
 void sigsegvHandler(int sig, siginfo_t *info, void *secret) {
     ucontext_t *uc = (ucontext_t *) secret;
     struct sigaction act;
-    LOG_FATAL("%s %s crashed by signal: %d", APPNAME, VERSION, sig);
+    printf("%s %s crashed by signal: %d", APPNAME, VERSION, sig);
 
     /* Log the stack trace */
-    LOG_FATAL("--- STACK TRACE START ---");
+    printf("--- STACK TRACE START ---");
     stacktrace(uc);
-    LOG_FATAL("--- STACK TRACE END ---");
+    printf("--- STACK TRACE END ---");
     /* Make sure we exit with the right signal at the end. So for instance
      * the core will be dumped if enabled. */
     sigemptyset (&act.sa_mask);
