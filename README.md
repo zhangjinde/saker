@@ -4,7 +4,7 @@
 [![Licence](http://img.shields.io/badge/Licence-MIT-brightgreen.svg)](COPYRIGHT)
 
 
-![UI](https://raw.githubusercontent.com/cinience/saker/test_logo/docs/saker.png "saker")
+![UI](https://raw.githubusercontent.com/cinience/saker/test_logo/docs/sake.jpg "saker")
 
 ##Introduction
 * saker is the ultimate enterprise-level software designed for monitoring availability and  performance of IT infrastructure components
